@@ -10,7 +10,7 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import javax.sql.DataSource;
-import modele.Ouvrage;
+import modele.Livre;
 
 /**
  * Le contrôleur de l'application.
@@ -68,7 +68,7 @@ public class Controleur extends HttpServlet {
             HttpServletResponse response, 
             OuvrageDAO ouvrageDAO) throws ServletException, IOException {
         /* On interroge la base de données pour obtenir la liste des ouvrages */
-        List<Ouvrage> ouvrages = ouvrageDAO.getListeOuvrages();
+        List<Livre> ouvrages = ouvrageDAO.getListeOuvrages();
         /* On ajoute cette liste à la requête en tant qu’attribut afin de la transférer à la vue
          * Rem. : ne pas confondre attribut (= objet ajouté à la requête par le programme
          * avant un forward, comme ici)
@@ -90,7 +90,7 @@ public class Controleur extends HttpServlet {
     private void actionGetOuvrage(HttpServletRequest request, 
             HttpServletResponse response, 
             OuvrageDAO ouvrageDAO) throws ServletException, IOException {
-        Ouvrage livre = ouvrageDAO.getOuvrage(Integer.parseInt(request.getParameter("id")));
+        Livre livre = ouvrageDAO.getOuvrage(Integer.parseInt(request.getParameter("id")));
         PrintWriter out = response.getWriter();
 
         switch(request.getParameter("view")){

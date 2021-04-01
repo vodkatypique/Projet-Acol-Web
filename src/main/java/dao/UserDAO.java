@@ -6,9 +6,9 @@ import java.util.List;
 import javax.sql.DataSource;
 import modele.Livre;
 
-public class OuvrageDAO extends AbstractDataBaseDAO {
+public class UserDAO extends AbstractDataBaseDAO {
 
-    public OuvrageDAO(DataSource ds) {
+    public UserDAO(DataSource ds) {
         super(ds);
     }
 

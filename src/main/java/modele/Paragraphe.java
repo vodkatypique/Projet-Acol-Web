@@ -1,13 +1,13 @@
       
 package modele; 
 
-public class Ouvrage {
+public class Paragraphe {
 
    private final int id;
    private final String auteur; 
    private final String titre; 
 
-   public Ouvrage(int id, String auteur, String titre) {
+   public Paragraphe(int id, String auteur, String titre) {
       this.titre = titre;
       this.auteur = auteur; 
       this.id = id ;
