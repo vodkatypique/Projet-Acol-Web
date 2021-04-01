@@ -44,7 +44,9 @@ public class Logout extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Servlet Logout at " + request.getContextPath() + "</h1>");
             out.println("Logout ok");
-            out.println("<a href='index.html'>go to index</a>");
+            out.println("<form action=\"controleur\" method=\"post\">");
+            out.println("<input type=\"submit\" value=\"Retour!\">");
+            out.println("</form>");
             out.println("</body>");
             out.println("</html>");
         }

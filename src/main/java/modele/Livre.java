@@ -3,32 +3,38 @@ package modele;
 
 public class Livre {
 
-   private final int id;
-   private final String auteur; 
-   private final String titre; 
+   private final int idLivre;
+   private String titreLivre; 
+   private boolean isPublished;
+   private boolean isOpen;
 
-   public Livre(int id, String auteur, String titre) {
-      this.titre = titre;
-      this.auteur = auteur; 
-      this.id = id ;
+   public Livre(int id, String titre, boolean isPublished, boolean isOpen) {
+      this.titreLivre = titre;
+      this.idLivre = id ;
+      this.isPublished = isPublished;
+      this.isOpen = isOpen;
    }
 
-   public String getAuteur() {
-      return this.auteur; 
+   public boolean getPublishedStatut() {
+      return this.isPublished; 
+   }
+   
+   public boolean getOpenStatut() {
+      return this.isOpen; 
    }
 
    public String getTitre() {
-      return this.titre;
+      return this.titreLivre;
    }
    
    public int getId()
    {
-       return this.id;
+       return this.idLivre;
    }
 
     @Override
     public String toString() {
-        return "Ouvrage{" + "id=" + id + ", auteur=" + auteur + ", titre=" + titre + '}';
+        return "Livre{" + "id=" + idLivre + " titre=" + titreLivre + '}';
     }
 }
 

@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
-import modele.Livre;
+import modele.User;
 
 public class UserDAO extends AbstractDataBaseDAO {
 
@@ -15,17 +15,17 @@ public class UserDAO extends AbstractDataBaseDAO {
     /**
      * Renvoie la liste des ouvrages de la table bibliographie.
      */
-    public List<Livre> getListeOuvrages() {
-        List<Livre> result = new ArrayList<Livre>();
+    public List<User> getListeUser() {
+        List<User> result = new ArrayList<User>();
         try (
 	     Connection conn = getConn();
 	     Statement st = conn.createStatement();
 	     ) {
-            ResultSet rs = st.executeQuery("SELECT * FROM bibliographie");
+            ResultSet rs = st.executeQuery("SELECT * FROM UserTable");
             while (rs.next()) {
-                Livre ouvrage =
-                    new Livre(rs.getInt("id"), rs.getString("auteur"), rs.getString("titre"));
-                result.add(ouvrage);
+                User user =
+                    new User(rs.getInt("idUser"), rs.getString("login"), rs.getString("password"));
+                result.add(user);
             }
         } catch (SQLException e) {
             throw new DAOException("Erreur BD " + e.getMessage(), e);
@@ -37,14 +37,14 @@ public class UserDAO extends AbstractDataBaseDAO {
      * Ajoute l'ouvrage d'auteur et de titre spécifiés dans la table
      * bibliographie.
      */
-    public void ajouterOuvrage(String auteur, String titre) {
+    public void ajouterUser(String login, String password) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("INSERT INTO bibliographie (auteur, titre) VALUES (?, ?)");
+	       ("INSERT INTO UserTable (login, password) VALUES (?, ?)"); //! a hasher
 	     ) {
-            st.setString(1, auteur);
-            st.setString(2, titre);
+            st.setString(1, login);
+            st.setString(2, password);
             st.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erreur BD " + e.getMessage(), e);
@@ -54,16 +54,16 @@ public class UserDAO extends AbstractDataBaseDAO {
     /**
      * Récupère l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public Livre getOuvrage(int id) {
+    public User getUser(int id) {
         try (
 	     Connection conn = getConn();
              PreparedStatement st = conn.prepareStatement
-	       ("SELECT * FROM bibliographie WHERE id = ?");
+	       ("SELECT * FROM UserTable WHERE idUser = ?");
             ) {
             st.setString(1, Integer.toString(id));
             ResultSet rs = st.executeQuery();
             if(rs.next()){
-               return new Livre(rs.getInt("id"), rs.getString("auteur"), rs.getString("titre"));
+               return new User(rs.getInt("id"), rs.getString("login"), rs.getString("password"));
             } else {
                 throw new DAOException("Erreur BD : id = " + id +" n'est pas dans la base.");
             }
@@ -76,15 +76,15 @@ public class UserDAO extends AbstractDataBaseDAO {
      * Modifie l'ouvrage d'identifiant id avec le nouvel auteur et le nouveau
      * titre spécifiés dans la table bibliographie.
      */
-    public void modifierOuvrage(int id, String auteur, String titre) {
+    public void modifierUser(int id, String login, String password) {
         String error;
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("UPDATE bibliographie SET auteur = ? , titre = ? WHERE id = ?");
+	       ("UPDATE UserTable SET login = ? , password = ? WHERE idUser = ?");
 	     ) {
-            st.setString(1, auteur);
-            st.setString(2, titre);
+            st.setString(1, login);
+            st.setString(2, password); //! a hasher
             st.setInt(3, id);
             error = st.toString();
             st.executeUpdate();
@@ -98,11 +98,11 @@ public class UserDAO extends AbstractDataBaseDAO {
     /**
      * Supprime l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public void supprimerOuvrage(int id) {
+    public void supprimerUser(int id) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("DELETE FROM bibliographie WHERE id = ?");
+	       ("DELETE FROM UserTable WHERE idUser = ?");
 	     ) {
             st.setInt(1, id);
             st.executeUpdate();
