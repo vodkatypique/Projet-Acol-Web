@@ -66,7 +66,7 @@ CREATE TABLE UserBookHistory(
 CREATE TABLE Choice(
     idBook INT NOT NULL,
     numParagraphCurrent INT NOT NULL,
-    numParagraphNext INT,
+    numParagraphNext VARCHAR(50),
     numParagraphConditional INT,
     CONSTRAINT fk_Choice_idBook FOREIGN KEY (idBook) REFERENCES Book(idBook) ON DELETE CASCADE,
     CONSTRAINT pk_Choice PRIMARY KEY (idBook, numParagraphCurrent)
@@ -137,6 +137,4 @@ VALUES (3, 2);
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
 VALUES (1, 1, 2, NULL);
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
-VALUES (1, 2, 3, NULL);
-INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
-VALUES (1, 2, 4, NULL);
+VALUES (1, 2, '3, 4', NULL);
