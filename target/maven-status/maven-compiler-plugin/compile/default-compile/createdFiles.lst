@@ -1,3 +1,13 @@
 dao/DAOException.class
+servlet/CheckUser.class
+servlet/Logout.class
+modele/Paragraphe.class
 controleur/Controleur.class
+servlet/Register.class
+modele/User.class
+dao/ParagrapheDAO.class
 dao/AbstractDataBaseDAO.class
+dao/UserDAO.class
+dao/BookDAO.class
+modele/Book.class
+modele/Livre.class
