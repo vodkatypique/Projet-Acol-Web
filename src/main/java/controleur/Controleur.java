@@ -53,6 +53,8 @@ public class Controleur extends HttpServlet {
                 actionDisplay(request, response, bookDAO);
             } else if (action.equals("getBook")){
                 actionGetBook(request, response, bookDAO);
+            } else if (action.equals("access")){
+                actionAccess(request, response, bookDAO);
             } else {
                 invalidParameters(request, response);
             }
@@ -119,4 +121,13 @@ public class Controleur extends HttpServlet {
         }
         else invalidParameters(request, response);
     }
+    
+     private void actionAccess(HttpServletRequest request, 
+            HttpServletResponse response, 
+            BookDAO bookDAO) throws ServletException, IOException {
+         int iB = Integer.parseInt(request.getParameter("idBook"));
+         int iU = Integer.parseInt(request.getParameter("idUser"));
+         boolean is = bookDAO.accessBook(iB, iU);
+         request.setAttribute("isAccess", is);
+     }
 }

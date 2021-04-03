@@ -100,7 +100,7 @@ public class BookDAO extends AbstractDataBaseDAO {
     /**
      * Supprime l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public void suppressLivre(int id) {
+    public void suppressBook(int id) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
@@ -110,6 +110,26 @@ public class BookDAO extends AbstractDataBaseDAO {
             st.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erreur BD " + e.getMessage(), e);
-        }
+        }       
+    }
+    
+     /**
+     * Indique si l'utilisateur d'identifiant donné à accès au livre 
+     * d'identifiant donné en écriture
+     */
+    public boolean accessBook(int idBook, int idUser) {
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("SELECT * FROM userAccess WHERE idBook=? AND idUser=?");
+	     ) {
+            st.setInt(1, idBook);
+            st.setInt(2, idUser);
+            ResultSet r = st.executeQuery();
+            return r.next(); // true ssi il existe un accès
+            
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD " + e.getMessage(), e);
+        }       
     }
 }

@@ -23,7 +23,12 @@
                 Si elle est ouverte, tous les utilisateurs en-registrés du site 
                 peuvent participer. Sinon, l’auteur du paragraphe initial invite l
                 es utilisateursqu’il veut et seuls ces utilisateurs ont accès à l’histoire en mode écritur-->
-                <jsp:include page="controleur?action=getBook&view=edit&id=${book.id}">
+                <jsp:include page="controleur.jsp">
+                    <jsp:param name="action" value="access" />
+                    <jsp:param name="idBook" value="${book.id}" />
+                    <jsp:param name="idUser" value="${user.id}" />
+                </jsp:include> 
+                <c:if test = '${request}.getAttribute("isAccess") === true'>
                     <tr>
                         <td></td>
                         <td>
@@ -35,6 +40,7 @@
                             Liste des auteurs, TO DO
                         </td>
                     </tr>
+                </c:if>
             </c:forEach>
         </table>
         </form>
