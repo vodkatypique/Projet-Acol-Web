@@ -4,7 +4,7 @@
 --------------------------------------------------------------------------------
 
 DROP TABLE Choice;
---DROP TABLE UserBookHistory;
+DROP TABLE UserBookHistory;
 DROP TABLE UserAccess;
 DROP TABLE Paragraph;
 DROP TABLE UserTable;
@@ -47,19 +47,20 @@ CREATE TABLE UserAccess(
     idUser INT NOT NULL,
     CONSTRAINT fk_userAccess_idBook FOREIGN KEY (idBook) REFERENCES Book(idBook) ON DELETE CASCADE,
     CONSTRAINT fk_userAccess_idUser FOREIGN KEY (idUser) REFERENCES UserTable(idUser) ON DELETE CASCADE,
-    CONSTRAINT pk_userAccess PRIMARY KEY (idBook, idUser) -- to verify
+    CONSTRAINT pk_userAccess PRIMARY KEY (idBook, idUser)
 );
 
 
----- A voir si on met directement cette classe dans le code html
---CREATE TABLE UserBookHistory(
---    idBook INT NOT NULL,
---    idUser INT NOT NULL,
---    history, :'( 
---    numJump INT,
---    CONSTRAINT fk_UserBookHistory_idBook FOREIGN KEY idBook REFERENCES Book(idBook),
---    CONSTRAINT fk_UserBookHistory_idUser FOREIGN KEY idUser REFERENCES UserTable(idUser),
---);
+
+CREATE TABLE UserBookHistory(
+    idBook INT NOT NULL,
+    idUser INT NOT NULL,
+    history VARCHAR(200),
+    numJump INT,
+    CONSTRAINT fk_userBookHistory_idBook FOREIGN KEY (idBook) REFERENCES Book(idBook),
+    CONSTRAINT fk_userBookHistory_idUser FOREIGN KEY (idUser) REFERENCES UserTable(idUser),
+    CONSTRAINT pk_userBookHistory PRIMARY KEY (idBook, idUser)
+);
 
 
 CREATE TABLE Choice(
@@ -76,3 +77,5 @@ CREATE TABLE Choice(
 --------------------------------------------------------------------------------
 -- Remplissage de la base de donneés
 --------------------------------------------------------------------------------
+
+
