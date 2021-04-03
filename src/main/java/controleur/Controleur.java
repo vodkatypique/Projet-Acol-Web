@@ -103,7 +103,7 @@ public class Controleur extends HttpServlet {
          * et paramètre (= chaîne représentant des données de formulaire envoyées par le client) */
         request.setAttribute("books", books);
         /* Enfin on transfère la requête avec cet attribut supplémentaire vers la vue qui convient */
-        request.getRequestDispatcher("/WEB-INF/listAll.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/listBooksToRead.jsp").forward(request, response);
     }
 
     /**

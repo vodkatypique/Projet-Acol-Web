@@ -41,7 +41,7 @@
                         </td>
                     </tr>
                 </c:if>
-            </c:forEach>
+        </c:forEach>
         </table>
         </form>
     </body>
