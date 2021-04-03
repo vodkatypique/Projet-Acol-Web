@@ -9,6 +9,11 @@
     <body>
         <%@include file="co_deco.jsp" %>
         
+        <!--On renvoie l'utilisateur au formulaire de connexion s'il n'est pas connecté :-->
+         <%HttpSession sess = request.getSession(false);
+         if (sess == null || sess.getAttribute("utilisateur") == null) {
+            response.sendRedirect("login.html");
+         }%>
         <h2> Liste des histoires que vous pouvez éditer : </h2>
         <form method="post" action="controleur" accept-charset="UTF-8">
         <table>
@@ -18,14 +23,9 @@
                 <th>Liste des auteurs</th>
             </tr>
             <c:forEach items="${books}" var="book">
-                <!--Une histoire peut être ouverte ou sur invitation. 
-                Si elle est ouverte, tous les utilisateurs en-registrés du site 
-                peuvent participer. Sinon, l’auteur du paragraphe initial invite l
-                es utilisateursqu’il veut et seuls ces utilisateurs ont accès à l’histoire en mode écritur-->
-                <jsp:include page="/controleur?action=access&idBook=${book.id}&idUser=1" />
-                <%boolean cond = (boolean) request.getAttribute("isAccess");%>
-                <%= cond %>
-                <c:if test = "cond === true"> <!-- ne fonctionne pas pour une raison obscure (j'ai tout essayé...) -->
+                <jsp:include page="/controleur?action=access&idBook=${book.id}" />
+                <% boolean cond = (boolean) request.getAttribute("isAccess");%>
+                <c:if test="<%=cond%>">
                     <tr>
                         <td></td>
                         <td>

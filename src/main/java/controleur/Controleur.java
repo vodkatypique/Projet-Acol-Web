@@ -2,6 +2,7 @@ package controleur;
 
 import dao.DAOException;
 import dao.BookDAO;
+import dao.UserDAO;
 import java.io.*;
 import java.net.http.HttpClient;
 import java.sql.SQLException;
@@ -51,6 +52,7 @@ public class Controleur extends HttpServlet {
         
         
         BookDAO bookDAO = new BookDAO(dsBook);
+        UserDAO userDAO = new UserDAO(dsUser);
 
         try {
             // actions depuis la page ppale = liste des livres disponibles
@@ -59,7 +61,7 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("getBook")){
                 actionGetBook(request, response, bookDAO);
             } else if (action.equals("access")){
-                actionAccess(request, response, bookDAO);
+                actionAccess(request, response, bookDAO, userDAO);
             } else if (action.equals("authors")){
                 actionAuthors(request, response, bookDAO);
             } else {
@@ -111,7 +113,7 @@ public class Controleur extends HttpServlet {
          * et paramètre (= chaîne représentant des données de formulaire envoyées par le client) */
         request.setAttribute("books", books);
         /* Enfin on transfère la requête avec cet attribut supplémentaire vers la vue qui convient */
-        request.getRequestDispatcher("/WEB-INF/listBooksToRead.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/listBooksToEdit.jsp").forward(request, response);
     }
 
     /**
@@ -132,11 +134,15 @@ public class Controleur extends HttpServlet {
     
      private void actionAccess(HttpServletRequest request, 
             HttpServletResponse response, 
-            BookDAO bookDAO) throws ServletException, IOException {
+            BookDAO bookDAO, UserDAO userDAO) throws ServletException, IOException {
+         boolean is = false;
          int iB = Integer.parseInt(request.getParameter("idBook"));
-         int iU = Integer.parseInt(request.getParameter("idUser"));
-         boolean is = bookDAO.accessBook(iB, iU);
-         request.setAttribute("isAccess", is);
+         String login = (String) request.getSession().getAttribute("utilisateur");
+         if(login != null) {
+             int iU = userDAO.getIdFromLogin(login);
+             is = bookDAO.accessBook(iB, iU);
+         }
+         request.setAttribute("isAccess", is); // faux pr un utilisateur non co
      }
      
     private void actionAuthors(HttpServletRequest request, 

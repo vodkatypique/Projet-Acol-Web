@@ -1,5 +1,3 @@
-dao/OuvrageDAO.class
+dao/DAOException.class
 controleur/Controleur.class
 dao/AbstractDataBaseDAO.class
-dao/DAOException.class
-modele/Ouvrage.class

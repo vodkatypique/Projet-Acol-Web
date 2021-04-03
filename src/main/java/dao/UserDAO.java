@@ -73,6 +73,25 @@ public class UserDAO extends AbstractDataBaseDAO {
 	}
     }
 
+    public int getIdFromLogin(String login) {
+        try (
+	     Connection conn = getConn();
+             PreparedStatement st = conn.prepareStatement
+	       ("SELECT idUser FROM UserTable WHERE login = ?");
+            ) {
+            st.setString(1, login);
+            ResultSet rs = st.executeQuery();
+            if(rs.next()){
+               return rs.getInt("idUser");
+            } else {
+                throw new DAOException("Erreur BD : login = " + login +" n'est pas dans la base.");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD " + e.getMessage(), e);
+	}
+    }
+    
+    
     /**
      * Modifie l'ouvrage d'identifiant id avec le nouvel auteur et le nouveau
      * titre spécifiés dans la table bibliographie.
