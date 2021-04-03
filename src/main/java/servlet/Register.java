@@ -89,7 +89,9 @@ public class Register extends HttpServlet {
         try {
             String login = request.getParameter("login");
             String mdp = request.getParameter("password");
-            inscription(login, mdp);
+            if (login != "" && mdp != ""){
+                inscription(login, mdp);
+            }
             request.getRequestDispatcher("checkuser").forward(request,response);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
