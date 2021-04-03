@@ -8,6 +8,7 @@
     </head>
     <body>
         <%@include file="co_deco.jsp" %>
+        <a href='WEB-INF/listBooksToEdit.jsp'>accéder à l'édition</a>
         
         <h2> Liste des histoires disponibles : </h2>
         <table>
@@ -17,7 +18,7 @@
                 <th>Liste des auteurs</th>
             </tr>
             <c:forEach items="${books}" var="book">
-                <c:if test = "${book.isPublished} === true">
+                <c:if test = "${book.isPublished}">
                     <tr>
                         <td></td>
                         <td>
@@ -26,7 +27,10 @@
                             </a>
                         </td>
                         <td>
-                            Liste des auteurs, TO DO
+                            <jsp:include page="/controleur?action=authors&idBook=${book.id}" />
+                            <c:forEach items="${authors}" var="author">
+                                ${author} ; 
+                            </c:forEach>
                         </td>
                     </tr>
                </c:if>
