@@ -30,7 +30,7 @@ import javax.websocket.Session;
  */
 @WebServlet(name = "CheckUser", urlPatterns = {"/checkuser"})
 public class CheckUser extends HttpServlet {
-    @Resource(name = "jdbc/bibliotheque")
+    @Resource(name = "jdbc/UserTable")
     private DataSource ds;
 
     /**
@@ -99,27 +99,7 @@ public class CheckUser extends HttpServlet {
         }
         
 
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CheckUser</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<div>");
-            String name = (String)request.getSession().getAttribute("utilisateur");
-            if (name != null) {
-                out.println(name + "est bien connecté");
-            } else {
-                out.println("echec de la connection");
-            }
-            out.println();
-            out.println("<a href='index.html'>go to index</a>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+        response.sendRedirect(request.getContextPath());
     }
 
     /**
@@ -136,7 +116,7 @@ public class CheckUser extends HttpServlet {
         try (Connection c = ds.getConnection()) {
             /* Un PreparedStatement évite les injections SQL */
             try(PreparedStatement s = c.prepareStatement(
-                "SELECT login FROM users WHERE login = ? AND password = ?"
+                "SELECT login FROM UserTable WHERE login = ? AND password = ?"
             )){
                 s.setString(1, login);
                 s.setString(2, mdp);

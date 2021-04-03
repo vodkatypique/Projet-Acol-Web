@@ -119,6 +119,8 @@ INSERT INTO UserTable(idUser, login, password)
 VALUES (1, 'Thibault', 'zjemgkjmihg');
 INSERT INTO UserTable(idUser, login, password)
 VALUES (2, 'Mathieu', '1234');
+INSERT INTO UserTable(idUser, login, password)
+VALUES (3, 'vodka', 'baccareccia2B');
 
 
 INSERT INTO UserAccess(idBook, idUser)

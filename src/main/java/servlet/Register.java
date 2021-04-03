@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.jar.Attributes.Name;
@@ -88,38 +89,13 @@ public class Register extends HttpServlet {
         try {
             String login = request.getParameter("login");
             String mdp = request.getParameter("password");
-
-            if (login != null && mdp != null && isLoginValid(login, mdp)) {
-                HttpSession session = request.getSession();
-                session.setAttribute("utilisateur", request.getParameter("login"));
-            }
+            inscription(login, mdp);
+            request.getRequestDispatcher("checkuser").forward(request,response);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CheckUser</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<div>");
-            String name = (String)request.getSession().getAttribute("utilisateur");
-            if (name != null) {
-                out.println(name + "est bien connecté");
-            } else {
-                out.println("echec de la connection");
-            }
-            out.println();
-            out.println("<a href='index.html'>go to index</a>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+       
     }
 
     /**
@@ -132,14 +108,21 @@ public class Register extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    public boolean isLoginValid(String login, String mdp) throws SQLException{
+    public boolean inscription(String login, String mdp) throws SQLException{
         try (Connection c = ds.getConnection()) {
             /* Un PreparedStatement évite les injections SQL */
             try(PreparedStatement s = c.prepareStatement(
-                "SELECT login FROM users WHERE login = ? AND password = ?"
+                "INSERT INTO UserTable (idUser, login, password) VALUES (?, ?, ?)"
             )){
-                s.setString(1, login);
-                s.setString(2, mdp);
+                Statement stmt = c.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM UserTable");
+                int count = 0;
+                while(rs.next()){
+                    count = rs.getInt("total");
+                }
+                s.setInt(1, count);
+                s.setString(2, login);
+                s.setString(3, mdp);
                 ResultSet r = s.executeQuery();
                 /* r.next() renvoie vrai si et seulement si la réponse contient au moins 1 ligne */
                 return r.next();

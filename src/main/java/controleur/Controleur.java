@@ -49,7 +49,6 @@ public class Controleur extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
         
-        
         BookDAO bookDAO = new BookDAO(dsBook);
 
         try {
@@ -72,17 +71,7 @@ public class Controleur extends HttpServlet {
             HttpServletResponse response)
             throws IOException, ServletException {
 
-        request.setCharacterEncoding("UTF-8");
-        String action = request.getParameter("action");
-        request.getSession().invalidate();
-
-        try {
-            if (action == null) {
-                actionIndex(request, response);
-            }
-        } catch (DAOException e) {
-            erreurBD(request, response, e);
-        }
+        this.doGet(request, response);
     }
 
     /**
