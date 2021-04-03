@@ -118,20 +118,20 @@ Au moins, vous ne vous êtes pas fait mangé. Vous avez gagné !',
 INSERT INTO UserTable(idUser, login, password)
 VALUES (1, 'Thibault', 'zjemgkjmihg');
 INSERT INTO UserTable(idUser, login, password)
-VALUES (1, 'Mathieu', '1234');
+VALUES (2, 'Mathieu', '1234');
 
 
 INSERT INTO UserAccess(idBook, idUser)
-VALUES (1, 'Mathieu');
+VALUES (1, 1);
 INSERT INTO UserAccess(idBook, idUser)
-VALUES (1, 'Thibault');
+VALUES (1, 2);
 INSERT INTO UserAccess(idBook, idUser)
-VALUES (2, 'Mathieu');
+VALUES (2, 1);
 INSERT INTO UserAccess(idBook, idUser)
-VALUES (3, 'Thibault');
+VALUES (3, 2);
 
 
--- l'historique se vérifiera surment par la pratique
+-- l'historique se vérifiera par la pratique
 
 
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
