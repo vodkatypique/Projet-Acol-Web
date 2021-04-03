@@ -21,21 +21,22 @@
                 Si elle est ouverte, tous les utilisateurs en-registrés du site 
                 peuvent participer. Sinon, l’auteur du paragraphe initial invite l
                 es utilisateursqu’il veut et seuls ces utilisateurs ont accès à l’histoire en mode écritur-->
-                <jsp:include page="controleur.jsp">
-                    <jsp:param name="action" value="access" />
-                    <jsp:param name="idBook" value="${book.id}" />
-                    <jsp:param name="idUser" value="${user.id}" />
-                </jsp:include> 
-                <c:if test = '${request}.getAttribute("isAccess") === true'>
+                <jsp:include page="/controleur?action=access&idBook=${book.id}&idUser=1" />
+                <%boolean cond = (boolean) request.getAttribute("isAccess");%>
+                <%= cond %>
+                <c:if test = "cond === true"> <!-- ne fonctionne pas pour une raison obscure (j'ai tout essayé...) -->
                     <tr>
                         <td></td>
                         <td>
                             <a href="controleur?action=getBook&view=edit&id=${book.id}">
-                            ${book.title}
+                                ${book.title} 
                             </a>
                         </td>
                         <td>
-                            Liste des auteurs, TO DO
+                            <jsp:include page="/controleur?action=authors&idBook=${book.id}" />
+                            <c:forEach items="${authors}" var="author">
+                                ${author} ; 
+                            </c:forEach>
                         </td>
                     </tr>
                 </c:if>
