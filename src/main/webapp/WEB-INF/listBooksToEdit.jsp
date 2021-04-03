@@ -7,9 +7,8 @@
 	<title>Editer une histoire</title>
     </head>
     <body>
-        <p> <a href="register.html">Se connecter</a></p>
-        <p> <a href="logout.html">déconnexion</a></p>
-
+        <%@include file="co_deco.jsp" %>
+        
         <h2> Liste des histoires que vous pouvez éditer : </h2>
         <form method="post" action="controleur" accept-charset="UTF-8">
         <table>

@@ -28,9 +28,9 @@ import javax.websocket.Session;
  *
  * @author cleme
  */
-@WebServlet(name = "CheckUser", urlPatterns = {"/checkuser"})
+@WebServlet(name = "Register", urlPatterns = {"/register"})
 public class Register extends HttpServlet {
-    @Resource(name = "jdbc/bibliotheque")
+    @Resource(name = "jdbc/UserTable")
     private DataSource ds;
 
     /**

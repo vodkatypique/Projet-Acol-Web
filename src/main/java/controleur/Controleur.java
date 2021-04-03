@@ -4,6 +4,7 @@ import dao.DAOException;
 import dao.BookDAO;
 import java.io.*;
 import java.net.http.HttpClient;
+import java.sql.SQLException;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.*;
@@ -18,8 +19,11 @@ import modele.Book;
 @WebServlet(name = "Controleur", urlPatterns = {"/controleur"})
 public class Controleur extends HttpServlet {
 
-    @Resource(name = "jdbc/bibliography")
-    private DataSource ds;
+    @Resource(name = "jdbc/Book")
+    private DataSource dsBook;
+    
+    @Resource(name = "jdbc/UserTable")
+    private DataSource dsUser;
 
     /* pages d’erreurs */
     private void invalidParameters(HttpServletRequest request,
@@ -44,8 +48,9 @@ public class Controleur extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
-
-        BookDAO bookDAO = new BookDAO(ds);
+        
+        
+        BookDAO bookDAO = new BookDAO(dsBook);
 
         try {
             // actions depuis la page ppale = liste des livres disponibles
@@ -69,6 +74,7 @@ public class Controleur extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
+        request.getSession().invalidate();
 
         try {
             if (action == null) {
