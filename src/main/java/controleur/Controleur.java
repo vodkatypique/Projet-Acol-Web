@@ -1,7 +1,7 @@
 package controleur;
 
 import dao.DAOException;
-import dao.LivreDAO;
+import dao.BookDAO;
 import java.io.*;
 import java.net.http.HttpClient;
 import java.util.List;
@@ -10,7 +10,7 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import javax.sql.DataSource;
-import modele.Livre;
+import modele.Book;
 
 /**
  * Le contrôleur de l'application.
@@ -45,9 +45,16 @@ public class Controleur extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
+        BookDAO bookDAO = new BookDAO(ds);
+
         try {
+            // actions depuis la page ppale = liste des livres disponibles
             if (action == null) {
-                actionIndex(request, response);
+                actionDisplay(request, response, bookDAO);
+            } else if (action.equals("getBook")){
+                actionGetBook(request, response, bookDAO);
+            } else {
+                invalidParameters(request, response);
             }
         } catch (DAOException e) {
             erreurBD(request, response, e);
@@ -71,23 +78,45 @@ public class Controleur extends HttpServlet {
     }
 
     /**
+     * Redirige vers l'index
      * 
-     * Affiche la page d’accueil avec la liste de tous les ouvrages. 
      */
     private void actionIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         request.getRequestDispatcher("/WEB-INF/index.jsp").forward(request, response);
     }
     
+    /**
+     * 
+     * Affiche la page d’accueil avec la liste de tous les ouvrages. 
+     */
+    
+    private void actionDisplay(HttpServletRequest request, 
+            HttpServletResponse response, 
+            BookDAO bookDAO) throws ServletException, IOException {
+        /* On interroge la base de données pour obtenir la liste des ouvrages */
+        List<Book> books = bookDAO.getBooksList();
+        /* On ajoute cette liste à la requête en tant qu’attribut afin de la transférer à la vue
+         * Rem. : ne pas confondre attribut (= objet ajouté à la requête par le programme
+         * avant un forward, comme ici)
+         * et paramètre (= chaîne représentant des données de formulaire envoyées par le client) */
+        request.setAttribute("books", books);
+        /* Enfin on transfère la requête avec cet attribut supplémentaire vers la vue qui convient */
+        request.getRequestDispatcher("/WEB-INF/listAll.jsp").forward(request, response);
+    }
 
     /**
      * 
-     * Récupère les informations sur un ouvrage donné par son identifiant.
-     * Ajoute cet ouvrage comme attribut à la requête puis appelle la vue demandée.
-     * La requête doit comprendre les paramètres :
-     * -- id, l’identifiant de l’ouvrage à récupérer
-     * -- view, le nom de la vue à afficher ("modifier" ou "supprimer")
-     * Sinon, on appelle invalidParameters.
+     * Affiche la page d’accueil avec la liste de tous les ouvrages. 
      */
-
-
+    private void actionGetBook(HttpServletRequest request, HttpServletResponse response, 
+                               BookDAO bookDAO) throws DAOException, ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String v = request.getParameter("view");
+        if (v.equals("read")) {
+            Book book = bookDAO.getBook(id);
+            request.setAttribute("book", book);
+            getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response); // Peut être des .html plutôt ? (et pas besoin d'une var si on rajoute pas d'autre trucs que read)
+        }
+        else invalidParameters(request, response);
+    }
 }

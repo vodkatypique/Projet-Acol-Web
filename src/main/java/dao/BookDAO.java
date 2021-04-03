@@ -4,27 +4,27 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
-import modele.Livre;
+import modele.Book;
 
-public class LivreDAO extends AbstractDataBaseDAO {
+public class BookDAO extends AbstractDataBaseDAO {
 
-    public LivreDAO(DataSource ds) {
+    public BookDAO(DataSource ds) {
         super(ds);
     }
 
     /**
      * Renvoie la liste des ouvrages de la table bibliographie.
      */
-    public List<Livre> getListeLivre() {
-        List<Livre> result = new ArrayList<Livre>();
+    public List<Book> getBooksList() {
+        List<Book> result = new ArrayList<Book>();
         try (
 	     Connection conn = getConn();
 	     Statement st = conn.createStatement();
 	     ) {
             ResultSet rs = st.executeQuery("SELECT * FROM Book");
             while (rs.next()) {
-                Livre livre =
-                    new Livre(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
+                Book livre =
+                    new Book(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
                 result.add(livre);
             }
         } catch (SQLException e) {
@@ -55,7 +55,7 @@ public class LivreDAO extends AbstractDataBaseDAO {
     /**
      * Récupère l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public Livre getBook(int id) {
+    public Book getBook(int id) {
         try (
 	     Connection conn = getConn();
              PreparedStatement st = conn.prepareStatement
@@ -64,7 +64,7 @@ public class LivreDAO extends AbstractDataBaseDAO {
             st.setInt(1, id);
             ResultSet rs = st.executeQuery();
             if(rs.next()){
-               return new Livre(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
+               return new Book(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
             } else {
                 throw new DAOException("Erreur BD : id = " + id +" n'est pas dans la base.");
             }
@@ -94,8 +94,8 @@ public class LivreDAO extends AbstractDataBaseDAO {
             throw new DAOException("Erreur BD " + e.getMessage(), e);
         }
     }
-    
-    
+
+
 
     /**
      * Supprime l'ouvrage d'identifiant id dans la table bibliographie.
