@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
-import modele.Livre;
+import modele.Book;
 import modele.Paragraphe;
 
 public class ParagrapheDAO extends AbstractDataBaseDAO {
