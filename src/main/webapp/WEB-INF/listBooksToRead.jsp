@@ -7,12 +7,7 @@
 	<title>Menu des histoires</title>
     </head>
     <body>
-        <form method="post" action="controleur" accept-charset="UTF-8">
-            <c:choose>
-                <c:when test='${request.session}.getAttribute("utilisateur") == null'> <p> <a href="register.html">Se connecter</a></p></c:when>
-                <c:otherwise><p> <a href="logout.html">déconnexion</a></p></c:otherwise>
-            </c:choose>
-        </form>       
+        <%@include file="co_deco.jsp" %>
 
         <h2> Liste des histoires disponibles : </h2>
         <form method="post" action="controleur" accept-charset="UTF-8">
