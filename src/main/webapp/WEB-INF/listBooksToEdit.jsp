@@ -15,7 +15,6 @@
             response.sendRedirect("login.html");
          }%>
         <h2> Liste des histoires que vous pouvez éditer : </h2>
-        <form method="post" action="controleur" accept-charset="UTF-8">
         <table>
             <tr>
                 <!--Image représentant l'histoire ?-->
@@ -43,6 +42,6 @@
                 </c:if>
         </c:forEach>
         </table>
-        </form>
+  
     </body>
 </html>
