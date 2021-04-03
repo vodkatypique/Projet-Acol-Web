@@ -13,6 +13,7 @@
          if (sess == null || sess.getAttribute("utilisateur") == null) { %>
             <h2> Connectez-vous pour accéder à l'édition </h2>
          <%} else {%>
+            <a href="controleur">vers lecture</a>
             <h2> Liste des histoires que vous pouvez éditer : </h2>
             <table>
                 <tr>
@@ -21,6 +22,7 @@
                     <th>Liste des auteurs</th>
                 </tr>
                 <c:forEach items="${books}" var="book">
+                    
                     <jsp:include page="/controleur?action=access&idBook=${book.id}" />
                     <% boolean cond = (boolean) request.getAttribute("isAccess");%>
                     <c:if test="<%=cond%>">

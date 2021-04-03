@@ -63,7 +63,10 @@ public class Controleur extends HttpServlet {
                 actionAccess(request, response, bookDAO, userDAO);
             } else if (action.equals("authors")){
                 actionAuthors(request, response, bookDAO);
-            } else {
+            } else if (action.equals("edition")){
+                actionEdit(request, response, bookDAO);
+            }
+            else {
                 invalidParameters(request, response);
             }
         } catch (DAOException e) {
@@ -104,6 +107,20 @@ public class Controleur extends HttpServlet {
         /* Enfin on transfère la requête avec cet attribut supplémentaire vers la vue qui convient */
         request.getRequestDispatcher("/WEB-INF/listBooksToRead.jsp").forward(request, response);
     }
+    
+    private void actionEdit(HttpServletRequest request, 
+            HttpServletResponse response, 
+            BookDAO bookDAO) throws ServletException, IOException {
+        /* On interroge la base de données pour obtenir la liste des ouvrages */
+        List<Book> books = bookDAO.getBooksList();
+        /* On ajoute cette liste à la requête en tant qu’attribut afin de la transférer à la vue
+         * Rem. : ne pas confondre attribut (= objet ajouté à la requête par le programme
+         * avant un forward, comme ici)
+         * et paramètre (= chaîne représentant des données de formulaire envoyées par le client) */
+        request.setAttribute("books", books);
+        /* Enfin on transfère la requête avec cet attribut supplémentaire vers la vue qui convient */
+        request.getRequestDispatcher("/WEB-INF/listBooksToEdit.jsp").forward(request, response);
+    }
 
     /**
      * 
@@ -127,10 +144,14 @@ public class Controleur extends HttpServlet {
          boolean is = false;
          int iB = Integer.parseInt(request.getParameter("idBook"));
          String login = (String) request.getSession().getAttribute("utilisateur");
+         
          if(login != null) {
              int iU = userDAO.getIdFromLogin(login);
+             System.out.println(iU);
+             System.out.println(iB);
              is = bookDAO.accessBook(iB, iU);
          }
+         
          request.setAttribute("isAccess", is); // faux pr un utilisateur non co
      }
      

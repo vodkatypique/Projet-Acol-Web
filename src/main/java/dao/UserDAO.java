@@ -82,6 +82,7 @@ public class UserDAO extends AbstractDataBaseDAO {
             st.setString(1, login);
             ResultSet rs = st.executeQuery();
             if(rs.next()){
+                System.out.println(rs.getInt("idUser"));
                return rs.getInt("idUser");
             } else {
                 throw new DAOException("Erreur BD : login = " + login +" n'est pas dans la base.");

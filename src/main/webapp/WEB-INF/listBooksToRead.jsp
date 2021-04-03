@@ -8,6 +8,7 @@
     </head>
     <body>
         <%@include file="co_deco.jsp" %>
+        <a href="controleur?action=edition">vers edition</a>
         <!--<a href='WEB-INF/listBooksToEdit.jsp'>accéder à l'édition</a>-->
         
         <h2> Liste des histoires disponibles : </h2>

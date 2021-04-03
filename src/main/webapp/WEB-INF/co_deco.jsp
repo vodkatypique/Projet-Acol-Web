@@ -10,11 +10,12 @@
                         <button type="submit" name="login" formaction="checkuser">Login</button>
                         <button type="submit" name="register" formaction="register">Register</button>
                         
-                    
+          
                 </c:when>
                 <c:otherwise>
                     <p>
                         ${utilisateur} est connecté
+                        <br>
                         <a href="logout">déconnexion</a>
                     </p>
                     
