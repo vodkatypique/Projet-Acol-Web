@@ -1,0 +1,78 @@
+
+--------------------------------------------------------------------------------
+-- Création de la base de donneés
+--------------------------------------------------------------------------------
+
+DROP TABLE Book;
+DROP TABLE Paragraph;
+DROP TABLE UserTable;
+DROP TABLE UserAccess;
+--DROP TABLE UserBookHistory;
+DROP TABLE Choice;
+
+
+CREATE TABLE Book(
+    idBook INT NOT NULL,
+    titleBook VARCHAR(50) NOT NULL,
+    isPublished INT, --boolean
+    isOpen INT, --boolean
+    CONSTRAINT pk_id_book PRIMARY KEY (idBook)
+);
+
+
+CREATE TABLE Paragraph(
+    idBook INT NOT NULL,
+    numParagraph INT NOT NULL,
+    paragraphTitle VARCHAR(200) NOT NULL,
+    text VARCHAR(2000) NOT NULL,
+    author VARCHAR(50) NOT NULL,
+    isEnd INT, --boolean
+    isValidate INT, --boolean
+    isAccessible INT, --boolean
+    CONSTRAINT fk_paragraph_idBook FOREIGN KEY idBook REFERENCES Book(idBook),
+    CONSTRAINT pk_paragraph PRIMARY KEY (idBook, numParagraph)
+);
+
+
+CREATE TABLE UserTable(
+    idUser INT NOT NULL,
+    login VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    CONSTRAINT pk_userTable PRIMARY KEY (idUser)
+);
+
+
+CREATE TABLE UserAccess(
+    idBook INT NOT NULL,
+    idUser INT NOT NULL,
+    CONSTRAINT fk_userAccess_idBook FOREIGN KEY idBook REFERENCES Book(idBook),
+    CONSTRAINT fk_userAccess_idUser FOREIGN KEY idUser REFERENCES UserTable(idUser),
+    CONSTRAINT pk_userAccess PRIMARY KEY (idBook, idUser) -- to verify
+);
+
+
+---- A voir si on met directement cette classe dans le code html
+--CREATE TABLE UserBookHistory(
+--    idBook INT NOT NULL,
+--    idUser INT NOT NULL,
+--    history, :'( 
+--    numJump INT,
+--    CONSTRAINT fk_UserBookHistory_idBook FOREIGN KEY idBook REFERENCES Book(idBook),
+--    CONSTRAINT fk_UserBookHistory_idUser FOREIGN KEY idUser REFERENCES UserTable(idUser),
+--);
+
+
+CREATE TABLE Choice(
+    idBook INT NOT NULL,
+    numParagraphCurrent INT NOT NULL,
+    numParagraphNext INT,
+    numParagraphConditional INT,
+    CONSTRAINT fk_Choice_idBook FOREIGN KEY idBook REFERENCES Book(idBook),
+    CONSTRAINT pk_Choice PRIMARY KEY (idBook, numParagraphCurrent)
+);
+
+
+
+--------------------------------------------------------------------------------
+-- Remplissage de la base de donneés
+--------------------------------------------------------------------------------

@@ -15,7 +15,7 @@ public class UserDAO extends AbstractDataBaseDAO {
     /**
      * Renvoie la liste des ouvrages de la table bibliographie.
      */
-    public List<User> getListeUser() {
+    public List<User> getListUser() {
         List<User> result = new ArrayList<User>();
         try (
 	     Connection conn = getConn();
@@ -37,14 +37,15 @@ public class UserDAO extends AbstractDataBaseDAO {
      * Ajoute l'ouvrage d'auteur et de titre spécifiés dans la table
      * bibliographie.
      */
-    public void ajouterUser(String login, String password) {
+    public void addUser(String idUser, String login, String password) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("INSERT INTO UserTable (login, password) VALUES (?, ?)"); //! a hasher
+	       ("INSERT INTO UserTable (idUser, login, password) VALUES (?, ?, ?)"); //! a hasher
 	     ) {
-            st.setString(1, login);
-            st.setString(2, password);
+            st.setString(1, idUser);
+            st.setString(2, login);
+            st.setString(3, password);
             st.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erreur BD " + e.getMessage(), e);
@@ -76,7 +77,7 @@ public class UserDAO extends AbstractDataBaseDAO {
      * Modifie l'ouvrage d'identifiant id avec le nouvel auteur et le nouveau
      * titre spécifiés dans la table bibliographie.
      */
-    public void modifierUser(int id, String login, String password) {
+    public void modifyUser(int id, String login, String password) {
         String error;
         try (
 	     Connection conn = getConn();
@@ -98,7 +99,7 @@ public class UserDAO extends AbstractDataBaseDAO {
     /**
      * Supprime l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public void supprimerUser(int id) {
+    public void suppressUser(int id) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
