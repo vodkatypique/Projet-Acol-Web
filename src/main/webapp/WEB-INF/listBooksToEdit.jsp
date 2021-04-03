@@ -4,17 +4,13 @@
 <html>
     <head>
 	<meta charset="UTF-8"/>
-	<title>Menu des histoires</title>
+	<title>Editer une histoire</title>
     </head>
     <body>
-        <form method="post" action="controleur" accept-charset="UTF-8">
-            <c:choose>
-                <c:when test='${request.session}.getAttribute("utilisateur") == null'> <p> <a href="register.html">Se connecter</a></p></c:when>
-                <c:otherwise><p> <a href="logout.html">déconnexion</a></p></c:otherwise>
-            </c:choose>
-        </form>       
+        <p> <a href="register.html">Se connecter</a></p>
+        <p> <a href="logout.html">déconnexion</a></p>
 
-        <h2> Liste des histoires disponibles : </h2>
+        <h2> Liste des histoires que vous pouvez éditer : </h2>
         <form method="post" action="controleur" accept-charset="UTF-8">
         <table>
             <tr>
@@ -23,11 +19,15 @@
                 <th>Liste des auteurs</th>
             </tr>
             <c:forEach items="${books}" var="book">
-                <c:if test = "${book.isPublished} === true">
+                <!--Une histoire peut être ouverte ou sur invitation. 
+                Si elle est ouverte, tous les utilisateurs en-registrés du site 
+                peuvent participer. Sinon, l’auteur du paragraphe initial invite l
+                es utilisateursqu’il veut et seuls ces utilisateurs ont accès à l’histoire en mode écritur-->
+                <jsp:include page="controleur?action=getBook&view=edit&id=${book.id}">
                     <tr>
                         <td></td>
                         <td>
-                            <a href="controleur?action=getBook&view=read&id=${book.id}">
+                            <a href="controleur?action=getBook&view=edit&id=${book.id}">
                             ${book.title}
                             </a>
                         </td>
@@ -35,7 +35,6 @@
                             Liste des auteurs, TO DO
                         </td>
                     </tr>
-               </c:if>
             </c:forEach>
         </table>
         </form>
