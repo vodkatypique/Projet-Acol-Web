@@ -3,28 +3,32 @@ package modele;
 
 public class Paragraphe {
 
-   private final int idLivre;
+   private final int idBook;
    private final int numParagraph; 
-   private String titreParagraphe;
-   private String auteur;
+   private String paragraphTitle;
+   private String text;
+   private String author;
    private boolean isEnd;
    private boolean isValidate;
+   private boolean isAccessible;
 
-   public Paragraphe(int id, int numParagraphe, String titre, String auteur, boolean isEnd, boolean isValidate, boolean isAccessible) {
-      this.titreParagraphe = titre;
-      this.auteur = auteur; 
-      this.idLivre = id;
-      this.numParagraph = numParagraphe;
+   public Paragraphe(int id, int numParagraph, String title, String text, String author, boolean isEnd, boolean isValidate, boolean isAccessible) {
+      this.idBook = id;
+      this.numParagraph = numParagraph;
+      this.paragraphTitle = title;
+      this.text = text;
+      this.author = author; 
       this.isEnd = isEnd;
       this.isValidate = isValidate;
+      this.isAccessible = isAccessible;
    }
 
-   public String getAuteur() {
-      return this.auteur; 
+   public String getAuthor() {
+      return this.author; 
    }
 
-   public String getTitre() {
-      return this.titreParagraphe;
+   public String getTitle() {
+      return this.paragraphTitle;
    }
    
    public int getId()
@@ -34,7 +38,7 @@ public class Paragraphe {
 
     @Override
     public String toString() {
-        return "Paragraphe{" + "id=" + numParagraph + ", auteur=" + auteur + ", titre=" + titreParagraphe + '}';
+        return "Paragraphe{" + "id=" + numParagraph + ", auteur=" + author + ", titre=" + paragraphTitle + ", text=" + text + '}';
     }
 }
 

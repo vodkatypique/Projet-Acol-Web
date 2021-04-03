@@ -37,11 +37,11 @@ public class BookDAO extends AbstractDataBaseDAO {
      * Ajoute l'ouvrage d'auteur et de titre spécifiés dans la table
      * bibliographie.
      */
-    public void ajouterLivre(String titre) {
+    public void addBook(String titre) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("INSERT INTO Book (titreLivre, isPublished, isOpen) VALUES (?, ?, ?)");
+	       ("INSERT INTO Book (titleBook, isPublished, isOpen) VALUES (?, ?, ?)");
 	     ) {
             st.setString(1, titre);
             st.setBoolean(2, false);
@@ -59,12 +59,12 @@ public class BookDAO extends AbstractDataBaseDAO {
         try (
 	     Connection conn = getConn();
              PreparedStatement st = conn.prepareStatement
-	       ("SELECT * FROM Book WHERE idLivre = ?");
+	       ("SELECT * FROM Book WHERE idBook = ?");
             ) {
             st.setInt(1, id);
             ResultSet rs = st.executeQuery();
             if(rs.next()){
-               return new Book(rs.getInt("idLivre"), rs.getString("titreLivre"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
+               return new Book(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
             } else {
                 throw new DAOException("Erreur BD : id = " + id +" n'est pas dans la base.");
             }
@@ -77,14 +77,14 @@ public class BookDAO extends AbstractDataBaseDAO {
      * Modifie l'ouvrage d'identifiant id avec le nouvel auteur et le nouveau
      * titre spécifiés dans la table bibliographie.
      */
-    public void modifierLivre(int id, String titre, boolean isPublished, boolean isOpen) {
+    public void modifyBook(int id, String title, boolean isPublished, boolean isOpen) {
         String error;
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("UPDATE Book SET titreLivre = ? , isPublished = ?, isOpen = ? WHERE idLivre = ?");
+	       ("UPDATE Book SET titleBook = ? , isPublished = ?, isOpen = ? WHERE idBook = ?");
 	     ) {
-            st.setString(1, titre);
+            st.setString(1, title);
             st.setBoolean(2, isPublished);
             st.setBoolean(3, isOpen);
             st.setInt(4, id);
@@ -94,17 +94,17 @@ public class BookDAO extends AbstractDataBaseDAO {
             throw new DAOException("Erreur BD " + e.getMessage(), e);
         }
     }
-    
-    
+
+
 
     /**
      * Supprime l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public void supprimerLivre(int id) {
+    public void suppressLivre(int id) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("DELETE FROM Book WHERE idLivre = ?");
+	       ("DELETE FROM Book WHERE idBook = ?");
 	     ) {
             st.setInt(1, id);
             st.executeUpdate();
