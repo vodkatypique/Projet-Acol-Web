@@ -9,8 +9,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Book"
-    password="baccareccia2B"
-    username="caffinc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -22,8 +22,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserTable"
-    password="baccareccia2B"
-    username="caffinc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -35,8 +35,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserAccess"
-    password="baccareccia2B"
-    username="caffinc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -48,8 +48,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Paragraph"
-    password="baccareccia2B"
-    username="caffinc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -61,7 +61,7 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Choice"
-    password="baccareccia2B"
-    username="caffinc"
+    password="serrandn"
+    username="serrandn"
   />
   </Context>

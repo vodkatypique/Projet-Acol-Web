@@ -46,6 +46,7 @@
                     </c:if>
             </c:forEach>
             </table>
+            <a href="controleur?action=writeBook"> Commencer à écrire un nouveau livre </a>
         <%}%>
     </body>
 </html>

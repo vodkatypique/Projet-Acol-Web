@@ -79,15 +79,17 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("getParagraph")){
                 actionGetParagraph(request, response, paragraphDAO);
             } else if (action.equals("access")){
-                actionAccess(request, response, userDAO, userAccessDAO);
+                actionGetAccess(request, response, userDAO, userAccessDAO);
             } else if (action.equals("authors")){
-                actionAuthors(request, response, paragraphDAO);
+                actionGetAuthors(request, response, paragraphDAO);
             } else if (action.equals("edition")){
                 actionEdit(request, response, bookDAO);
             } else if (action.equals("read")){
                 actionRead(request, response, bookDAO, paragraphDAO);
             } else if (action.equals("getChoices")){
                 actionChoices(request, response, choiceDAO);
+            } else if (action.equals("writeBook")){
+                actionWriteBook(request, response);
             }
             else {
                 invalidParameters(request, response);
@@ -100,8 +102,24 @@ public class Controleur extends HttpServlet {
     public void doPost(HttpServletRequest request,
             HttpServletResponse response)
             throws IOException, ServletException {
+        
+        request.setCharacterEncoding("UTF-8");
+        String action = request.getParameter("action");
+        BookDAO bookDAO = new BookDAO(dsBook);
+        ParagraphDAO paragraphDAO = new ParagraphDAO(dsParagraph);
+        ChoiceDAO choiceDAO = new ChoiceDAO((dsChoice));
 
-        this.doGet(request, response);
+        
+        if (action.equals("createNewBook")) {
+            actionCreateNewBook(request, response, bookDAO);
+        }else if(action.equals("createParagraph")) {
+            actionCreateParagraph(request, response, paragraphDAO, choiceDAO);
+        
+  
+        } else {
+            invalidParameters(request, response);
+        }
+
     }
 
     /**
@@ -157,6 +175,8 @@ public class Controleur extends HttpServlet {
             Book book = bookDAO.getBook(id);
             request.setAttribute("book", book);
             getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response);
+        } else if (v.equals("edit")) {
+            
         }
         else invalidParameters(request, response);
     }
@@ -174,7 +194,7 @@ public class Controleur extends HttpServlet {
         else invalidParameters(request, response);
     }
     
-     private void actionAccess(HttpServletRequest request, 
+     private void actionGetAccess(HttpServletRequest request, 
             HttpServletResponse response, 
             UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException {
          boolean is = false;
@@ -191,7 +211,7 @@ public class Controleur extends HttpServlet {
          request.setAttribute("isAccess", is); // faux pr un utilisateur non co
      }
      
-    private void actionAuthors(HttpServletRequest request, 
+    private void actionGetAuthors(HttpServletRequest request, 
             HttpServletResponse response, ParagraphDAO paragraphDAO) throws ServletException, IOException {
          int iB = Integer.parseInt(request.getParameter("idBook"));
          List<String> authors = paragraphDAO.findAuthors(iB);
@@ -215,5 +235,52 @@ public class Controleur extends HttpServlet {
         int idP = Integer.parseInt(request.getParameter("idPara"));
         List<Paragraph> res = choiceDAO.getListChoices(idB, idP);
         request.setAttribute("choices", res);
+    }
+    
+    private void actionWriteBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+    }
+
+    private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO) throws ServletException, IOException{
+        String title = request.getParameter("title");
+        Book book = bookDAO.addBook(title);
+        request.setAttribute("book", book);
+        request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+    }
+    
+  
+    private void actionCreateParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO) throws ServletException, IOException{
+           // TODO not yet implemented
+           int idBook = Integer.parseInt(request.getParameter("idBook"));
+           int numParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
+           String paragraphTitle = request.getParameter("paragraphTitle");
+           String paragraphContent = request.getParameter("paragraphContent");
+           String author = (String) request.getSession().getAttribute("utilisateur");
+            // TO DO  Ajouter les booléens au formulaire
+           boolean isEnd = false;
+           boolean isValidate = false;
+           boolean isAccess = false;
+           paragraphDAO.addParagraph(idBook,
+                                     numParagraph,
+                                     paragraphTitle,
+                                     paragraphContent, 
+                                     author, 
+                                     isEnd, 
+                                     isValidate, 
+                                     isAccess);
+           String[] choices = request.getParameterValues("choice");
+           for(int i = 0; i < choices.length; i++) {
+               paragraphDAO.addParagraph(idBook, 
+                                         numParagraph + i + 1, 
+                                         choices[i], 
+                                         "La suite de l'histoire n'a pas encore été écrite", 
+                                         author, 
+                                         false, 
+                                         false, 
+                                         false);
+                choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
+           }
+           
+           
     }
 }

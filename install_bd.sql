@@ -1,4 +1,3 @@
-
 --------------------------------------------------------------------------------
 -- Création de la base de donneés
 --------------------------------------------------------------------------------
@@ -9,7 +8,8 @@ DROP TABLE UserAccess;
 DROP TABLE Paragraph;
 DROP TABLE UserTable;
 DROP TABLE Book;
-
+DROP SEQUENCE SeqBook;
+DROP SEQUENCE SeqUser;
 
 CREATE TABLE Book(
     idBook INT NOT NULL,
@@ -73,42 +73,45 @@ CREATE TABLE Choice(
 );
 
 
+CREATE SEQUENCE SeqBook;
+CREATE SEQUENCE SeqUser;
 
 --------------------------------------------------------------------------------
 -- Remplissage de la base de donneés
 --------------------------------------------------------------------------------
 
 INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
-VALUES (1, 'Les aventures de Shrek !', 1, 1);
-INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
-VALUES (2, 'Les aventures de Shrek 2 !', 0, 1);
-INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
-VALUES (3, 'La forêt maudite', 0, 0);
-
+VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek !', 1, 1);
 
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
-VALUES (1, 1, 'Il était une fois, dans un marée,',  
+VALUES (SeqBook.CURRVAL, 1, 'Il était une fois, dans un marée,',  
 'un joli ogre tout vert y vivait paisiblement dans un tronc d''arbre.',
  'Thibault', 0, 1, 1);
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
-VALUES (1, 2, 'Vous êtes un chevalier en mission pour attaquer un dragon.',
+VALUES (SeqBook.CURRVAL, 2, 'Vous êtes un chevalier en mission pour attaquer un dragon.',
  'Cependant, en vous aventurant dans ce même marée pour chercher le dragon, 
 vous vous retrouvez né à né avec Shrek.
  A première vu il vous effraye mais il n''a pas l''air méchant, 
 peut être qu''il vous aidera dans votre mission si vous demandez gentillement que faites vous ?',
  'Thibault', 0, 1, 1);
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
-VALUES (1, 3, 'Vous décidez d''attaquer l''ogre.', 
+VALUES (SeqBook.CURRVAL, 3, 'Vous décidez d''attaquer l''ogre.', 
 'L''ogre esquive votre épée et vous vous enfuyait lâchement. 
 Vous avez découvert ce qu''était un ogre énervé 
 mais vous ne pouvez pas continuer votre mission sans votre épée. Vous avez perdu !',
  'Thibault', 1, 1, 1);
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
-VALUES (1, 4, 'Vous décidez de demander de l''aide à l''ogre pour terasser le dragon.',
+VALUES (SeqBook.CURRVAL, 4, 'Vous décidez de demander de l''aide à l''ogre pour terasser le dragon.',
  'L''ogre semble comprendre vos mots mais ne semble pas adhérer à votre cause. 
 Il vous hurle dessus et vous demande de partir de son marée. 
 Au moins, vous ne vous êtes pas fait mangé. Vous avez gagné !',
  'Mathieu', 1, 1, 1);
+
+INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
+VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek 2 !', 0, 1);
+INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
+VALUES (SeqBook.NEXTVAL, 'La forêt maudite', 0, 0);
+
 
 -- TODO rajouter des histoires pour les livres 2 et 3, ouvertes ou non
 
@@ -116,11 +119,11 @@ Au moins, vous ne vous êtes pas fait mangé. Vous avez gagné !',
 
 
 INSERT INTO UserTable(idUser, login, password)
-VALUES (1, 'Thibault', 'zjemgkjmihg');
+VALUES (SeqUser.NEXTVAL, 'Thibault', 'zjemgkjmihg');
 INSERT INTO UserTable(idUser, login, password)
-VALUES (2, 'Mathieu', '1234');
+VALUES (SeqUser.NEXTVAL, 'Mathieu', '1234');
 INSERT INTO UserTable(idUser, login, password)
-VALUES (3, 'vodka', 'baccareccia2B');
+VALUES (SeqUser.NEXTVAL, 'vodka', 'baccareccia2B');
 
 
 INSERT INTO UserAccess(idBook, idUser)

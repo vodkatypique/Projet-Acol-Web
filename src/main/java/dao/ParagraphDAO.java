@@ -167,4 +167,21 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
         }
         return result;
     }
+    
+    public int getCurrentMaxNumParagraph(int idBook){
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("SELECT MAX(numParagraph) FROM Paragraph WHERE idBook=?");
+	     ) {
+            st.setInt(1, idBook);
+            ResultSet r = st.executeQuery();
+            while(r.next()) {
+                return r.getInt("MAX(NUMPARAGRAPH)");
+            }
+            return -1; // book is empty
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans ParagraphDAO (findAuthors) " + e.getMessage(), e);
+        }
+    }
 }
