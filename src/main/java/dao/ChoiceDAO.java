@@ -25,7 +25,9 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
 	       ("SELECT * FROM Choice JOIN Paragraph ON Choice.idBook = Paragraph.idBook AND Choice.numParagraphNext = Paragraph.numParagraph WHERE Choice.idBook = ? AND numParagraphCurrent = ?");
 	     ) {
             st.setInt(1, idBook);
-            st.setInt(2, numParagraphCurrent);
+          
+            System.out.println(idBook);
+            
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Paragraph Paragraph =

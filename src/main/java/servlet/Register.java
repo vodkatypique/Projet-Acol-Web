@@ -120,11 +120,12 @@ public class Register extends HttpServlet {
                 ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM UserTable");
                 int count = 0;
                 while(rs.next()){
-                    count = rs.getInt("total");
+                    count = rs.getInt("total") + 1;
                 }
                 s.setInt(1, count);
                 s.setString(2, login);
                 s.setString(3, mdp);
+                System.out.println(count);
                 ResultSet r = s.executeQuery();
                 /* r.next() renvoie vrai si et seulement si la réponse contient au moins 1 ligne */
                 return r.next();
