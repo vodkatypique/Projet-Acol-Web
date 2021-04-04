@@ -28,7 +28,7 @@ public class BookDAO extends AbstractDataBaseDAO {
                 result.add(livre);
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans BookDAO (getBooksList) " + e.getMessage(), e);
 	}
 	return result;
     }
@@ -48,7 +48,7 @@ public class BookDAO extends AbstractDataBaseDAO {
             st.setBoolean(2, false);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD  dans BookDAO (addBook)" + e.getMessage(), e);
         }
     }
 
@@ -69,7 +69,7 @@ public class BookDAO extends AbstractDataBaseDAO {
                 throw new DAOException("Erreur BD : id = " + id +" n'est pas dans la base.");
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans BookDAO (getBook) " + e.getMessage(), e);
 	}
     }
 
@@ -91,7 +91,7 @@ public class BookDAO extends AbstractDataBaseDAO {
             error = st.toString();
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans BookDAO (modifyBook) " + e.getMessage(), e);
         }
     }
 
@@ -109,7 +109,7 @@ public class BookDAO extends AbstractDataBaseDAO {
             st.setInt(1, id);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD  dans BookDAO (suppressBook) " + e.getMessage(), e);
         }       
     }
 }

@@ -42,7 +42,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
                 result.add(Paragraph);
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ChoiceDAO (getListChoices) " + e.getMessage(), e);
 	}
 	return result;
     }
@@ -63,7 +63,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
             st.setInt(4, conditional);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ChoiceDAO (addChoice) " + e.getMessage(), e);
         }
     }
 
@@ -84,7 +84,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
             error = st.toString();
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ChoiceDAO (modifyChoice) " + e.getMessage(), e);
         }
     }
     
@@ -103,7 +103,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
             st.setInt(3, next);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ChoiceDAO (suppressChoice) " + e.getMessage(), e);
         }
     }
     

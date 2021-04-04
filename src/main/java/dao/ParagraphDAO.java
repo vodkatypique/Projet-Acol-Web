@@ -40,7 +40,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
                 result.add(Paragraph);
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ParagraphDAO (getListParagraphs)" + e.getMessage(), e);
 	}
 	return result;
     }
@@ -66,7 +66,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
             st.setBoolean(8, isAccess);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ParagraphDAO (addParagraph) " + e.getMessage(), e);
         }
     }
 
@@ -98,7 +98,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
                 throw new DAOException("Erreur BD : idLvre = " + idBook + "idPara = " + idParagraph +" n'est pas dans la base.");
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ParagraphDAO (getParagraph) " + e.getMessage(), e);
 	}
     }
 
@@ -123,7 +123,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
             error = st.toString();
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ParagraphDAO (modifyParagraph)" + e.getMessage(), e);
         }
     }
     
@@ -142,7 +142,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
             st.setInt(2, idPara);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ParagraphDAO (suppressParagraph)" + e.getMessage(), e);
         }
     }
     
@@ -163,7 +163,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
                 result.add(r.getString("author"));
             }            
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ParagraphDAO (findAuthors) " + e.getMessage(), e);
         }
         return result;
     }

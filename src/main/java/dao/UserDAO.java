@@ -28,7 +28,7 @@ public class UserDAO extends AbstractDataBaseDAO {
                 result.add(user);
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans UserDAO (getListUser)" + e.getMessage(), e);
 	}
 	return result;
     }
@@ -48,7 +48,7 @@ public class UserDAO extends AbstractDataBaseDAO {
             st.setString(3, password);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD  dans UserDAO (addUser)" + e.getMessage(), e);
         }
     }
 
@@ -69,7 +69,7 @@ public class UserDAO extends AbstractDataBaseDAO {
                 throw new DAOException("Erreur BD : id = " + id +" n'est pas dans la base.");
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD  dans UserDAO (getUser) " + e.getMessage(), e);
 	}
     }
 
@@ -88,7 +88,7 @@ public class UserDAO extends AbstractDataBaseDAO {
                 throw new DAOException("Erreur BD : login = " + login +" n'est pas dans la base.");
             }
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD  dans UserDAO (getIdFromLogin) " + e.getMessage(), e);
 	}
     }
     
@@ -110,7 +110,7 @@ public class UserDAO extends AbstractDataBaseDAO {
             error = st.toString();
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans UserDAO (modifyUser) " + e.getMessage(), e);
         }
     }
     
@@ -128,7 +128,7 @@ public class UserDAO extends AbstractDataBaseDAO {
             st.setInt(1, id);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans UserDAO (suppressUser) " + e.getMessage(), e);
         }
     }
 }

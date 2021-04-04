@@ -25,7 +25,7 @@ public class UserAccessDAO extends AbstractDataBaseDAO {
             return r.next(); // true ssi il existe un accès
             
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD " + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans UserAccessDAO (accessBook)" + e.getMessage(), e);
         }       
     }
 }
