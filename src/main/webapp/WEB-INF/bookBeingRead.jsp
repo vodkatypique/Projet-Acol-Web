@@ -11,7 +11,8 @@
 	<title>Lecture du livre <%= book%></title>
     </head>
     <body>
-        <!-- Il va falloir donner l'id du livre qu'on est en train de lire => TO DO-->
+        <% request.setAttribute("idBook", book.getId()); %>
+        <% request.setAttribute("idPara", para.getId()); %>
         <% request.setAttribute("currentPageAction", "read"); %>
         <%@include file="co_deco.jsp" %>
         

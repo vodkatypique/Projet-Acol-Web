@@ -6,7 +6,13 @@
                       <li> Login : <input type="text" name="login"/></li>
                       <li> Mot de passe : <input type="password" name="password"/></li>
                     </ul>
-                        <input type="hidden" name="currentPageAction" value="<%=request.getAttribute("currentPageAction")%>" />
+                        <%String cP = (String) request.getAttribute("currentPageAction");
+                        boolean bookRead = cP.equals("read");%>
+                        <input type="hidden" name="currentPageAction" value="<%=cP%>" />
+                        <c:if test="<%=bookRead%>">
+                            <input type="hidden" name="idBook" value="<%=request.getAttribute("idBook")%>" />
+                            <input type="hidden" name="idPara" value="<%=request.getAttribute("idPara")%>" />
+                        </c:if>
                         <button type="submit" name="login" formaction="checkuser">Login</button>
                         <button type="submit" name="register" formaction="register">Register</button>
                 </c:when>

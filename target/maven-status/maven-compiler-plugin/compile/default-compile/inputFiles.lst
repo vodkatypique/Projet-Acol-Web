@@ -1,5 +1,7 @@
 /home/chloec/web/ProjetWeb/projet-acol-web/src/main/java/dao/ChoiceDAO.java
+/home/chloec/web/ProjetWeb/projet-acol-web/src/main/java/dao/UserBookHistoryDAO.java
 /home/chloec/web/ProjetWeb/projet-acol-web/src/main/java/modele/Book.java
+/home/chloec/web/ProjetWeb/projet-acol-web/src/main/java/modele/UserBookHistory.java
 /home/chloec/web/ProjetWeb/projet-acol-web/src/main/java/dao/BookDAO.java
 /home/chloec/web/ProjetWeb/projet-acol-web/src/main/java/servlet/Logout.java
 /home/chloec/web/ProjetWeb/projet-acol-web/src/main/java/dao/UserDAO.java
