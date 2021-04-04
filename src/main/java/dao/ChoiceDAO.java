@@ -6,7 +6,7 @@ import java.util.List;
 import javax.sql.DataSource;
 import modele.Book;
 import modele.Choice;
-import modele.Paragraphe;
+import modele.Paragraph;
 
 public class ChoiceDAO extends AbstractDataBaseDAO {
     
@@ -17,8 +17,8 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
     /**
      * Renvoie la liste des choix sous forme de paragraphes, pour le paragraphe du livre courrant
      */
-    public List<Paragraphe> getListChoice(int idBook, int numParagraphCurrent) {
-        List<Paragraphe> result = new ArrayList<Paragraphe>();
+    public List<Paragraph> getListChoices(int idBook, int numParagraphCurrent) {
+        List<Paragraph> result = new ArrayList<Paragraph>();
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
@@ -28,8 +28,8 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
             st.setInt(2, numParagraphCurrent);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Paragraphe Paragraph =
-                    new Paragraphe(
+                Paragraph Paragraph =
+                    new Paragraph(
                             rs.getInt("idBook"),
                             rs.getInt("numParagraph"),
                             rs.getString("paragraphTitle"),

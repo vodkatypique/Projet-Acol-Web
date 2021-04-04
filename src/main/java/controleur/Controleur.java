@@ -2,12 +2,14 @@ package controleur;
 
 import dao.DAOException;
 import dao.BookDAO;
+import dao.ChoiceDAO;
 import dao.ParagraphDAO;
 import dao.UserAccessDAO;
 import dao.UserDAO;
 import java.io.*;
 import java.net.http.HttpClient;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.*;
@@ -15,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import javax.sql.DataSource;
 import modele.Book;
+import modele.Paragraph;
 
 /**
  * Le contrôleur de l'application.
@@ -33,6 +36,9 @@ public class Controleur extends HttpServlet {
     
     @Resource(name = "jdbc/UserAccess")
     private DataSource dsUserAccess;
+    
+    @Resource(name = "jdbc/Choice")
+    private DataSource dsChoice;
 
     /* pages d’erreurs */
     private void invalidParameters(HttpServletRequest request,
@@ -62,6 +68,7 @@ public class Controleur extends HttpServlet {
         ParagraphDAO paragraphDAO = new ParagraphDAO(dsParagraph);
         UserDAO userDAO = new UserDAO(dsUser);
         UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
+        ChoiceDAO choiceDAO = new ChoiceDAO(dsChoice);
         
         try {
             // actions depuis la page ppale = liste des livres disponibles
@@ -69,12 +76,18 @@ public class Controleur extends HttpServlet {
                 actionDisplay(request, response, bookDAO);
             } else if (action.equals("getBook")){
                 actionGetBook(request, response, bookDAO);
+            } else if (action.equals("getParagraph")){
+                actionGetParagraph(request, response, paragraphDAO);
             } else if (action.equals("access")){
                 actionAccess(request, response, userDAO, userAccessDAO);
             } else if (action.equals("authors")){
                 actionAuthors(request, response, paragraphDAO);
             } else if (action.equals("edition")){
                 actionEdit(request, response, bookDAO);
+            } else if (action.equals("read")){
+                actionRead(request, response);
+            } else if (action.equals("getChoices")){
+                actionChoices(request, response, choiceDAO);
             }
             else {
                 invalidParameters(request, response);
@@ -140,10 +153,23 @@ public class Controleur extends HttpServlet {
                                BookDAO bookDAO) throws DAOException, ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         String v = request.getParameter("view");
-        if (v.equals("read")) {
+        if (v.equals("listBooksToRead") || v.equals("listBooksToEdit")) {
             Book book = bookDAO.getBook(id);
             request.setAttribute("book", book);
-            getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response); // Peut être des .html plutôt ? (et pas besoin d'une var si on rajoute pas d'autre trucs que read)
+            getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response);
+        }
+        else invalidParameters(request, response);
+    }
+    
+    private void actionGetParagraph(HttpServletRequest request, HttpServletResponse response, 
+                               ParagraphDAO paragraphDAO) throws DAOException, ServletException, IOException {
+        int idB = Integer.parseInt(request.getParameter("idBook"));
+        int idP = Integer.parseInt(request.getParameter("idPara"));
+        String v = request.getParameter("view");
+        if (v.equals("listBooksToRead") || v.equals("listBooksToEdit")) {
+            Paragraph para = paragraphDAO.getParagraph(idB, idP);
+            request.setAttribute("paragraph", para);
+            getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response); 
         }
         else invalidParameters(request, response);
     }
@@ -171,4 +197,19 @@ public class Controleur extends HttpServlet {
          List<String> authors = paragraphDAO.findAuthors(iB);
          request.setAttribute("authors", authors);
      }
+    
+    private void actionRead(HttpServletRequest request, 
+        HttpServletResponse response) throws ServletException, IOException {
+    request.setAttribute("bookBeingRead", request.getParameter("book"));
+    request.setAttribute("paragraphBeingRead", request.getParameter("para"));
+    request.getRequestDispatcher("/WEB-INF/bookBeingRead.jsp").forward(request, response);
+    }
+    
+    private void actionChoices(HttpServletRequest request, 
+        HttpServletResponse response, ChoiceDAO choiceDAO) {
+        int idB = Integer.parseInt(request.getParameter("idBook"));
+        int idP = Integer.parseInt(request.getParameter("idPara"));
+        List<Paragraph> res = choiceDAO.getListChoices(idB, idP);
+        request.setAttribute("choices", res);
+    }
 }

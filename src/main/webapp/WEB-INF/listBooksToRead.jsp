@@ -24,8 +24,10 @@
                     <tr>
                         <td></td>
                         <td>
-                            <a href="controleur?action=getBook&view=read&id=${book.id}">
-                            ${book.title}
+                            <!-- <a href="controleur?action=getBook&view=read&id=\${book.id}"> -->
+                            <jsp:include page="/controleur?action=getParagraph&view=listBooksToRead&idBook=${book.id}&idPara=1" />
+                            <a href='controleur?action=read&&book=${book}&para=${paragraph}'>
+                                ${book.title}
                             </a>
                         </td>
                         <td>

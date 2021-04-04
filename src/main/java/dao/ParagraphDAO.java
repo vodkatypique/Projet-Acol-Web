@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
 import modele.Book;
-import modele.Paragraphe;
+import modele.Paragraph;
 
 public class ParagraphDAO extends AbstractDataBaseDAO {
 
@@ -16,8 +16,8 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
     /**
      * Renvoie la liste des ouvrages de la table bibliographie.
      */
-    public List<Paragraphe> getListParagraphs(int idBook) {
-        List<Paragraphe> result = new ArrayList<Paragraphe>();
+    public List<Paragraph> getListParagraphs(int idBook) {
+        List<Paragraph> result = new ArrayList<Paragraph>();
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
@@ -26,8 +26,8 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
             st.setInt(1, idBook);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Paragraphe Paragraph =
-                    new Paragraphe(
+                Paragraph Paragraph =
+                    new Paragraph(
                             rs.getInt("idBook"),
                             rs.getInt("numParagraph"),
                             rs.getString("paragraphTitle"),
@@ -73,7 +73,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
     /**
      * Récupère l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public Paragraphe getParagraph(int idBook, int idParagraph) {
+    public Paragraph getParagraph(int idBook, int idParagraph) {
         try (
 	     Connection conn = getConn();
              PreparedStatement st = conn.prepareStatement
@@ -83,7 +83,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
             st.setInt(2, idParagraph);
             ResultSet rs = st.executeQuery();
             if(rs.next()){
-               return new Paragraphe(
+               return new Paragraph(
                             rs.getInt("idBook"),
                             rs.getInt("numParagraph"),
                             rs.getString("paragraphTitle"),

@@ -1,7 +1,7 @@
       
 package modele; 
 
-public class Paragraphe {
+public class Paragraph {
 
    private final int idBook;
    private final int numParagraph; 
@@ -12,7 +12,7 @@ public class Paragraphe {
    private boolean isValidate;
    private boolean isAccessible;
 
-   public Paragraphe(int id, int numParagraph, String title, String text, String author, boolean isEnd, boolean isValidate, boolean isAccessible) {
+   public Paragraph(int id, int numParagraph, String title, String text, String author, boolean isEnd, boolean isValidate, boolean isAccessible) {
       this.idBook = id;
       this.numParagraph = numParagraph;
       this.paragraphTitle = title;
@@ -34,6 +34,11 @@ public class Paragraphe {
    public int getId()
    {
        return this.numParagraph;
+   }
+   
+   public String getText()
+   {
+       return this.text;
    }
 
     @Override
