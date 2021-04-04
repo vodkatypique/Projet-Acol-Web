@@ -2,6 +2,8 @@ package controleur;
 
 import dao.DAOException;
 import dao.BookDAO;
+import dao.ParagraphDAO;
+import dao.UserAccessDAO;
 import dao.UserDAO;
 import java.io.*;
 import java.net.http.HttpClient;
@@ -23,8 +25,14 @@ public class Controleur extends HttpServlet {
     @Resource(name = "jdbc/Book")
     private DataSource dsBook;
     
+    @Resource(name = "jdbc/Paragraph")
+    private DataSource dsParagraph;
+    
     @Resource(name = "jdbc/UserTable")
     private DataSource dsUser;
+    
+    @Resource(name = "jdbc/UserAccess")
+    private DataSource dsUserAccess;
 
     /* pages d’erreurs */
     private void invalidParameters(HttpServletRequest request,
@@ -51,8 +59,10 @@ public class Controleur extends HttpServlet {
         String action = request.getParameter("action");
         
         BookDAO bookDAO = new BookDAO(dsBook);
+        ParagraphDAO paragraphDAO = new ParagraphDAO(dsParagraph);
         UserDAO userDAO = new UserDAO(dsUser);
-
+        UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
+        
         try {
             // actions depuis la page ppale = liste des livres disponibles
             if (action == null || action.equals("accueil")) {
@@ -60,9 +70,9 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("getBook")){
                 actionGetBook(request, response, bookDAO);
             } else if (action.equals("access")){
-                actionAccess(request, response, bookDAO, userDAO);
+                actionAccess(request, response, userDAO, userAccessDAO);
             } else if (action.equals("authors")){
-                actionAuthors(request, response, bookDAO);
+                actionAuthors(request, response, paragraphDAO);
             } else if (action.equals("edition")){
                 actionEdit(request, response, bookDAO);
             }
@@ -140,7 +150,7 @@ public class Controleur extends HttpServlet {
     
      private void actionAccess(HttpServletRequest request, 
             HttpServletResponse response, 
-            BookDAO bookDAO, UserDAO userDAO) throws ServletException, IOException {
+            UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException {
          boolean is = false;
          int iB = Integer.parseInt(request.getParameter("idBook"));
          String login = (String) request.getSession().getAttribute("utilisateur");
@@ -149,17 +159,16 @@ public class Controleur extends HttpServlet {
              int iU = userDAO.getIdFromLogin(login);
              System.out.println(iU);
              System.out.println(iB);
-             is = bookDAO.accessBook(iB, iU);
+             is = userAccessDAO.accessBook(iB, iU);
          }
          
          request.setAttribute("isAccess", is); // faux pr un utilisateur non co
      }
      
     private void actionAuthors(HttpServletRequest request, 
-            HttpServletResponse response, 
-            BookDAO bookDAO) throws ServletException, IOException {
+            HttpServletResponse response, ParagraphDAO paragraphDAO) throws ServletException, IOException {
          int iB = Integer.parseInt(request.getParameter("idBook"));
-         List<String> authors = bookDAO.findAuthors(iB);
+         List<String> authors = paragraphDAO.findAuthors(iB);
          request.setAttribute("authors", authors);
      }
 }

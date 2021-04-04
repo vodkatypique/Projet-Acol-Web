@@ -7,16 +7,16 @@ import javax.sql.DataSource;
 import modele.Book;
 import modele.Paragraphe;
 
-public class ParagrapheDAO extends AbstractDataBaseDAO {
+public class ParagraphDAO extends AbstractDataBaseDAO {
 
-    public ParagrapheDAO(DataSource ds) {
+    public ParagraphDAO(DataSource ds) {
         super(ds);
     }
 
     /**
      * Renvoie la liste des ouvrages de la table bibliographie.
      */
-    public List<Paragraphe> getListeParagraph(int idBook) {
+    public List<Paragraphe> getListParagraphs(int idBook) {
         List<Paragraphe> result = new ArrayList<Paragraphe>();
         try (
 	     Connection conn = getConn();
@@ -144,5 +144,27 @@ public class ParagrapheDAO extends AbstractDataBaseDAO {
         } catch (SQLException e) {
             throw new DAOException("Erreur BD " + e.getMessage(), e);
         }
+    }
+    
+    /**
+     * Indique si l'utilisateur d'identifiant donné à accès au livre 
+     * d'identifiant donné en écriture
+     */
+    public List<String> findAuthors(int idBook) {
+        List<String> result = new ArrayList<String>();
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("SELECT DISTINCT Author FROM Paragraph WHERE idBook=?");
+	     ) {
+            st.setInt(1, idBook);
+            ResultSet r = st.executeQuery();
+            while(r.next()) {
+                result.add(r.getString("author"));
+            }            
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD " + e.getMessage(), e);
+        }
+        return result;
     }
 }
