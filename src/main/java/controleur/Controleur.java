@@ -55,7 +55,7 @@ public class Controleur extends HttpServlet {
 
         try {
             // actions depuis la page ppale = liste des livres disponibles
-            if (action == null) {
+            if (action == null || action.equals("accueil")) {
                 actionDisplay(request, response, bookDAO);
             } else if (action.equals("getBook")){
                 actionGetBook(request, response, bookDAO);

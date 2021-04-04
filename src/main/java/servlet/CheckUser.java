@@ -99,7 +99,8 @@ public class CheckUser extends HttpServlet {
         }
         
 
-        response.sendRedirect(request.getContextPath());
+        //response.sendRedirect(request.getContextPath());
+        response.sendRedirect("controleur?action=" + request.getParameter("currentPageAction"));
     }
 
     /**

@@ -7,8 +7,9 @@
 	<title>Menu des histoires</title>
     </head>
     <body>
+        <% request.setAttribute("currentPageAction", "accueil"); %>
         <%@include file="co_deco.jsp" %>
-        <a href="controleur?action=edition">vers edition</a>
+        <a href="controleur?action=edition">vers édition</a>
         <!--<a href='WEB-INF/listBooksToEdit.jsp'>accéder à l'édition</a>-->
         
         <h2> Liste des histoires disponibles : </h2>

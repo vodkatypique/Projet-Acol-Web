@@ -7,13 +7,16 @@
 	<title>Editer une histoire</title>
     </head>
     <body>
+        <% request.setAttribute("currentPageAction", "edition"); %>
+        
         <%@include file="co_deco.jsp" %>
+        
+        <a href="controleur">vers lecture</a>
         
          <%HttpSession sess = request.getSession(false);
          if (sess == null || sess.getAttribute("utilisateur") == null) { %>
             <h2> Connectez-vous pour accéder à l'édition </h2>
          <%} else {%>
-            <a href="controleur">vers lecture</a>
             <h2> Liste des histoires que vous pouvez éditer : </h2>
             <table>
                 <tr>
