@@ -85,7 +85,7 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("edition")){
                 actionEdit(request, response, bookDAO);
             } else if (action.equals("read")){
-                actionRead(request, response);
+                actionRead(request, response, bookDAO, paragraphDAO);
             } else if (action.equals("getChoices")){
                 actionChoices(request, response, choiceDAO);
             }
@@ -169,7 +169,7 @@ public class Controleur extends HttpServlet {
         if (v.equals("listBooksToRead") || v.equals("listBooksToEdit")) {
             Paragraph para = paragraphDAO.getParagraph(idB, idP);
             request.setAttribute("paragraph", para);
-            getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response); 
+            //getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response); 
         }
         else invalidParameters(request, response);
     }
@@ -199,9 +199,13 @@ public class Controleur extends HttpServlet {
      }
     
     private void actionRead(HttpServletRequest request, 
-        HttpServletResponse response) throws ServletException, IOException {
-    request.setAttribute("bookBeingRead", request.getParameter("book"));
-    request.setAttribute("paragraphBeingRead", request.getParameter("para"));
+        HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException {
+    int idB = Integer.parseInt(request.getParameter("idBook"));
+    Book book = bookDAO.getBook(idB);
+    int idP = Integer.parseInt(request.getParameter("idPara"));
+    Paragraph para = paragraphDAO.getParagraph(idB, idP);
+    request.setAttribute("bookBeingRead", book);
+    request.setAttribute("paragraphBeingRead", para);
     request.getRequestDispatcher("/WEB-INF/bookBeingRead.jsp").forward(request, response);
     }
     

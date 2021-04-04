@@ -77,7 +77,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
         try (
 	     Connection conn = getConn();
              PreparedStatement st = conn.prepareStatement
-	       ("SELECT * FROM Paragraph WHERE idBook = ?, numParagraph = ?");
+	       ("SELECT * FROM Paragraph WHERE idBook = ? AND numParagraph = ?");
             ) {
             st.setInt(1, idBook);
             st.setInt(2, idParagraph);

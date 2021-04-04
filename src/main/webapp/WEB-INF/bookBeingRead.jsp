@@ -21,7 +21,7 @@
         <div class='paragraphText'><%= para.getText() %> </div>
         <jsp:include page="/controleur?action=getChoices&idBook=<%= book.getId()%>&idPara=<%= para.getId()%>" />
         <c:forEach items="${choices}" var="choice"> <!-- ce sont des paragraphes -->
-            <div class='choice'><a href='controleur?action=read&&book=<%= book%>&para=${choice}'>${choice.title}</a></div>
+            <div class='choice'><a href='controleur?action=read&&book=<%= book.getId()%>&para=${choice.id}'>${choice.title}</a></div>
         </c:forEach>
     </body>
 </html>

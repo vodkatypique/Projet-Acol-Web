@@ -8,7 +8,7 @@
 	<title>Menu des histoires</title>
     </head>
     <body>
-        <% request.setAttribute("currentPageAction", "accueil"); %>
+        <%-- <% request.setAttribute("currentPageAction", "accueil"); %>--%>
         <%@include file="co_deco.jsp" %>
         <a href="controleur?action=edition">vers édition</a>
         <!--<a href='WEB-INF/listBooksToEdit.jsp'>accéder à l'édition</a>-->
@@ -25,18 +25,8 @@
                     <tr>
                         <td></td>
                         <td>
-                            <!-- <a href="controleur?action=getBook&view=read&id=\${book.id}"> -->
-                            
-                            
-                            <!-- cassé (pb de BD, sûrement dans getParagraph de ParagraphDAO) -->
-                            <%--<jsp:include page="/controleur?action=getParagraph&view=listBooksToRead&idBook=${book.id}&idPara=1" />
-                            <a href='controleur?action=read&&book=${book}&para${paragraph}'> --%>
-                            
-                            <!-- En attendant : -->
-                            <% Paragraph paragraph = new Paragraph(1, 1, 
-                                    "Il était une fois, dans un marée,", 
-                                "un joli ogre tout vert y vivait paisiblement dans un tronc d'arbre.", "Thibault", false, true, true); %>
-                            <a href='controleur?action=read&&book=${book}&para=<%=paragraph%>'>
+                            <jsp:include page="/controleur?action=getParagraph&view=listBooksToRead&idBook=${book.id}&idPara=1" />
+                            <a href='controleur?action=read&idBook=${book.id}&idPara=${paragraph.id}'>
                                 ${book.title}
                             </a>
                         </td>
