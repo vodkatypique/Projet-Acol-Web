@@ -22,7 +22,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("SELECT * FROM Choice JOIN Paragraph ON Choice.idBook = Paragraph.idBook AND Choice.numParagraphCurrent = Paragraph.numParagraph WHERE Choice.idBook = ? AND numParagraphCurrent = ?");
+	       ("SELECT * FROM Choice JOIN Paragraph ON Choice.idBook = Paragraph.idBook AND Choice.numParagraphNext = Paragraph.numParagraph WHERE Choice.idBook = ? AND numParagraphCurrent = ?");
 	     ) {
             st.setInt(1, idBook);
             st.setInt(2, numParagraphCurrent);
@@ -48,7 +48,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
     }
 
     /**
-     * Ajoute l'ouvrage un choix à un paragraphe d'un livre.
+     * Ajoute un choix à un paragraphe d'un livre.
      */
     public void addChoice(int idBook, int current, int next, int conditional) {
         try (
@@ -68,8 +68,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
     }
 
     /**
-     * Modifie l'ouvrage d'identifiant id avec le nouvel auteur et le nouveau
-     * titre spécifiés dans la table bibliographie.
+     * Modifie le choix conditionnel d'un paragraphe précis dans un livre prédéterminé
      */
     public void modifyChoice(int idBook, int numParagraphCurrent, int numParagraphNext, int numParagraphConditional) {
         String error;
