@@ -6,7 +6,7 @@ import java.util.List;
 import javax.sql.DataSource;
 import modele.Book;
 import modele.Choice;
-import modele.Paragraphe;
+import modele.Paragraph;
 import modele.UserBookHistory;
 
 

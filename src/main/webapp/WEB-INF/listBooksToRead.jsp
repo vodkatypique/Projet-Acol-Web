@@ -1,3 +1,4 @@
+<%@page import="modele.Paragraph"%>
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -25,8 +26,17 @@
                         <td></td>
                         <td>
                             <!-- <a href="controleur?action=getBook&view=read&id=\${book.id}"> -->
-                            <jsp:include page="/controleur?action=getParagraph&view=listBooksToRead&idBook=${book.id}&idPara=1" />
-                            <a href='controleur?action=read&&book=${book}&para=${paragraph}'>
+                            
+                            
+                            <!-- cassé (pb de BD, sûrement dans getParagraph de ParagraphDAO) -->
+                            <%--<jsp:include page="/controleur?action=getParagraph&view=listBooksToRead&idBook=${book.id}&idPara=1" />
+                            <a href='controleur?action=read&&book=${book}&para${paragraph}'> --%>
+                            
+                            <!-- En attendant : -->
+                            <% Paragraph paragraph = new Paragraph(1, 1, 
+                                    "Il était une fois, dans un marée,", 
+                                "un joli ogre tout vert y vivait paisiblement dans un tronc d'arbre.", "Thibault", false, true, true); %>
+                            <a href='controleur?action=read&&book=${book}&para=<%=paragraph%>'>
                                 ${book.title}
                             </a>
                         </td>
