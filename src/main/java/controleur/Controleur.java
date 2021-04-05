@@ -255,7 +255,7 @@ public class Controleur extends HttpServlet {
         HttpServletResponse response, UserBookHistoryDAO userBookHistoryDAO) {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idP = Integer.parseInt(request.getParameter("idPara"));
-        List<Integer> res = userBookHistoryDAO.getHistory(idB, idP);
+        String res = userBookHistoryDAO.getHistory(idB, idP);
         request.setAttribute("history", res);
     }
     

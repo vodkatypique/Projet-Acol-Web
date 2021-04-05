@@ -20,7 +20,7 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
      * Renvoie l'historique d'un utilisateur sur un livre sous la forme
      * d'une liste des numéros des différents paragraphes.
      */
-    public List<Integer> getHistory(int idBook, int idUser) {
+    public String getHistory(int idBook, int idUser) {
         List<Integer> result = new ArrayList<Integer>();
         try (
 	     Connection conn = getConn();
@@ -32,11 +32,7 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
             ResultSet rs = st.executeQuery();
             if(rs.next()){
                String str = rs.getString("history");
-               String[] listeParaId = str.split(" ");
-               for(String idStr : listeParaId) {
-                   result.add(Integer.parseInt(idStr));
-               }
-               return result;
+               return str;
             } else {
                 throw new DAOException("Erreur BD : idBook = " + idBook + "idUser" + idUser + " n'est pas dans la base history.");
             }
