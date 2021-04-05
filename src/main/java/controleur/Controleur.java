@@ -270,7 +270,7 @@ public class Controleur extends HttpServlet {
     
     HttpSession session = request.getSession();
     
-    if (session != null){
+    if (null == session.getAttribute("utilisateur")){
         request.setAttribute("idBook", idB);
         Cookie[] cookies = request.getCookies();
         boolean cook = false;
@@ -367,6 +367,8 @@ public class Controleur extends HttpServlet {
     
     request.getRequestDispatcher("/WEB-INF/bookBeingRead.jsp").forward(request, response);
     }
+    
+    request.getRequestDispatcher("/WEB-INF/bookBeingRead.jsp").forward(request, response);
     }
 
     private void actionChoices(HttpServletRequest request,
