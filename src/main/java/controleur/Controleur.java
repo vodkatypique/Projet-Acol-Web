@@ -18,6 +18,7 @@ import javax.servlet.http.*;
 import javax.sql.DataSource;
 import modele.Book;
 import modele.Paragraph;
+import modele.User;
 
 /**
  * Le contrôleur de l'application.
@@ -108,15 +109,27 @@ public class Controleur extends HttpServlet {
         BookDAO bookDAO = new BookDAO(dsBook);
         ParagraphDAO paragraphDAO = new ParagraphDAO(dsParagraph);
         ChoiceDAO choiceDAO = new ChoiceDAO((dsChoice));
-
+        UserDAO userDAO = new UserDAO(dsUser);
+        UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
         
         if (action.equals("createNewBook")) {
-            actionCreateNewBook(request, response, bookDAO);
+            actionCreateNewBook(request, response, bookDAO, userDAO, userAccessDAO);
         }else if(action.equals("createParagraph")) {
             actionCreateParagraph(request, response, paragraphDAO, choiceDAO, bookDAO);
+        } else if (action.equals("addUserInvit")){
+                actionAddUserInvit(request, response, userDAO, userAccessDAO);
+            }
+        else if (action.equals("getInvitedUsers")) {
+                actionGetInvitedUsers(request, response, userDAO, userAccessDAO);
+        }
+        else if (action.equals("endInvitedAuthors")) {
+                actionEndInvitedAuthors(request, response, bookDAO);
+        }
+        else if (action.equals("endInvitedAuthorsOpen")) {
+            actionEndInvitedAuthorsOpen(request, response, bookDAO, userDAO, userAccessDAO);
+        }
         
-  
-        } else {
+        else {
             invalidParameters(request, response);
         }
 
@@ -239,13 +252,18 @@ public class Controleur extends HttpServlet {
     
     private void actionWriteBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+        //request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
 
-    private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO) throws ServletException, IOException{
+    private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
         String title = request.getParameter("title");
-        Book book = bookDAO.addBook(title);
-        request.setAttribute("book", book);
-        request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+        int idBook = bookDAO.addBook(title);
+        request.setAttribute("idBook", idBook);
+        String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
+        int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
+        userAccessDAO.addNewAccess(idBook, idConnectedUser);
+        //request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
     
   
@@ -293,5 +311,59 @@ public class Controleur extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
         }           
+    }
+    
+    private void actionAddUserInvit(HttpServletRequest request, 
+            HttpServletResponse response, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException {
+        String log = request.getParameter("userToAdd");
+        int idUser = userDAO.getIdFromLogin(log);
+        String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
+        int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
+        if(idUser != -1 && idUser != idConnectedUser) { // L'utilisateur existe et ce n'est pas celui connecté
+            int idBook = Integer.parseInt(request.getParameter("idBook"));
+            boolean already = userAccessDAO.accessBook(idBook, idUser);
+            if (already) {
+                request.setAttribute("errorInAddedUser3", log);
+            } else {
+                userAccessDAO.addNewAccess(idBook, idUser);
+            }
+        } else if (idUser == idConnectedUser){
+            request.setAttribute("errorInAddedUser2", log);
+        } else { // l'utilisateur donné est inexistant
+            request.setAttribute("errorInAddedUser", log);
+        }
+        request.setAttribute("idBook", request.getParameter("idBook"));
+        request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
+    }
+    
+    private void actionGetInvitedUsers(HttpServletRequest request, 
+            HttpServletResponse response, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException {
+        
+        int idBook = Integer.parseInt(request.getParameter("idBook"));
+        List<Integer> listOfIds = userAccessDAO.getAllUsersAllowed(idBook);
+        List<String> list = new ArrayList<String>();
+        for(int id : listOfIds) {
+            String login = userDAO.getLoginFromId(id);
+            list.add(login);
+        }
+        request.setAttribute("alreadyAddedUsers", list);
+    }
+    
+        private void actionEndInvitedAuthors(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO) throws ServletException, IOException{
+            Book book = bookDAO.getBook(Integer.parseInt(request.getParameter("idBook")));
+            request.setAttribute("book", book);
+            request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+    }
+        
+        private void actionEndInvitedAuthorsOpen(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
+            //rendre accessible à tous
+            List<Integer> listOfIds = userDAO.getListIdUser();
+            int idBook = Integer.parseInt(request.getParameter("idBook"));
+            for(int id : listOfIds) {
+                if(!(userAccessDAO.accessBook(idBook, id))) {
+                    userAccessDAO.addNewAccess(idBook, id);
+                }
+            }
+            actionEndInvitedAuthors(request, response, bookDAO);
     }
 }

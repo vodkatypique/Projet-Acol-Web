@@ -37,7 +37,7 @@ public class BookDAO extends AbstractDataBaseDAO {
      * Ajoute l'ouvrage d'auteur et de titre spécifiés dans la table
      * bibliographie.
      */
-    public Book addBook(String titre) {
+    public int addBook(String titre) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
@@ -51,7 +51,7 @@ public class BookDAO extends AbstractDataBaseDAO {
             /* Select this book, it is the book with the higher ID*/
             ResultSet rs = st2.executeQuery("SELECT * FROM Book ORDER BY idBook DESC  FETCH FIRST 1 ROWS ONLY");
              if(rs.next()){
-               return new Book(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
+               return rs.getInt("idBook");
             } else {
                 throw new DAOException("Erreur BD le livre n'a pas été ajouté");
             }

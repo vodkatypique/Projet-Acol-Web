@@ -32,6 +32,22 @@ public class UserDAO extends AbstractDataBaseDAO {
 	}
 	return result;
     }
+    
+        public List<Integer> getListIdUser() {
+        List<Integer> result = new ArrayList<Integer>();
+        try (
+	     Connection conn = getConn();
+	     Statement st = conn.createStatement();
+	     ) {
+            ResultSet rs = st.executeQuery("SELECT * FROM UserTable");
+            while (rs.next()) {
+                result.add(rs.getInt("idUser"));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans UserDAO (getListUser)" + e.getMessage(), e);
+	}
+	return result;
+    }
 
     /**
      * Ajoute l'ouvrage d'auteur et de titre spécifiés dans la table
@@ -64,7 +80,7 @@ public class UserDAO extends AbstractDataBaseDAO {
             st.setString(1, Integer.toString(id));
             ResultSet rs = st.executeQuery();
             if(rs.next()){
-               return new User(rs.getInt("id"), rs.getString("login"), rs.getString("password"));
+               return new User(rs.getInt("idUser"), rs.getString("login"), rs.getString("password"));
             } else {
                 throw new DAOException("Erreur BD : id = " + id +" n'est pas dans la base.");
             }
@@ -72,6 +88,42 @@ public class UserDAO extends AbstractDataBaseDAO {
             throw new DAOException("Erreur BD  dans UserDAO (getUser) " + e.getMessage(), e);
 	}
     }
+    
+    public String getLoginFromId(int id) {
+        try (
+	     Connection conn = getConn();
+             PreparedStatement st = conn.prepareStatement
+	       ("SELECT login FROM UserTable WHERE idUser = ?");
+            ) {
+            st.setString(1, Integer.toString(id));
+            ResultSet rs = st.executeQuery();
+            if(rs.next()){
+               return rs.getString("login");
+            } else {
+                throw new DAOException("Erreur BD : id = " + id +" n'est pas dans la base.");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD  dans UserDAO (getLoginFromId) " + e.getMessage(), e);
+	}
+    }
+    
+        /*public User getUserFromLogin(String login) {
+        try (
+	     Connection conn = getConn();
+             PreparedStatement st = conn.prepareStatement
+	       ("SELECT * FROM UserTable WHERE login = ?");
+            ) {
+            st.setString(1, login);
+            ResultSet rs = st.executeQuery();
+            if(rs.next()){
+               return new User(rs.getInt("idUser"), rs.getString("login"), rs.getString("password"));
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD  dans UserDAO (getUserFromLogin) " + e.getMessage(), e);
+	}
+    }*/
 
     public int getIdFromLogin(String login) {
         try (
@@ -85,7 +137,8 @@ public class UserDAO extends AbstractDataBaseDAO {
                 System.out.println(rs.getInt("idUser"));
                return rs.getInt("idUser");
             } else {
-                throw new DAOException("Erreur BD : login = " + login +" n'est pas dans la base.");
+                //throw new DAOException("Erreur BD : login = " + login +" n'est pas dans la base.");
+                return -1;
             }
         } catch (SQLException e) {
             throw new DAOException("Erreur BD  dans UserDAO (getIdFromLogin) " + e.getMessage(), e);

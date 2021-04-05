@@ -44,7 +44,7 @@
                             </td>
                         </tr>
                     </c:if>
-            </c:forEach>
+                </c:forEach>
             </table>
             <a href="controleur?action=writeBook"> Commencer à écrire un nouveau livre </a>
         <%}%>
