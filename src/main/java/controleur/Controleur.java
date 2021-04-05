@@ -5,6 +5,7 @@ import dao.BookDAO;
 import dao.ChoiceDAO;
 import dao.ParagraphDAO;
 import dao.UserAccessDAO;
+import dao.UserBookHistoryDAO;
 import dao.UserDAO;
 import java.io.*;
 import java.net.http.HttpClient;
@@ -24,7 +25,7 @@ import modele.Paragraph;
  */
 @WebServlet(name = "Controleur", urlPatterns = {"/controleur"})
 public class Controleur extends HttpServlet {
-
+    
     @Resource(name = "jdbc/Book")
     private DataSource dsBook;
     
@@ -39,6 +40,9 @@ public class Controleur extends HttpServlet {
     
     @Resource(name = "jdbc/Choice")
     private DataSource dsChoice;
+
+    @Resource(name = "jdbc/UserBookHistory")
+    private DataSource dsUserBookHistory;
 
     /* pages d’erreurs */
     private void invalidParameters(HttpServletRequest request,
@@ -69,6 +73,7 @@ public class Controleur extends HttpServlet {
         UserDAO userDAO = new UserDAO(dsUser);
         UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
         ChoiceDAO choiceDAO = new ChoiceDAO(dsChoice);
+        UserBookHistoryDAO userBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
         
         try {
             // actions depuis la page ppale = liste des livres disponibles
@@ -90,6 +95,10 @@ public class Controleur extends HttpServlet {
                 actionChoices(request, response, choiceDAO);
             } else if (action.equals("writeBook")){
                 actionWriteBook(request, response);
+            } else if (action.equals("getHistory")){
+                actionGetHistory(request, response, userBookHistoryDAO);
+            } else if (action.equals("saveHistory")){
+                actionSaveHistory(request, response, userBookHistoryDAO);
             }
             else {
                 invalidParameters(request, response);
@@ -108,6 +117,7 @@ public class Controleur extends HttpServlet {
         BookDAO bookDAO = new BookDAO(dsBook);
         ParagraphDAO paragraphDAO = new ParagraphDAO(dsParagraph);
         ChoiceDAO choiceDAO = new ChoiceDAO((dsChoice));
+        UserBookHistoryDAO UserBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
 
         
         if (action.equals("createNewBook")) {
@@ -240,7 +250,24 @@ public class Controleur extends HttpServlet {
     private void actionWriteBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
     }
-
+    
+    private void actionGetHistory(HttpServletRequest request, 
+        HttpServletResponse response, UserBookHistoryDAO userBookHistoryDAO) {
+        int idB = Integer.parseInt(request.getParameter("idBook"));
+        int idP = Integer.parseInt(request.getParameter("idPara"));
+        List<Integer> res = userBookHistoryDAO.getHistory(idB, idP);
+        request.setAttribute("history", res);
+    }
+    
+    private void actionSaveHistory(HttpServletRequest request, 
+        HttpServletResponse response, UserBookHistoryDAO userBookHistoryDAO) {
+        int idB = Integer.parseInt(request.getParameter("idBook"));
+        int idU = Integer.parseInt(request.getParameter("idUser"));
+        userBookHistoryDAO.suppressHistory(idB, idU);
+        String histo = request.getParameter("history"); // TODO il faudrait gerer l'historique avec les cookies
+        userBookHistoryDAO.addHistory(idB, idU, histo);
+    }
+    
     private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO) throws ServletException, IOException{
         String title = request.getParameter("title");
         Book book = bookDAO.addBook(title);
