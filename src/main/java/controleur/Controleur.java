@@ -113,7 +113,7 @@ public class Controleur extends HttpServlet {
         if (action.equals("createNewBook")) {
             actionCreateNewBook(request, response, bookDAO);
         }else if(action.equals("createParagraph")) {
-            actionCreateParagraph(request, response, paragraphDAO, choiceDAO);
+            actionCreateParagraph(request, response, paragraphDAO, choiceDAO, bookDAO);
         
   
         } else {
@@ -249,7 +249,7 @@ public class Controleur extends HttpServlet {
     }
     
   
-    private void actionCreateParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO) throws ServletException, IOException{
+    private void actionCreateParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
            // TODO not yet implemented
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
@@ -280,7 +280,18 @@ public class Controleur extends HttpServlet {
                                          false);
                 choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
            }
-           
-           
+           try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Book created</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Le paragraphe " + paragraphTitle + " a bien été créé! </h1>");
+            out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
+            out.println("</body>");
+            out.println("</html>");
+        }           
     }
 }
