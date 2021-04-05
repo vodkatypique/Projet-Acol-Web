@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import javax.websocket.Session;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
@@ -126,6 +127,8 @@ public class CheckUser extends HttpServlet {
                 "SELECT login FROM UserTable WHERE login = ? AND password = ?"
             )){
                 s.setString(1, login);
+                mdp = new DigestUtils("SHA3-256").digestAsHex(mdp);
+                System.out.println(mdp);
                 s.setString(2, mdp);
                 ResultSet r = s.executeQuery();
                 /* r.next() renvoie vrai si et seulement si la réponse contient au moins 1 ligne */

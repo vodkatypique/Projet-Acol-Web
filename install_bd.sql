@@ -37,7 +37,7 @@ CREATE TABLE Paragraph(
 CREATE TABLE UserTable(
     idUser INT NOT NULL,
     login VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL,
+    password VARCHAR(64) NOT NULL,
     CONSTRAINT pk_userTable PRIMARY KEY (idUser)
 );
 

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import javax.websocket.Session;
-
+import org.apache.commons.codec.digest.DigestUtils;
 /**
  *
  * @author cleme
@@ -124,8 +124,9 @@ public class Register extends HttpServlet {
                 }
                 s.setInt(1, count);
                 s.setString(2, login);
+                mdp = new DigestUtils("SHA3-256").digestAsHex(mdp);
+                System.out.println(mdp);
                 s.setString(3, mdp);
-                System.out.println(count);
                 ResultSet r = s.executeQuery();
                 /* r.next() renvoie vrai si et seulement si la réponse contient au moins 1 ligne */
                 return r.next();
