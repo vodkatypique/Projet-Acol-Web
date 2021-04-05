@@ -95,7 +95,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
                     );
 
             } else {
-                throw new DAOException("Erreur BD : idLvre = " + idBook + "idPara = " + idParagraph +" n'est pas dans la base.");
+                throw new DAOException("Erreur BD : idBook = " + idBook + "idPara = " + idParagraph +" n'est pas dans la base.");
             }
         } catch (SQLException e) {
             throw new DAOException("Erreur BD dans ParagraphDAO (getParagraph) " + e.getMessage(), e);
@@ -111,7 +111,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("UPDATE Paragraph SET paragraphTitle = ?, author = ?, isEnd = ?, isValidate = ?, isAccessible = ? WHERE idLivre = ? AND numParagraph = ?");
+	       ("UPDATE Paragraph SET paragraphTitle = ?, author = ?, isEnd = ?, isValidate = ?, isAccessible = ? WHERE idBook = ? AND numParagraph = ?");
 	     ) {
             st.setString(1, title);
             st.setString(2, author);
