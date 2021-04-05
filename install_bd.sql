@@ -119,11 +119,11 @@ VALUES (SeqBook.NEXTVAL, 'La forêt maudite', 0, 0);
 
 
 INSERT INTO UserTable(idUser, login, password)
-VALUES (SeqUser.NEXTVAL, 'Thibault', 'zjemgkjmihg');
+VALUES (SeqUser.NEXTVAL, 'Thibault', '2ec75386bb0d5b1fb510b1a60c1b5ad7e0599250000e03c9ae4ac44e6c57e485');
 INSERT INTO UserTable(idUser, login, password)
-VALUES (SeqUser.NEXTVAL, 'Mathieu', '1234');
+VALUES (SeqUser.NEXTVAL, 'Mathieu', '1d6442ddcfd9db1ff81df77cbefcd5afcc8c7ca952ab3101ede17a84b866d3f3');
 INSERT INTO UserTable(idUser, login, password)
-VALUES (SeqUser.NEXTVAL, 'vodka', 'baccareccia2B');
+VALUES (SeqUser.NEXTVAL, 'vodka', 'ba2a9145222781aa216c27cab0056c1ee4f407e291f302f2be5d934b0de84706');
 
 
 INSERT INTO UserAccess(idBook, idUser)
