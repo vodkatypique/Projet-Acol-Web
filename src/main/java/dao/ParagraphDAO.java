@@ -106,22 +106,22 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
      * Modifie l'ouvrage d'identifiant id avec le nouvel auteur et le nouveau
      * titre spécifiés dans la table bibliographie.
      */
-    public void modifyParagraph(int idBook, int numParagraph, String title, String author, boolean isEnd, boolean isValidate, boolean isAccess) {
+    public void modifyParagraph(int idBook, int numParagraph, String title, String text, String author, boolean isEnd, boolean isValidate, boolean isAccess) {
         String error;
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("UPDATE Paragraph SET paragraphTitle = ?, author = ?, isEnd = ?, isValidate = ?, isAccessible = ? WHERE idBook = ? AND numParagraph = ?");
+	       ("UPDATE Paragraph SET paragraphTitle = ?, text = ?, author = ?, isEnd = ?, isValidate = ?, isAccessible = ? WHERE idBook = ? AND numParagraph = ?");
 	     ) {
             st.setString(1, title);
-            st.setString(2, author);
-            st.setBoolean(3, isEnd);
-            st.setBoolean(4, isValidate);
-            st.setBoolean(5, isAccess);
-            st.setInt(6, idBook);
-            st.setInt(7, numParagraph);
-            error = st.toString();
-            st.executeUpdate();
+            st.setString(2, text);            
+            st.setString(3, author);
+            st.setBoolean(4, isEnd);
+            st.setBoolean(5, isValidate);
+            st.setBoolean(6, isAccess);
+            st.setInt(7, idBook);
+            st.setInt(8, numParagraph);
+            System.out.println("SQL: " + st.executeUpdate());
         } catch (SQLException e) {
             throw new DAOException("Erreur BD dans ParagraphDAO (modifyParagraph)" + e.getMessage(), e);
         }

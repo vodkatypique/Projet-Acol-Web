@@ -75,26 +75,29 @@ public class Controleur extends HttpServlet {
         ChoiceDAO choiceDAO = new ChoiceDAO(dsChoice);
         UserBookHistoryDAO userBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
         
+        System.out.println("HELLO");
         try {
             // actions depuis la page ppale = liste des livres disponibles
             if (action == null || action.equals("accueil")) {
                 actionDisplay(request, response, bookDAO);
             } else if (action.equals("getBook")){
-                actionGetBook(request, response, bookDAO);
+                actionGetBook(request, response, bookDAO, paragraphDAO);
             } else if (action.equals("getParagraph")){
-                actionGetParagraph(request, response, paragraphDAO);
+                actionGetParagraph(request, response, paragraphDAO, bookDAO);
             } else if (action.equals("access")){
                 actionGetAccess(request, response, userDAO, userAccessDAO);
             } else if (action.equals("authors")){
                 actionGetAuthors(request, response, paragraphDAO);
             } else if (action.equals("edition")){
-                actionEdit(request, response, bookDAO);
+                actionEdition(request, response, bookDAO);
             } else if (action.equals("read")){
                 actionRead(request, response, bookDAO, paragraphDAO);
             } else if (action.equals("getChoices")){
                 actionChoices(request, response, choiceDAO);
             } else if (action.equals("writeBook")){
                 actionWriteBook(request, response);
+            } else if (action.equals("editParagraph")){
+                actionGetEditParagraph(request, response, bookDAO, paragraphDAO);
             } else if (action.equals("getHistory")){
                 actionGetHistory(request, response, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
@@ -124,8 +127,10 @@ public class Controleur extends HttpServlet {
             actionCreateNewBook(request, response, bookDAO);
         }else if(action.equals("createParagraph")) {
             actionCreateParagraph(request, response, paragraphDAO, choiceDAO, bookDAO);
+        }else if(action.equals("postEditParagraph")) {
+            actionPostEditParagraph(request, response, paragraphDAO, choiceDAO, bookDAO);
         
-  
+           
         } else {
             invalidParameters(request, response);
         }
@@ -159,7 +164,7 @@ public class Controleur extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/listBooksToRead.jsp").forward(request, response);
     }
     
-    private void actionEdit(HttpServletRequest request, 
+    private void actionEdition(HttpServletRequest request, 
             HttpServletResponse response, 
             BookDAO bookDAO) throws ServletException, IOException {
         /* On interroge la base de données pour obtenir la liste des ouvrages */
@@ -178,21 +183,26 @@ public class Controleur extends HttpServlet {
      * Affiche la page d’accueil avec la liste de tous les ouvrages. 
      */
     private void actionGetBook(HttpServletRequest request, HttpServletResponse response, 
-                               BookDAO bookDAO) throws DAOException, ServletException, IOException {
+                               BookDAO bookDAO, ParagraphDAO paragraphDAO) throws DAOException, ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         String v = request.getParameter("view");
         if (v.equals("listBooksToRead") || v.equals("listBooksToEdit")) {
             Book book = bookDAO.getBook(id);
             request.setAttribute("book", book);
-            getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response);
-        } else if (v.equals("edit")) {
-            
+            getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response);          
+        } else if(v.equals("edit")) {
+            Paragraph firstParagraph = paragraphDAO.getParagraph(id, 1);
+            Book book = bookDAO.getBook(id);
+            request.setAttribute("para", firstParagraph);
+            request.setAttribute("book", book);
+            getServletContext().getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
+        }else {
+            invalidParameters(request, response);
         }
-        else invalidParameters(request, response);
     }
     
     private void actionGetParagraph(HttpServletRequest request, HttpServletResponse response, 
-                               ParagraphDAO paragraphDAO) throws DAOException, ServletException, IOException {
+                               ParagraphDAO paragraphDAO, BookDAO bookDAO) throws DAOException, ServletException, IOException {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idP = Integer.parseInt(request.getParameter("idPara"));
         String v = request.getParameter("view");
@@ -200,6 +210,12 @@ public class Controleur extends HttpServlet {
             Paragraph para = paragraphDAO.getParagraph(idB, idP);
             request.setAttribute("paragraph", para);
             //getServletContext().getRequestDispatcher("/WEB-INF/" + v + ".jsp").forward(request, response); 
+        } else  if (v.equals("edit")) {
+            Paragraph para = paragraphDAO.getParagraph(idB, idP);
+            Book book = bookDAO.getBook(idB);
+            request.setAttribute("para", para);
+            request.setAttribute("book", book);
+            getServletContext().getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
         }
         else invalidParameters(request, response);
     }
@@ -308,7 +324,6 @@ public class Controleur extends HttpServlet {
                 choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
            }
            try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -321,4 +336,51 @@ public class Controleur extends HttpServlet {
             out.println("</html>");
         }           
     }
+    
+       private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO) 
+               throws ServletException, IOException{
+        int idBook = Integer.parseInt(request.getParameter("idBook"));
+        int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
+        Paragraph paragraph = paragraphDAO.getParagraph(idBook, numParagraph);
+        request.setAttribute("paragraph", paragraph);
+        Book book = bookDAO.getBook(idBook);
+        request.setAttribute("book", book);
+        request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+    }
+       
+       private void actionPostEditParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
+           // TODO not yet implemented
+           int idBook = Integer.parseInt(request.getParameter("idBook"));
+           int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
+           String paragraphTitle = request.getParameter("paragraphTitle");
+           String paragraphContent = request.getParameter("paragraphContent");
+           String author = (String) request.getSession().getAttribute("utilisateur");
+            // TO DO  Ajouter les booléens au formulaire
+           boolean isEnd = false;
+           boolean isValidate = false;
+           boolean isAccess = false;
+           paragraphDAO.modifyParagraph(idBook,
+                                     numParagraph,
+                                     paragraphTitle,
+                                     paragraphContent, 
+                                     author, 
+                                     isEnd, 
+                                     isValidate, 
+                                     isAccess);
+
+           try (PrintWriter out = response.getWriter()) {
+                out.println("<!DOCTYPE html>");
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<title>Book created</title>");            
+                out.println("</head>");
+                out.println("<body>");
+                out.println("<h1>Le paragraphe " + paragraphTitle + " a bien été modifié! </h1>");
+                out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
+                out.println("</body>");
+                out.println("</html>");
+                }
+       }       
+       
+       
 }
