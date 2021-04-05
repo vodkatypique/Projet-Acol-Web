@@ -5,13 +5,13 @@ modele/UserBookHistory.class
 servlet/Logout.class
 controleur/Controleur.class
 servlet/Register.class
-modele/Choice.class
 modele/User.class
+modele/Choice.class
 dao/ParagraphDAO.class
 dao/ChoiceDAO.class
 dao/AbstractDataBaseDAO.class
 dao/UserDAO.class
-dao/BookDAO.class
 modele/Book.class
+dao/BookDAO.class
 dao/UserAccessDAO.class
 dao/UserBookHistoryDAO.class
