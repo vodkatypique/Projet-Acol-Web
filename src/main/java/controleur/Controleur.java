@@ -20,6 +20,8 @@ import javax.sql.DataSource;
 import modele.Book;
 import modele.Paragraph;
 import modele.User;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Le contrôleur de l'application.
@@ -257,7 +259,7 @@ public class Controleur extends HttpServlet {
          request.setAttribute("authors", authors);
      }
 
-    private void actionRead(HttpServletRequest request,
+    private void actionRead(HttpServletRequest request, 
         HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException {
     int idB = Integer.parseInt(request.getParameter("idBook"));
     Book book = bookDAO.getBook(idB);
@@ -265,7 +267,106 @@ public class Controleur extends HttpServlet {
     Paragraph para = paragraphDAO.getParagraph(idB, idP);
     request.setAttribute("bookBeingRead", book);
     request.setAttribute("paragraphBeingRead", para);
+    
+    HttpSession session = request.getSession();
+    
+    if (session != null){
+        request.setAttribute("idBook", idB);
+        Cookie[] cookies = request.getCookies();
+        boolean cook = false;
+        if(cookies != null){ //check si on a le bon cookie
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(Integer.toString(idB))) {
+                    cook = true;
+                    final GsonBuilder builder = new GsonBuilder();
+                    final Gson gson = builder.create();
+                    ArrayList<String> listCookie = gson.fromJson(cookie.getValue(), ArrayList.class);
+                    System.out.println(listCookie);
+                    
+                    if(listCookie.contains(Integer.toString(idP))){
+                        System.out.println("COKK");
+                        for (Cookie cookie2 : cookies) {
+                            if (cookie2.getName().equals("temp")) {
+                                System.out.println("TEMP");
+                                System.out.println(listCookie.size());
+                                System.out.println(listCookie.size());
+                                ArrayList<String> listCookieTemp = gson.fromJson(cookie2.getValue(), ArrayList.class);
+                                
+                                listCookieTemp.addAll(
+                                        0,
+                                        listCookie.subList(
+                                                listCookie.indexOf(Integer.toString(idP))+1,
+                                                listCookie.size()
+                                        )
+                                );
+                                
+                                System.out.println(listCookie);
+                                System.out.println(listCookie.indexOf(Integer.toString(idP))+1);
+                                
+                                listCookie = new ArrayList<String>(listCookie.subList(
+                                        0,
+                                        listCookie.indexOf(Integer.toString(idP))+1));
+                                
+                            System.out.println(gson.toJson(listCookieTemp));
+                            System.out.println(gson.toJson(listCookie));
+                            cookie2.setValue(gson.toJson(listCookieTemp));
+                            response.addCookie(cookie2);
+                            cookie.setValue(gson.toJson(listCookie)); 
+                            
+                            response.addCookie(cookie);
+                            request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+                            System.out.println("cookie2");
+                            }
+                        }
+                        
+                    } else {
+                        System.out.println("ICI");
+                        listCookie.add(Integer.toString(idP));
+                        for (Cookie cookie2 : cookies) {
+                            if (cookie2.getName().equals("temp")) {
+                                ArrayList<String> listCookieTemp = gson.fromJson(cookie2.getValue(), ArrayList.class);
+                                if (listCookieTemp.size()>0){
+                                    System.out.println(listCookieTemp.get(0));
+                                    if (listCookieTemp.get(0).equals(Integer.toString(idP))){
+                                        listCookieTemp.remove(0);
+                                        
+                                    } else {
+                                        listCookieTemp = new ArrayList<String>();
+                                    }
+                                    cookie2.setValue(gson.toJson(listCookieTemp));
+                                    response.addCookie(cookie2);
+                                }                     
+                            }   
+                    }
+                    
+                  cookie.setValue(gson.toJson(listCookie));      
+                  
+                  response.addCookie(cookie);
+                  request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+         
+                 }
+                    
+            }
+        }
+        if (!cook){
+            System.out.println("what");
+            List<String> listCookie = new ArrayList<String>();
+            List<String> listCookieTemp = new ArrayList<String>();
+            listCookie.add(Integer.toString(idP));
+            final GsonBuilder builder = new GsonBuilder();
+            final Gson gson = builder.create();
+            Cookie cookie = new Cookie(Integer.toString(idB), gson.toJson(listCookie));
+            //System.out.println(gson.toJson(listCookie));
+            response.addCookie(cookie);
+            Cookie cookieTemp;
+            cookieTemp = new Cookie("temp", gson.toJson(listCookieTemp));
+            request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+            response.addCookie(cookieTemp);
+        }
+    }
+    
     request.getRequestDispatcher("/WEB-INF/bookBeingRead.jsp").forward(request, response);
+    }
     }
 
     private void actionChoices(HttpServletRequest request,

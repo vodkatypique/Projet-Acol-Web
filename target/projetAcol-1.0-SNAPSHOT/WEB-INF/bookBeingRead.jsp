@@ -15,6 +15,7 @@
         <% request.setAttribute("idPara", para.getId()); %>
         <% request.setAttribute("currentPageAction", "read"); %>
         <%@include file="co_deco.jsp" %>
+        <%@include file="historique.jsp" %>
         
         <a href="controleur">Retour au menu d'accueil</a>
         
