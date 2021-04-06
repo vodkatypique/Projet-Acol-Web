@@ -145,7 +145,12 @@ public class Controleur extends HttpServlet {
         } else if(action.equals("postEditParagraph")) {
             actionPostEditParagraph(request, response, paragraphDAO, choiceDAO, bookDAO);
         }
-
+        else if(action.equals("uninviteUser")) {
+            actionUninviteUser(request, response, userDAO, userAccessDAO);
+        }
+        else if(action.equals("uninviteEveryUser")) {
+            actionUninviteEveryUser(request, response, userDAO, userAccessDAO);
+        }
         else {
             invalidParameters(request, response);
         }
@@ -511,6 +516,24 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         }
         actionEndInvitedAuthors(request, response, bookDAO);
 }
+    
+    private void actionUninviteUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
+        int idBook = Integer.parseInt(request.getParameter("idBook"));
+        int idUser = userDAO.getIdFromLogin(request.getParameter("loginUser"));
+        userAccessDAO.removeAccess(idBook, idUser);
+        request.setAttribute("idBook", idBook);
+        request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
+    }
+    
+    private void actionUninviteEveryUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
+        int idBook = Integer.parseInt(request.getParameter("idBook"));
+        String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
+        int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
+        userAccessDAO.removeEveryAccess(idBook);
+        userAccessDAO.addNewAccess(idBook, idConnectedUser);
+        request.setAttribute("idBook", idBook);
+        request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
+    }
 
 private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO)
                throws ServletException, IOException{
