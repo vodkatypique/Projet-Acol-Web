@@ -96,7 +96,7 @@ peut être qu''il vous aidera dans votre mission si vous demandez gentillement q
  'Thibault', 0, 1, 1);
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
 VALUES (SeqBook.CURRVAL, 3, 'Vous décidez d''attaquer l''ogre.', 
-'L''ogre esquive votre épée et vous vous enfuyait lâchement. 
+'L''ogre esquive votre épée et vous vous enfuyez lâchement. 
 Vous avez découvert ce qu''était un ogre énervé 
 mais vous ne pouvez pas continuer votre mission sans votre épée. Vous avez perdu !',
  'Thibault', 1, 1, 1);
@@ -104,7 +104,7 @@ INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd,
 VALUES (SeqBook.CURRVAL, 4, 'Vous décidez de demander de l''aide à l''ogre pour terasser le dragon.',
  'L''ogre semble comprendre vos mots mais ne semble pas adhérer à votre cause. 
 Il vous hurle dessus et vous demande de partir de son marée. 
-Au moins, vous ne vous êtes pas fait mangé. Vous avez gagné !',
+Au moins, vous ne vous êtes pas fait manger. Vous avez gagné !',
  'Mathieu', 1, 1, 1);
 
 INSERT INTO Book(idBook, titleBook, isPublished, isOpen)

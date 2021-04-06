@@ -270,7 +270,8 @@ public class Controleur extends HttpServlet {
     
     HttpSession session = request.getSession();
     
-    if (null == session.getAttribute("utilisateur")){
+    if (true){
+    //if (null == session.getAttribute("utilisateur")){
         request.setAttribute("idBook", idB);
         Cookie[] cookies = request.getCookies();
         boolean cook = false;
@@ -389,7 +390,11 @@ public class Controleur extends HttpServlet {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idP = Integer.parseInt(request.getParameter("idPara"));
         String res = userBookHistoryDAO.getHistory(idB, idP);
-        request.setAttribute("history", res);
+        if(res != null){
+            request.setAttribute("paragraphes", res.split(" "));
+        } else {
+            request.setAttribute("paragraphes", "");
+        }
     }
 
     private void actionSaveHistory(HttpServletRequest request,
@@ -397,7 +402,7 @@ public class Controleur extends HttpServlet {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idU = Integer.parseInt(request.getParameter("idUser"));
         userBookHistoryDAO.suppressHistory(idB, idU);
-        String histo = request.getParameter("history"); // TODO il faudrait gerer l'historique avec les cookies
+        String histo = request.getParameter("paragraphes"); // TODO il faudrait gerer l'historique avec les cookies
         userBookHistoryDAO.addHistory(idB, idU, histo);
     }
 

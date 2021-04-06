@@ -49,8 +49,8 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("INSERT INTO History (idBook, idUser, history, numJump"
-                       + "VALUES (?, ?, ?, ?)");
+	       ("INSERT INTO History (idBook, idUser, history"
+                       + "VALUES (?, ?, ?)");
 	     ) {
             st.setInt(1, idBook);
             st.setInt(2, idUser);
