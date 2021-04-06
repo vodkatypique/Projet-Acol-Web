@@ -16,10 +16,43 @@
         
         <jsp:include page="/controleur?action=getInvitedUsers&idBook=${idBook}" />
         <% List<String> aau = (List<String>) request.getAttribute("alreadyAddedUsers");%>
-        <c:forEach items="<%=aau%>" var="addedUser"> <!<!-- On affiche les users dj ajoutés -->
-            <p>${addedUser}</p> <!-- c'est son login -->
-        </c:forEach>    
-    
+        
+        <%--String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
+        <c:set var = "loginCU" scope = "session" value = "<%= loginConnectedUser%>"/>--%>
+        
+        
+
+        
+        <table>
+            <c:forEach items="<%=aau%>" var="addedUser"> <!-- On affiche les users dj ajoutés -->
+                <tr>
+                    <td>
+                         ${addedUser} <!-- c'est son login -->
+                    </td>
+                    <td>
+                        <%--<%boolean isNotThemselves = !(<c:out value = '${addedUser}'/>.equals(loginConnectedUser));%> --%>
+                        <c:if test="${!(utilisateur.equals(addedUser))}"> <!<!-- utilisateur est un attribut de session -->
+                            <form method="post" action="controleur?action=uninviteUser" accept-charset="utf-8">
+                                <p>
+                                    <input type="hidden" name="idBook" value="${idBook}">
+                                    <input type="hidden" name="loginUser" value="${addedUser}">
+                                    <input type="submit" value="supprimer">
+                                </p>
+                            </form>
+                        </c:if>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+        
+            
+        <form method="post" action="controleur?action=uninviteEveryUser" accept-charset="utf-8">
+            <p>
+            <input type="hidden" name="idBook" value="${idBook}">
+            <input type="submit" value="supprimer l'accès à tous les utilisateurs">
+            </p>
+        </form>
+        ----------------------------------------------------------
         <form method="post" action="controleur?action=addUserInvit" accept-charset="utf-8">
             <p>
             <input type="hidden" name="idBook" value="${idBook}">
@@ -52,7 +85,7 @@
             <input type="submit" value="Valider et passer à la suite">
             </p>
         </form>
-            
+        ----------------------------------------------------------    
         <form method="post" action="controleur?action=endInvitedAuthorsOpen" accept-charset="utf-8">
             <p>
             <input type="hidden" name="idBook" value="${idBook}">

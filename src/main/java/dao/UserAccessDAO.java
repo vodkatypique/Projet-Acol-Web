@@ -45,6 +45,33 @@ public class UserAccessDAO extends AbstractDataBaseDAO {
         }
     }
     
+    public void removeAccess(int idBook, int idUser) {
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("DELETE FROM UserAccess WHERE idBook=? AND idUser=?");
+	     ) {
+            st.setInt(1, idBook);
+            st.setInt(2, idUser);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD  dans UserAccessDAO (removeAccess) " + e.getMessage(), e);
+        }
+    }
+    
+    public void removeEveryAccess(int idBook) {
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("DELETE FROM UserAccess WHERE idBook=?");
+	     ) {
+            st.setInt(1, idBook);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD  dans UserAccessDAO (removeAccess) " + e.getMessage(), e);
+        }
+    }
+    
     public List<Integer> getAllUsersAllowed(int idBook) {
         List<Integer> list = new ArrayList<Integer>();
         try (
