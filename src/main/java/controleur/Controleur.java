@@ -102,9 +102,9 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("editParagraph")){
                 actionGetEditParagraph(request, response, bookDAO, paragraphDAO);
             } else if (action.equals("getHistory")){
-                actionGetHistory(request, response, userBookHistoryDAO);
+                actionGetHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
-                actionSaveHistory(request, response, userBookHistoryDAO);
+                actionSaveHistory(request, response, userDAO, userBookHistoryDAO);
             }
             else {
                 invalidParameters(request, response);
@@ -321,6 +321,11 @@ public class Controleur extends HttpServlet {
                             
                             response.addCookie(cookie);
                             request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+                            String history = " ";
+                            for (String str : listCookie) {
+                                history += str + " ";
+                            }
+                            request.setAttribute("history", history);
                             System.out.println("cookie2");
                             }
                         }
@@ -349,6 +354,11 @@ public class Controleur extends HttpServlet {
                   
                   response.addCookie(cookie);
                   request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+                            String history = " ";
+                            for (String str : listCookie) {
+                                history += str + " ";
+                            }
+                  request.setAttribute("history", history);
          
                  }
                     
@@ -391,23 +401,21 @@ public class Controleur extends HttpServlet {
     }
 
     private void actionGetHistory(HttpServletRequest request,
-        HttpServletResponse response, UserBookHistoryDAO userBookHistoryDAO) {
+        HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) {
+        // TODO mettre a jour idUser avant cette fonction, dans CheckUser ?
         int idB = Integer.parseInt(request.getParameter("idBook"));
-        int idP = Integer.parseInt(request.getParameter("idPara"));
-        String res = userBookHistoryDAO.getHistory(idB, idP);
-        if(res != null){
-            request.setAttribute("paragraphes", res.split(" "));
-        } else {
-            request.setAttribute("paragraphes", "");
-        }
+        int idU = Integer.parseInt(request.getParameter("idUser"));
+        String res = userBookHistoryDAO.getHistory(idB, idU);
+        request.setAttribute("history", res);
     }
 
     private void actionSaveHistory(HttpServletRequest request,
-        HttpServletResponse response, UserBookHistoryDAO userBookHistoryDAO) {
+        HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) {
+        // TODO mettre a jour idUser avant cette fonction, dans CheckUser ?
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idU = Integer.parseInt(request.getParameter("idUser"));
         userBookHistoryDAO.suppressHistory(idB, idU);
-        String histo = request.getParameter("paragraphes"); // TODO il faudrait gerer l'historique avec les cookies
+        String histo = request.getParameter("history");
         userBookHistoryDAO.addHistory(idB, idU, histo);
     }
 

@@ -30,6 +30,9 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
             st.setInt(1, idBook);
             st.setInt(2, idUser);
             ResultSet rs = st.executeQuery();
+            if(rs == null) {
+                return "";
+            }
             if(rs.next()){
                String str = rs.getString("history");
                return str;

@@ -56,7 +56,6 @@ CREATE TABLE UserBookHistory(
     idBook INT NOT NULL,
     idUser INT NOT NULL,
     history VARCHAR(200),
-    numJump INT,
     CONSTRAINT fk_userBookHistory_idBook FOREIGN KEY (idBook) REFERENCES Book(idBook),
     CONSTRAINT fk_userBookHistory_idUser FOREIGN KEY (idUser) REFERENCES UserTable(idUser),
     CONSTRAINT pk_userBookHistory PRIMARY KEY (idBook, idUser)
