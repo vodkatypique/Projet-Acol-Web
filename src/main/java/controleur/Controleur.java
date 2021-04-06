@@ -105,6 +105,12 @@ public class Controleur extends HttpServlet {
                 actionGetHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
                 actionSaveHistory(request, response, userDAO, userBookHistoryDAO);
+            } else if (action.equals("displayParaEdit")){
+                actionDisplayParaEdit(request, response, paragraphDAO, bookDAO);
+            } else if (action.equals("addChoiceToPara")){
+                actionAddChoiceToPara(request, response);
+            } else if(action.equals("getListPara")) {
+                actionGetListPara(request, response, paragraphDAO);
             }
             else {
                 invalidParameters(request, response);
@@ -151,6 +157,11 @@ public class Controleur extends HttpServlet {
         else if(action.equals("uninviteEveryUser")) {
             actionUninviteEveryUser(request, response, userDAO, userAccessDAO);
         }
+        else if(action.equals("choiceAdded")) {
+            actionChoiceAdded(request, response, paragraphDAO, bookDAO, choiceDAO);
+        } else if (action.equals("getChoices")){
+                actionChoices(request, response, choiceDAO);
+            } 
         else {
             invalidParameters(request, response);
         }
@@ -559,8 +570,14 @@ private void actionGetEditParagraph(HttpServletRequest request, HttpServletRespo
         request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
     }
 
+    private void actionDisplayParaEdit(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, BookDAO bookDAO) throws ServletException, IOException {
+           int idBook = Integer.parseInt(request.getParameter("idBook"));
+           int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
+           request.setAttribute("book", bookDAO.getBook(idBook));
+           request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
+           request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
+    }
        private void actionPostEditParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
-           // TODO not yet implemented
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
            String paragraphTitle = request.getParameter("paragraphTitle");
@@ -586,12 +603,55 @@ private void actionGetEditParagraph(HttpServletRequest request, HttpServletRespo
                 out.println("<title>Book created</title>");
                 out.println("</head>");
                 out.println("<body>");
-                out.println("<h1>Le paragraphe " + paragraphTitle + " a bien été modifié! </h1>");
-                out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
+                out.println("<h1>Le paragraphe \"" + paragraphTitle + "\" a bien été modifié! </h1>");
+                out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "\">Retour à l'édition</a>");
                 out.println("</body>");
                 out.println("</html>");
                 }
        }
-
-
+       
+       private void actionAddChoiceToPara(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+           int idBook = Integer.parseInt(request.getParameter("idBook"));
+           int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
+           request.setAttribute("idBook", idBook);
+           request.setAttribute("numParagraph", numParagraph);
+           if (Boolean.parseBoolean(request.getParameter("isNew"))) {
+               request.getRequestDispatcher("/WEB-INF/addNewChoice.jsp").forward(request, response);
+           }
+           else {
+               request.getRequestDispatcher("/WEB-INF/addChoiceAlreadyExists.jsp").forward(request, response);
+           }
+    }
+       
+    private void actionChoiceAdded(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, BookDAO bookDAO, ChoiceDAO choiceDAO) throws ServletException, IOException {
+           int idBook = Integer.parseInt(request.getParameter("idBook"));
+           int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
+           int numNextParagraph = 0;
+           boolean isConditional = Boolean.parseBoolean(request.getParameter("isConditional")); // TO DO
+           boolean isNew = Boolean.parseBoolean(request.getParameter("isNew"));
+           if (isNew) {
+               String choiceText = request.getParameter("choiceText");
+               boolean isError = paragraphDAO.isParagraphWithThisTitle(choiceText);
+               if (isError) {
+                   request.setAttribute("previousError", choiceText);
+                   request.getRequestDispatcher("/WEB-INF/addNewChoice.jsp").forward(request, response);
+               }
+               numNextParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
+               // ajouter le para ? non, on en connait pas le contenu... Mais alors getCurrentMaxNumParagraph valide ou po ?
+           } else { // on relie à un paragraphe déjà existant
+               // TO DO : controle doublons + Enlever celui sur lequel on est => à faire directement dans l'affichage ?
+               numNextParagraph = Integer.parseInt(request.getParameter("numNextParagraph"));
+           }
+           choiceDAO.addChoice(idBook, numParagraph, numNextParagraph, 0);
+           
+           request.setAttribute("book", bookDAO.getBook(idBook));
+           request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
+           request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
+    }
+    
+    private void actionGetListPara(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO) throws ServletException, IOException {
+        int idBook = Integer.parseInt(request.getParameter("idBook"));
+        List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
+        request.setAttribute("listPara", list);
+    }
 }

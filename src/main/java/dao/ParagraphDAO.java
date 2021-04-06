@@ -184,4 +184,18 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
             throw new DAOException("Erreur BD dans ParagraphDAO (findAuthors) " + e.getMessage(), e);
         }
     }
+    
+    public boolean isParagraphWithThisTitle(String text) {
+        try (
+	     Connection conn = getConn();
+             PreparedStatement st = conn.prepareStatement
+	       ("SELECT * FROM Paragraph WHERE paragraphTitle = ?");
+            ) {
+            st.setString(1, text);
+            ResultSet rs = st.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans ParagraphDAO (isParagraphWithThisTitle) " + e.getMessage(), e);
+	}
+    }
 }

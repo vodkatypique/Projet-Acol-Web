@@ -9,7 +9,6 @@
 	<title>Lecture du livre ${book.title}</title>
     </head>
     <body>
-        <% request.setAttribute("currentPageAction", "edit"); %>
         <%@include file="co_deco.jsp" %>
         
         <a href="controleur">Retour au menu d'accueil</a>
@@ -23,5 +22,9 @@
         <c:forEach items="${choices}" var="choice"> <!-- ce sont des paragraphes -->
             <div class='choice'><a href='controleur?action=getParagraph&view=edit&idBook=${book.id}&idPara=${choice.id}'>${choice.title}</a></div>
         </c:forEach> 
+        <p></p>
+        <p></p>
+        <p><a href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}&isNew=false">Ajouter un choix lié à un paragraphe déjà existant</a></p>
+        <p><a href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}&isNew=true">Ajouter un nouveau choix</a></p>
     </body>
 </html>
