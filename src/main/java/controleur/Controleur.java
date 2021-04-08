@@ -257,7 +257,7 @@ public class Controleur extends HttpServlet {
          boolean is = false;
          int iB = Integer.parseInt(request.getParameter("idBook"));
          String login = (String) request.getSession().getAttribute("utilisateur");
-
+         
          if(login != null) {
              int iU = userDAO.getIdFromLogin(login);
              System.out.println(iU);
@@ -332,9 +332,9 @@ public class Controleur extends HttpServlet {
                             
                             response.addCookie(cookie);
                             request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
-                            String history = " ";
+                            String history = "";
                             for (String str : listCookie) {
-                                history += str + " ";
+                                history += str + "_";
                             }
                             request.setAttribute("history", history);
                             System.out.println("cookie2");
@@ -365,9 +365,9 @@ public class Controleur extends HttpServlet {
                   
                   response.addCookie(cookie);
                   request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
-                            String history = " ";
+                            String history = "";
                             for (String str : listCookie) {
-                                history += str + " ";
+                                history += str + "_";
                             }
                   request.setAttribute("history", history);
          
@@ -413,19 +413,21 @@ public class Controleur extends HttpServlet {
 
     private void actionGetHistory(HttpServletRequest request,
         HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) {
-        // TODO mettre a jour idUser avant cette fonction, dans CheckUser ?
+        String login = request.getParameter("utilisateur");
+        int idU = userDAO.getIdFromLogin(login);
+        request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
-        int idU = Integer.parseInt(request.getParameter("idUser"));
         String res = userBookHistoryDAO.getHistory(idB, idU);
         request.setAttribute("history", res);
     }
 
     private void actionSaveHistory(HttpServletRequest request,
         HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) {
-        // TODO mettre a jour idUser avant cette fonction, dans CheckUser ?
+        String login = request.getParameter("utilisateur");
+        int idU = userDAO.getIdFromLogin(login);
+        request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
-        int idU = Integer.parseInt(request.getParameter("idUser"));
-        userBookHistoryDAO.suppressHistory(idB, idU);
+        // userBookHistoryDAO.suppressHistory(idB, idU);
         String histo = request.getParameter("history");
         userBookHistoryDAO.addHistory(idB, idU, histo);
     }

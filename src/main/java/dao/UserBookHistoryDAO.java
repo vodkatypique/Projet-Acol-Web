@@ -25,7 +25,7 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
         try (
 	     Connection conn = getConn();
              PreparedStatement st = conn.prepareStatement
-	       ("SELECT * FROM History WHERE idBook = ? AND idUser = ?");
+	       ("SELECT * FROM UserBookHistory WHERE idBook = ? AND idUser = ?");
             ) {
             st.setInt(1, idBook);
             st.setInt(2, idUser);
@@ -52,7 +52,7 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("INSERT INTO History (idBook, idUser, history"
+	       ("INSERT INTO UserBookHistory (idBook, idUser, history) "
                        + "VALUES (?, ?, ?)");
 	     ) {
             st.setInt(1, idBook);
@@ -90,7 +90,7 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("UPDATE History SET history = CONCAT(history, ?) WHERE idBook = ? AND idUser = ?");
+	       ("UPDATE UserBookHistory SET UserBookHistory = CONCAT(UserBookHistory, ?) WHERE idBook = ? AND idUser = ?");
 	     ) {
             st.setString(1, Integer.toString(numParagraph) + " ");
             st.setInt(2, idBook);
