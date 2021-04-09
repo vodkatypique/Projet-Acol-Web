@@ -586,9 +586,9 @@ private void actionGetEditParagraph(HttpServletRequest request, HttpServletRespo
            String paragraphContent = request.getParameter("paragraphContent");
            String author = (String) request.getSession().getAttribute("utilisateur");
             // TO DO  Ajouter les booléens au formulaire
-           boolean isEnd = false;
-           boolean isValidate = false;
-           boolean isAccess = false;
+           boolean isEnd = Boolean.parseBoolean(request.getParameter("isEnd"));
+           boolean isValidate = true;
+           boolean isAccess = true;
            paragraphDAO.modifyParagraph(idBook,
                                      numParagraph,
                                      paragraphTitle,
