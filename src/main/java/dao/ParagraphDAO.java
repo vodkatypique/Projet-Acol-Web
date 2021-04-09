@@ -132,7 +132,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
     /**
      * Supprime l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public void suppressParagraph(int idBook, int idPara) {
+    public void deleteParagraph(int idBook, int idPara) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement

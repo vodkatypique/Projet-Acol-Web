@@ -4,6 +4,7 @@
     Author     : nicolas
 --%>
 
+<%@page import="dao.ChoiceDAO"%>
 <%@page import="modele.Paragraph"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -76,8 +77,11 @@
                 <input type="submit" value="Valider le paragraphe">
                 </p>
             </form>
-                <% if(request.getAttribute("paragraph") != null && ((Paragraph) request.getAttribute("paragraph")).getIsEnd()) { %>
-                  <button onclick="controler?action=DeleteParagraph&id=${paragraph.id}"> supprimer </button>
+                <% if(request.getAttribute("paragraph") != null) { %>
+                 <jsp:include page="/controleur?action=getChoices&idBook=${book.id}&idPara=${paragraph.id}" />
+                 <c:if test="${choices.isEmpty()}">
+                  <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}'"> supprimer ce paragraphe </button>
+                 </c:if>
                   <%} %>
             </p>
             

@@ -22,6 +22,7 @@ import modele.Paragraph;
 import modele.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import modele.Choice;
 
 /**
  * Le contrôleur de l'application.
@@ -99,7 +100,7 @@ public class Controleur extends HttpServlet {
                 actionChoices(request, response, choiceDAO);
             } else if (action.equals("writeBook")){
                 actionWriteBook(request, response);
-            } else if (action.equals("editParagraph")){
+            } else if (action.equals("editParagraph")){  // Rentre dans le menu d'édition d'un paragraphe
                 actionGetEditParagraph(request, response, bookDAO, paragraphDAO);
             } else if (action.equals("getHistory")){
                 actionGetHistory(request, response, userDAO, userBookHistoryDAO);
@@ -108,6 +109,9 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("displayParaEdit")){
                 actionDisplayParaEdit(request, response, paragraphDAO, bookDAO);
             } else if (action.equals("addChoiceToPara")){
+                actionAddChoiceToPara(request, response, paragraphDAO);
+            }else if(action.equals("deleteParagraph")){
+                actionDeleteParagraph(request, response, paragraphDAO, choiceDAO);
                 actionAddChoiceToPara(request, response, paragraphDAO);
             } else if(action.equals("isChoiceValid")) {
                 actionIsChoiceValid(request, response, choiceDAO);
@@ -479,7 +483,7 @@ public class Controleur extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Book created</title>");
+            out.println("<title>Paragraph created</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Le paragraphe " + paragraphTitle + " a bien été créé! </h1>");
@@ -488,6 +492,36 @@ public class Controleur extends HttpServlet {
             out.println("</html>");
         }
     }
+    
+ private void actionDeleteParagraph(HttpServletRequest request,
+        HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO) throws IOException{
+        int idBook = Integer.parseInt(request.getParameter("idB"));
+        int idPara = Integer.parseInt(request.getParameter("idP"));
+        //On s'assure qu'il n'y a pas de choix après le paragraphe à supprimer
+        List<Paragraph> choices = choiceDAO.getListChoices(idBook, idPara);
+        if(choices.isEmpty()){
+            // On supprime les choix qui renvoie vers le paragraphe à supprimer
+            List<Paragraph> predecessorChoices = choiceDAO.getListPredecessorChoices(idBook, idPara);
+            for (Paragraph choice : predecessorChoices){
+                choiceDAO.suppressChoice(idBook, choice.getId(), idPara);
+            }
+            paragraphDAO.deleteParagraph(idBook, idPara);
+            try (PrintWriter out = response.getWriter()) {
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Paragraph deleted</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Le paragraphe a bien été supprimé! </h1>");
+            out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
+            out.println("</body>");
+            out.println("</html>");
+            }
+        }
+        
+        
+ }
 
 private void actionAddUserInvit(HttpServletRequest request,
         HttpServletResponse response, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException {
@@ -561,7 +595,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
 
-private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO)
+    private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO)
                throws ServletException, IOException{
         int idBook = Integer.parseInt(request.getParameter("idBook"));
         int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
