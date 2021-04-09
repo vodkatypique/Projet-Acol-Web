@@ -14,9 +14,13 @@
         <a href="controleur">Retour au menu d'accueil</a>
         
         <h2> ${para.title} </h2>
-        <a href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}">Modifier</a>
-        <!-- TO DO afficher Modifier uniquement si le user est l'auteur -->  
-        <div class='paragraphText'>${para.text}</div>
+        <p>paragraphe écrit par ${para.author}.</p>
+        <p>      <c:if test="${para.author.equals(utilisateur)}">
+                    <a href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}">Modifier le contenu du paragraphe</a>
+        </c:if>
+        </p>
+         <p><div class='paragraphText'>${para.text}</div></p>
+         
         
         <jsp:include page="/controleur?action=getChoices&idBook=${book.id}&idPara=${para.id}" />
         <c:forEach items="${choices}" var="choice"> <!-- ce sont des paragraphes -->

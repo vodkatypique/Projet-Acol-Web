@@ -40,7 +40,12 @@ public class Paragraph {
    {
        return this.text;
    }
-
+   
+   public boolean getIsEnd()
+   {
+       return this.isEnd;
+   }
+   
     @Override
     public String toString() {
         return "Paragraphe{" + "id=" + numParagraph + ", auteur=" + author + ", titre=" + paragraphTitle + ", text=" + text + '}';

@@ -1,4 +1,4 @@
-function paragraphManager(lien) {
+function addChoice(lien) {
     "use strict";
      var tr = lien.parentElement.parentElement; // ligne du tableau contenant le lien
      var table = tr.parentElement;
@@ -21,3 +21,17 @@ function paragraphManager(lien) {
      new_tr.appendChild(new_th2);
      table.insertBefore(new_tr, tr);
   }
+  
+
+function blockChoice(checkbox){
+    
+            var table = document.getElementsByTagName("table");
+            var listInput = table[0].getElementsByTagName("input");
+            var listButton = table[0].getElementsByTagName("button");
+            for(i=0; i < listInput.length; i++) {
+                listInput[i].disabled = checkbox.checked;
+            }
+            for(i=0; i < listButton.length; i++){
+                listButton[i].disabled = checkbox.checked;
+            }
+}   
