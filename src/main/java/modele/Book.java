@@ -7,9 +7,9 @@ public class Book {
    private String titleBook; 
    private boolean isPublished;
    private boolean isOpen;
-   private int superAuthor;
+   private String superAuthor;
 
-   public Book(int id, String titre, boolean isPublished, boolean isOpen, int superAuthor) {
+   public Book(int id, String titre, boolean isPublished, boolean isOpen, String superAuthor) {
       this.titleBook = titre;
       this.idBook = id ;
       this.isPublished = isPublished;
@@ -34,7 +34,7 @@ public class Book {
        return this.idBook;
    }
    
-   public int getSuperAuthor()
+   public String getSuperAuthor()
    {
        return this.superAuthor;
    }

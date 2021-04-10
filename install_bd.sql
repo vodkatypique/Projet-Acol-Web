@@ -16,7 +16,7 @@ CREATE TABLE Book(
     titleBook VARCHAR(50),
     isPublished INT, --boolean
     isOpen INT, --boolean
-    superAuthor INT,
+    superAuthor VARCHAR(50),
     CONSTRAINT pk_id_book PRIMARY KEY (idBook)
 );
 
@@ -80,8 +80,17 @@ CREATE SEQUENCE SeqUser;
 -- Remplissage de la base de donneés
 --------------------------------------------------------------------------------
 
+INSERT INTO UserTable(idUser, login, password)
+VALUES (SeqUser.NEXTVAL, 'Thibault', '2ec75386bb0d5b1fb510b1a60c1b5ad7e0599250000e03c9ae4ac44e6c57e485');
+INSERT INTO UserTable(idUser, login, password)
+VALUES (SeqUser.NEXTVAL, 'Mathieu', '1d6442ddcfd9db1ff81df77cbefcd5afcc8c7ca952ab3101ede17a84b866d3f3');
+INSERT INTO UserTable(idUser, login, password)
+VALUES (SeqUser.NEXTVAL, 'vodka', 'ba2a9145222781aa216c27cab0056c1ee4f407e291f302f2be5d934b0de84706');
+
+
+
 INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
-VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek !', 1, 1);
+VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek !', 1, 1, 'Thibault');
 
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
 VALUES (SeqBook.CURRVAL, 1, 'Il était une fois, dans un marée,',  
@@ -108,22 +117,13 @@ Au moins, vous ne vous êtes pas fait manger. Vous avez gagné !',
  'Mathieu', 1, 1, 1);
 
 INSERT INTO Book(idBook, titleBook, isPublished, isOpen, superAuthor)
-VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek 2 !', 0, 1, 1);
+VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek 2 !', 0, 1, 'Thibault');
 INSERT INTO Book(idBook, titleBook, isPublished, isOpen, superAuthor)
-VALUES (SeqBook.NEXTVAL, 'La forêt maudite', 0, 0, 1);
+VALUES (SeqBook.NEXTVAL, 'La forêt maudite', 0, 0, 'Mathieu');
 
 
 -- TODO rajouter des histoires pour les livres 2 et 3, ouvertes ou non
 
-
-
-
-INSERT INTO UserTable(idUser, login, password)
-VALUES (SeqUser.NEXTVAL, 'Thibault', '2ec75386bb0d5b1fb510b1a60c1b5ad7e0599250000e03c9ae4ac44e6c57e485');
-INSERT INTO UserTable(idUser, login, password)
-VALUES (SeqUser.NEXTVAL, 'Mathieu', '1d6442ddcfd9db1ff81df77cbefcd5afcc8c7ca952ab3101ede17a84b866d3f3');
-INSERT INTO UserTable(idUser, login, password)
-VALUES (SeqUser.NEXTVAL, 'vodka', 'ba2a9145222781aa216c27cab0056c1ee4f407e291f302f2be5d934b0de84706');
 
 
 INSERT INTO UserAccess(idBook, idUser)

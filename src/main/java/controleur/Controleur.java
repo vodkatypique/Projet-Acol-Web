@@ -294,7 +294,16 @@ public class Controleur extends HttpServlet {
     int idB = Integer.parseInt(request.getParameter("idBook"));
     Book book = bookDAO.getBook(idB);
     int idP = Integer.parseInt(request.getParameter("idPara"));
+    //List<Paragraph> paragraphBeingRead = new ArrayList<Paragraph>();
     Paragraph para = paragraphDAO.getParagraph(idB, idP);
+    
+    //paragraphBeingRead.add(para);
+    // il faut concaténer les paragraphes tant qu'il n'y a que que un choix.
+    //int choiceNumber = 1;
+    //boolean concat = false;
+    //while(choiceNumber == 1) {
+    //    concat = true;
+    //}
     request.setAttribute("bookBeingRead", book);
     request.setAttribute("paragraphBeingRead", para);
     
@@ -504,7 +513,7 @@ public class Controleur extends HttpServlet {
         String title = request.getParameter("title");
         String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
         int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
-        int idBook = bookDAO.addBook(title, idConnectedUser);
+        int idBook = bookDAO.addBook(title, loginConnectedUser);
         request.setAttribute("idBook", idBook);
         userAccessDAO.addNewAccess(idBook, idConnectedUser);
         //request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
