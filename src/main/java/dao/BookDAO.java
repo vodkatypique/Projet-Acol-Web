@@ -122,4 +122,33 @@ public class BookDAO extends AbstractDataBaseDAO {
             throw new DAOException("Erreur BD  dans BookDAO (suppressBook) " + e.getMessage(), e);
         }       
     }
-}
+    
+        /**
+     * Modifie l'ouvrage d'identifiant id avec le nouvel auteur et le nouveau
+     * titre spécifiés dans la table bibliographie.
+     */
+    public boolean inversePublication(int id, boolean toSet) {        
+        try (
+            Connection conn = getConn();
+            PreparedStatement st = conn.prepareStatement
+                ("SELECT * FROM Paragraph WHERE idBook = ? AND isEnd = 1"); 
+            PreparedStatement st2 = conn.prepareStatement
+                ("UPDATE Book SET isPublished = ? WHERE idBook = ?"); )
+        {
+            if(toSet == true) { // On souhaite publier => il faut vérif qu'il existe bien un isEnd
+                 st.setInt(1, id);
+                 ResultSet rs = st.executeQuery();
+                 if(!rs.next()) { // il n'y a pas de paragraphe de conclusion => impossible de publier
+                     return false;
+                 }
+            }
+            st2.setBoolean(1, toSet);
+            st2.setInt(2, id);
+            st2.executeUpdate();
+            return true;
+            
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans BookDAO (inversePublication) " + e.getMessage(), e);
+        }    
+    }
+ }   
