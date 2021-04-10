@@ -46,7 +46,15 @@ public class Paragraph {
        return this.isEnd;
    }
    
-    @Override
+   public boolean getIsAccessible(){
+       return this.isAccessible;
+   }
+   
+  public boolean getIsValidate(){
+       return this.isValidate;
+   }
+   
+   @Override
     public String toString() {
         return "Paragraphe{" + "id=" + numParagraph + ", auteur=" + author + ", titre=" + paragraphTitle + ", text=" + text + '}';
     }

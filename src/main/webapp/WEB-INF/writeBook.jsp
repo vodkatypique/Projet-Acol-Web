@@ -50,7 +50,7 @@
                 </p>
                 <textarea name="paragraphContent" style="resize: none; width: 600px; height: 300px;" 
                           required><% if(request.getAttribute("paragraph")!=null) { %>${paragraph.text}<%}%></textarea>
-                 <% if(request.getAttribute("paragraph")==null) { %>
+                          <% if(request.getAttribute("paragraph")==null || !((Paragraph) request.getAttribute("paragraph")).getIsValidate()) { %>
                 <table>
                     <tr>
                         <th>Choix</th>
