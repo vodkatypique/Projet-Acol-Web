@@ -44,17 +44,13 @@
         <p><a href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}&isNew=true">Ajouter un nouveau choix</a></p
         <p>---------------</p> <!-- faire du CSS plus propre -->
         
-        <!-- test TO DO : si l'utilisateur est l'auteur du paragraphe initial : 
-        Changer les autorisations
-        Publier l'histoire (si pas publiée ; grisé si pas de isEnd ou alors renvoie une erreur si pas de isEnd) / dépublier
-        -->
-        <c:if test="${book.superAuthor == utilisateur.id}">
-            <a href='controleur?action=changeInvitations&idBook=${book.id}'></a>
+        <c:if test="${book.superAuthor.equals(utilisateur)}">
+            <a href='controleur?action=changeInvitations&idBook=${book.id}'>Changer les invitations</a>
             <% String textToDisplay = "Publier l'histoire";%>
             <c:if test="${book.isPublished == true}">
                 <% textToDisplay = "Dépublier l'histoire";%>
             </c:if>
-            <button type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}$isPublished=${book.isPublished}"><%=textToDisplay%></button>
+            <button type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}&isPublished=${book.isPublished}'"><%=textToDisplay%></button>
         </c:if></p>
         
         <c:choose>
@@ -64,13 +60,13 @@
                 </div>
            </c:when>
 
-            <c:when test = "${pubCode == 0}"> <!-- Pas otherwise car isPubError peut aussi être null -->
+            <c:when test = "${pubCode == 0}">
                 <div class='green'>
                     L'histoire a bien été dépubliée !
                 </div>
            </c:when>  
             
-            <c:when test = "${pubCode == 1}"> <!-- Pas otherwise car isPubError peut aussi être null -->
+            <c:when test = "${pubCode == 1}">
                 <div class='green'>
                     L'histoire a bien été publiée !
                 </div>
