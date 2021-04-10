@@ -105,6 +105,7 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("getHistory")){
                 actionGetHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
+                
                 actionSaveHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("displayParaEdit")){
                 actionDisplayParaEdit(request, response, paragraphDAO, bookDAO);
@@ -352,10 +353,9 @@ public class Controleur extends HttpServlet {
                             request.setAttribute("paragraphes", val);
                             
                             
-                            String history = "";
-                            for (String str : listCookie) {
-                                history += str + "_";
-                            }
+                            String history = gson.toJson(val);
+                           
+                            history = history.replaceAll("\"", "\\\\\'");
                             request.setAttribute("history", history);
                             System.out.println("cookie2");
                             }
@@ -385,10 +385,10 @@ public class Controleur extends HttpServlet {
                   //cookie.setValue(gson.toJson(listCookie));
                   //response.addCookie(cookie);
                   request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
-                            String history = "";
-                            for (String str : listCookie) {
-                                history += str + "_";
-                            }
+                            String history = cookie.getValue();
+                           
+                            history = history.replaceAll("\"", "\\\\\'");
+                            request.setAttribute("history", history);
                   request.setAttribute("history", history);
          
                  }
@@ -444,12 +444,19 @@ public class Controleur extends HttpServlet {
 
     private void actionSaveHistory(HttpServletRequest request,
         HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) throws ServletException, IOException{
+        
+        System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
         String login = request.getParameter("utilisateur");
         int idU = userDAO.getIdFromLogin(login);
         request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
         userBookHistoryDAO.suppressHistory(idB, idU);
+        
+        
         String histo = request.getParameter("history");
+        
+        
+        
         userBookHistoryDAO.addHistory(idB, idU, histo);
         try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
