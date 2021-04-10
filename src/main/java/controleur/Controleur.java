@@ -680,40 +680,45 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            int numNextParagraph = 0;
            int numParagraphConditional = 0;
            String author = (String) request.getSession().getAttribute("utilisateur");
-           boolean isConditional = Boolean.parseBoolean(request.getParameter("isConditional")); // TO DO
            boolean isNew = Boolean.parseBoolean(request.getParameter("isNew"));
+           boolean isError = false;
            if (isNew) {
                String choiceText = request.getParameter("choiceText");
-               boolean isError = paragraphDAO.isParagraphWithThisTitle(choiceText);
+               isError = paragraphDAO.isParagraphWithThisTitle(choiceText);
                if (isError) {
                    request.setAttribute("previousError", choiceText);
+                   request.setAttribute("idBook", idBook);
+                   request.setAttribute("numParagraph", numParagraph);
                    List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
                    request.setAttribute("listPara", list);
                    request.getRequestDispatcher("/WEB-INF/addNewChoice.jsp").forward(request, response);
+               } else {
+                    numNextParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
+                    paragraphDAO.addParagraph(idBook,
+                                              numNextParagraph,
+                                              choiceText,
+                                              "La suite de l'histoire n'a pas encore été écrite",
+                                              author,
+                                              false,
+                                              false,
+                                              false);
                }
-               numNextParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
-               paragraphDAO.addParagraph(idBook,
-                                         numNextParagraph,
-                                         choiceText,
-                                         "La suite de l'histoire n'a pas encore été écrite",
-                                         author,
-                                         false,
-                                         false,
-                                         false);
            } else { // on relie à un paragraphe déjà existant
                numNextParagraph = Integer.parseInt(request.getParameter("numNextParagraph"));
            }
            //request.setAttribute("valeurMystere", request.getParameter("isConditional"));
            //request.getRequestDispatcher("/WEB-INF/test.jsp").forward(request, response);
-           
-           if(request.getParameter("isConditional") != null) {
-               numParagraphConditional = Integer.parseInt(request.getParameter("conditionalToWhich"));
+           if(!isError) {
+                if(request.getParameter("isConditional") != null) {
+                    numParagraphConditional = Integer.parseInt(request.getParameter("conditionalToWhich"));
+                }
+                choiceDAO.addChoice(idBook, numParagraph, numNextParagraph, numParagraphConditional);
+                paragraphDAO.removeIsEnd(idBook, numParagraph); // le paragraphe a un choix donc ce n'est plus une conclusion
+                request.setAttribute("book", bookDAO.getBook(idBook));
+                request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
+                request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
            }
-           choiceDAO.addChoice(idBook, numParagraph, numNextParagraph, numParagraphConditional);
-           paragraphDAO.removeIsEnd(idBook, numParagraph); // le paragraphe a un choix donc ce n'est plus une conclusion
-           request.setAttribute("book", bookDAO.getBook(idBook));
-           request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
-           request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
+          
     }
     
     private void actionIsChoiceValid(HttpServletRequest request, HttpServletResponse response, ChoiceDAO choiceDAO) throws ServletException, IOException {
