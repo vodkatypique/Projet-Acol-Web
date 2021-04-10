@@ -58,13 +58,19 @@
         </c:if></p>
         
         <c:choose>
-           <c:when test = "${isPubError == true}">
+           <c:when test = "${pubCode == -1}">
                 <div class='red'>
                     Erreur de publication : l'histoire doit contenir au moins un paragraphe qui "est une fin de l'histoire" !
                 </div>
            </c:when>
 
-            <c:when test = "${isPubError == false}"> <!-- Pas otherwise car isPubError peut aussi être null -->
+            <c:when test = "${pubCode == 0}"> <!-- Pas otherwise car isPubError peut aussi être null -->
+                <div class='green'>
+                    L'histoire a bien été dépubliée !
+                </div>
+           </c:when>  
+            
+            <c:when test = "${pubCode == 1}"> <!-- Pas otherwise car isPubError peut aussi être null -->
                 <div class='green'>
                     L'histoire a bien été publiée !
                 </div>

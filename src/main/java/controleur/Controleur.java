@@ -814,7 +814,8 @@ private void actionGetInvitedUsers(HttpServletRequest request,
        int idPara = Integer.parseInt(request.getParameter("idPara"));
        boolean isPublished = Boolean.parseBoolean(request.getParameter("idPublished"));
        boolean isError = !(bookDAO.inversePublication(idBook, !isPublished));
-       request.setAttribute("isPubError", isError);
+       int pubCode = (isError)? -1 : (isPublished)? 0 : 1; // 1 = publiée avec succès, 0 = dépubliée avec succès, -1 = échec
+       request.setAttribute("pubCode", pubCode);
        request.setAttribute("book", bookDAO.getBook(idBook));
        request.setAttribute("para", paragraphDAO.getParagraph(idBook, idPara));
        request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
