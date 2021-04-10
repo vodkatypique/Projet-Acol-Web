@@ -16,6 +16,7 @@ CREATE TABLE Book(
     titleBook VARCHAR(50),
     isPublished INT, --boolean
     isOpen INT, --boolean
+    superAuthor INT,
     CONSTRAINT pk_id_book PRIMARY KEY (idBook)
 );
 
@@ -106,10 +107,10 @@ Il vous hurle dessus et vous demande de partir de son marée.
 Au moins, vous ne vous êtes pas fait manger. Vous avez gagné !',
  'Mathieu', 1, 1, 1);
 
-INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
-VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek 2 !', 0, 1);
-INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
-VALUES (SeqBook.NEXTVAL, 'La forêt maudite', 0, 0);
+INSERT INTO Book(idBook, titleBook, isPublished, isOpen, superAuthor)
+VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek 2 !', 0, 1, 1);
+INSERT INTO Book(idBook, titleBook, isPublished, isOpen, superAuthor)
+VALUES (SeqBook.NEXTVAL, 'La forêt maudite', 0, 0, 1);
 
 
 -- TODO rajouter des histoires pour les livres 2 et 3, ouvertes ou non

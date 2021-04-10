@@ -24,7 +24,7 @@ public class BookDAO extends AbstractDataBaseDAO {
             ResultSet rs = st.executeQuery("SELECT * FROM Book");
             while (rs.next()) {
                 Book livre =
-                    new Book(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
+                    new Book(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"), rs.getInt("superAuthor"));
                 result.add(livre);
             }
         } catch (SQLException e) {
@@ -37,16 +37,17 @@ public class BookDAO extends AbstractDataBaseDAO {
      * Ajoute l'ouvrage d'auteur et de titre spécifiés dans la table
      * bibliographie.
      */
-    public int addBook(String titre) {
+    public int addBook(String titre, int superAuthor) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("INSERT INTO Book (IdBook, titleBook, isPublished, isOpen) VALUES (SeqBook.NEXTVAL, ?, ?, ?)");
+	       ("INSERT INTO Book (IdBook, titleBook, isPublished, isOpen, superAuthor) VALUES (SeqBook.NEXTVAL, ?, ?, ?, ?)");
             Statement st2 = conn.createStatement();
 	     ) {
             st.setString(1, titre);
             st.setBoolean(2, false);
             st.setBoolean(3, false);
+            st.setInt(4, superAuthor);
             st.executeUpdate();
             /* Select this book, it is the book with the higher ID*/
             ResultSet rs = st2.executeQuery("SELECT * FROM Book ORDER BY idBook DESC  FETCH FIRST 1 ROWS ONLY");
@@ -72,7 +73,7 @@ public class BookDAO extends AbstractDataBaseDAO {
             st.setInt(1, id);
             ResultSet rs = st.executeQuery();
             if(rs.next()){
-               return new Book(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"));
+               return new Book(rs.getInt("idBook"), rs.getString("titleBook"), rs.getBoolean("isPublished"), rs.getBoolean("isOpen"), rs.getInt("superAuthor"));
             } else {
                 throw new DAOException("Erreur BD : id = " + id +" n'est pas dans la base.");
             }
@@ -85,12 +86,12 @@ public class BookDAO extends AbstractDataBaseDAO {
      * Modifie l'ouvrage d'identifiant id avec le nouvel auteur et le nouveau
      * titre spécifiés dans la table bibliographie.
      */
-    public void modifyBook(int id, String title, boolean isPublished, boolean isOpen) {
+    public void modifyBook(int id, String title, boolean isPublished, boolean isOpen, int superAuthor) {
         String error;
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
-	       ("UPDATE Book SET titleBook = ? , isPublished = ?, isOpen = ? WHERE idBook = ?");
+	       ("UPDATE Book SET titleBook = ? , isPublished = ?, isOpen = ?, superAuthor = ? WHERE idBook = ?");
 	     ) {
             st.setString(1, title);
             st.setBoolean(2, isPublished);

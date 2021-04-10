@@ -7,12 +7,14 @@ public class Book {
    private String titleBook; 
    private boolean isPublished;
    private boolean isOpen;
+   private int superAuthor;
 
-   public Book(int id, String titre, boolean isPublished, boolean isOpen) {
+   public Book(int id, String titre, boolean isPublished, boolean isOpen, int superAuthor) {
       this.titleBook = titre;
       this.idBook = id ;
       this.isPublished = isPublished;
       this.isOpen = isOpen;
+      this.superAuthor = superAuthor;
    }
 
    public boolean getIsPublished() { // besoin d'avoir le mm nom pour utiliser les $ jsp
@@ -30,6 +32,11 @@ public class Book {
    public int getId()
    {
        return this.idBook;
+   }
+   
+   public int getSuperAuthor()
+   {
+       return this.superAuthor;
    }
 
     @Override

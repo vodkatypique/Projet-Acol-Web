@@ -502,10 +502,10 @@ public class Controleur extends HttpServlet {
 
     private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
         String title = request.getParameter("title");
-        int idBook = bookDAO.addBook(title);
-        request.setAttribute("idBook", idBook);
         String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
         int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
+        int idBook = bookDAO.addBook(title, idConnectedUser);
+        request.setAttribute("idBook", idBook);
         userAccessDAO.addNewAccess(idBook, idConnectedUser);
         //request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
