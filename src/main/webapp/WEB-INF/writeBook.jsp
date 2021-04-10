@@ -4,6 +4,9 @@
     Author     : nicolas
 --%>
 
+<%@page import="dao.ChoiceDAO"%>
+<%@page import="modele.Paragraph"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 
@@ -62,16 +65,24 @@
                     </tr>
                     <tr>
                         <th>
-                           <button onclick="paragraphManager(this)" form="">Ajouter</button>
+                           <button onclick="addChoice(this)" form="">Ajouter</button>
                        </th>
                        <th></th>
                     </tr>
                 </table>
                 <% } %>
+                  <input type="checkbox" id="isEnd" name="isEnd" onclick="blockChoice(this)">
+                  <label for="isEnd">est une fin de l'histoire</label>
                 <p>
                 <input type="submit" value="Valider le paragraphe">
                 </p>
             </form>
+                <% if(request.getAttribute("paragraph") != null) { %>
+                 <jsp:include page="/controleur?action=getChoices&idBook=${book.id}&idPara=${paragraph.id}" />
+                 <c:if test="${choices.isEmpty()}">
+                  <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}'"> supprimer ce paragraphe </button>
+                 </c:if>
+                  <%} %>
             </p>
             
             

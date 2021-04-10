@@ -132,7 +132,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
     /**
      * Supprime l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public void suppressParagraph(int idBook, int idPara) {
+    public void deleteParagraph(int idBook, int idPara) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
@@ -197,5 +197,20 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
         } catch (SQLException e) {
             throw new DAOException("Erreur BD dans ParagraphDAO (isParagraphWithThisTitle) " + e.getMessage(), e);
 	}
+    }
+    
+    public void removeIsEnd(int idBook, int idPara) {
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("UPDATE Paragraph SET isEnd = ? WHERE idBook = ? AND numParagraph = ?");
+	     ) {
+            st.setBoolean(1, false);
+            st.setInt(2, idBook);
+            st.setInt(3, idPara);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans ParagraphDAO (removeIsEnd) " + e.getMessage(), e);
+        }
     }
 }
