@@ -345,7 +345,13 @@ public class Controleur extends HttpServlet {
                             //cookie.setValue(gson.toJson(listCookie)); 
                             //response.addCookie(cookie);
                             
-                            request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+                            ArrayList val = gson.fromJson(cookie.getValue(), ArrayList.class);
+                            val.addAll(gson.fromJson(cookie2.getValue(), ArrayList.class));
+                            System.out.println(val);                  
+                            
+                            request.setAttribute("paragraphes", val);
+                            
+                            
                             String history = "";
                             for (String str : listCookie) {
                                 history += str + "_";
