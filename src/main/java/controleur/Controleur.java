@@ -78,8 +78,7 @@ public class Controleur extends HttpServlet {
         UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
         ChoiceDAO choiceDAO = new ChoiceDAO(dsChoice);
         UserBookHistoryDAO userBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
-
-        System.out.println("HELLO");
+        
         try {
             // actions depuis la page ppale = liste des livres disponibles
             if (action == null || action.equals("accueil")) {
@@ -115,6 +114,10 @@ public class Controleur extends HttpServlet {
                 actionAddChoiceToPara(request, response, paragraphDAO);
             } else if(action.equals("isChoiceValid")) {
                 actionIsChoiceValid(request, response, choiceDAO);
+            } else if(action.equals("changeInvitations")) {
+                actionChangeInvitations(request, response);
+            } else if(action.equals("publishOrUnpublish")) {
+                actionPublishOrUnpublish(request, response, bookDAO, paragraphDAO);
             }
             else {
                 invalidParameters(request, response);
@@ -617,6 +620,12 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         request.setAttribute("idBook", idBook);
         request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
+    
+    private void actionChangeInvitations(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        int idBook = Integer.parseInt(request.getParameter("idBook"));
+        request.setAttribute("idBook", idBook);
+        request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
+    }
 
     private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO)
                throws ServletException, IOException{
@@ -741,6 +750,16 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            res = !(choiceDAO.isAlreadyHere(idBook, numParagraph, numNextParagraph));
        }
        request.setAttribute("isChoiceValid", res);
-       
+    }
+    
+    private void actionPublishOrUnpublish(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException {
+       int idBook = Integer.parseInt(request.getParameter("idBook"));
+       int idPara = Integer.parseInt(request.getParameter("idPara"));
+       boolean isPublished = Boolean.parseBoolean(request.getParameter("idPublished"));
+       boolean isError = !(bookDAO.inversePublication(idBook, !isPublished));
+       request.setAttribute("isPubError", isError);
+       request.setAttribute("book", bookDAO.getBook(idBook));
+       request.setAttribute("para", paragraphDAO.getParagraph(idBook, idPara));
+       request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
 }

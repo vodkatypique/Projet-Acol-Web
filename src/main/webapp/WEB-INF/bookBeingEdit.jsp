@@ -6,6 +6,7 @@
 <html>
     <head>
 	<meta charset="UTF-8"/>
+        <link rel="stylesheet" type="text/css" href="styleInviteAuthors.css" />
 	<title>Lecture du livre ${book.title}</title>
     </head>
     <body>
@@ -15,10 +16,7 @@
         
         <h2> ${para.title} </h2>
         <p>paragraphe écrit par ${para.author}.</p>
-        <p>      <c:if test="${para.author.equals(utilisateur)}">
-                    <a href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}">Modifier le contenu du paragraphe</a>
-        </c:if>
-        </p>
+
          <p><div class='paragraphText'>${para.text}</div></p>
          
         
@@ -27,8 +25,40 @@
             <div class='choice'><a href='controleur?action=getParagraph&view=edit&idBook=${book.id}&idPara=${choice.id}'>${choice.title}</a></div>
         </c:forEach> 
         <p></p>
-        <p></p>
+        <p>---------------</p> <!-- faire du CSS plus propre -->
+        <p><c:if test="${para.author.equals(utilisateur)}">
+                <a href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}">Modifier le contenu du paragraphe</a>
+        </c:if></p>
         <p><a href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}&isNew=false">Ajouter un choix lié à un paragraphe déjà existant</a></p>
-        <p><a href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}&isNew=true">Ajouter un nouveau choix</a></p>
+        <p><a href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}&isNew=true">Ajouter un nouveau choix</a></p
+        <p>---------------</p> <!-- faire du CSS plus propre -->
+        
+        <!-- test TO DO : si l'utilisateur est l'auteur du paragraphe initial : 
+        Changer les autorisations
+        Publier l'histoire (si pas publiée ; grisé si pas de isEnd ou alors renvoie une erreur si pas de isEnd) / dépublier
+        -->
+        <c:if test="${book.superAuthor == utilisateur.id}">
+            <a href='controleur?action=changeInvitations&idBook=${book.id}'></a>
+            <% String textToDisplay = "Publier l'histoire";%>
+            <c:if test="${book.isPublished == true}">
+                <% textToDisplay = "Dépublier l'histoire";%>
+            </c:if>
+            <button type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}$isPublished=${book.isPublished}"><%=textToDisplay%></button>
+        </c:if></p>
+        
+        <c:choose>
+           <c:when test = "${isPubError == true}">
+                <div class='red'>
+                    Erreur de publication : l'histoire doit contenir au moins un paragraphe qui "est une fin de l'histoire" !
+                </div>
+           </c:when>
+
+            <c:when test = "${isPubError == false}"> <!-- Pas otherwise car isPubError peut aussi être null -->
+                <div class='green'>
+                    L'histoire a bien été publiée !
+                </div>
+           </c:when>  
+        </c:choose>
+        
     </body>
 </html>
