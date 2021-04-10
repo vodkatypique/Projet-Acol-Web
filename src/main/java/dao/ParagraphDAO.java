@@ -121,7 +121,21 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
             st.setBoolean(6, isAccess);
             st.setInt(7, idBook);
             st.setInt(8, numParagraph);
-            System.out.println("SQL: " + st.executeUpdate());
+            st.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans ParagraphDAO (modifyParagraph)" + e.getMessage(), e);
+        }
+    }
+    
+    public void lockParagraph(int idBook, int numParagraph) {
+        String error;
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("UPDATE Paragraph SET isAccessible = 0 WHERE idBook = ? AND numParagraph = ?");
+	     ) {
+            st.setInt(1, idBook);   
+            st.setInt(2, numParagraph);
         } catch (SQLException e) {
             throw new DAOException("Erreur BD dans ParagraphDAO (modifyParagraph)" + e.getMessage(), e);
         }

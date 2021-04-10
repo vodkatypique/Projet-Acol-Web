@@ -104,6 +104,7 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("getHistory")){
                 actionGetHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
+                
                 actionSaveHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("displayParaEdit")){
                 actionDisplayParaEdit(request, response, paragraphDAO, bookDAO);
@@ -319,7 +320,7 @@ public class Controleur extends HttpServlet {
                     if(listCookie.contains(Integer.toString(idP))){
                         System.out.println("COKK");
                         for (Cookie cookie2 : cookies) {
-                            if (cookie2.getName().equals("temp")) {
+                            if (cookie2.getName().equals("temp"+Integer.toString(idB))) {
                                 System.out.println("TEMP");
                                 System.out.println(listCookie.size());
                                 System.out.println(listCookie.size());
@@ -348,11 +349,16 @@ public class Controleur extends HttpServlet {
                             //cookie.setValue(gson.toJson(listCookie)); 
                             //response.addCookie(cookie);
                             
-                            request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
-                            String history = "";
-                            for (String str : listCookie) {
-                                history += str + "_";
-                            }
+                            ArrayList val = gson.fromJson(cookie.getValue(), ArrayList.class);
+                            val.addAll(gson.fromJson(cookie2.getValue(), ArrayList.class));
+                            System.out.println(val);                  
+                            
+                            request.setAttribute("paragraphes", val);
+                            
+                            
+                            String history = gson.toJson(val);
+                           
+                            history = history.replaceAll("\"", "\\\\\'");
                             request.setAttribute("history", history);
                             System.out.println("cookie2");
                             }
@@ -362,7 +368,7 @@ public class Controleur extends HttpServlet {
                         System.out.println("ICI");
                         listCookie.add(Integer.toString(idP));
                         for (Cookie cookie2 : cookies) {
-                            if (cookie2.getName().equals("temp")) {
+                            if (cookie2.getName().equals("temp"+Integer.toString(idB))) {
                                 ArrayList<String> listCookieTemp = gson.fromJson(cookie2.getValue(), ArrayList.class);
                                 if (listCookieTemp.size()>0){
                                     System.out.println(listCookieTemp.get(0));
@@ -382,11 +388,24 @@ public class Controleur extends HttpServlet {
                   //cookie.setValue(gson.toJson(listCookie));
                   //response.addCookie(cookie);
                   request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
-                            String history = "";
-                            for (String str : listCookie) {
-                                history += str + "_";
+                  System.out.println("ON EST LA");
+                  
+                  for (Cookie cookie2 : cookies) {
+                            if (cookie2.getName().equals("temp"+Integer.toString(idB))) {
+                                ArrayList val = gson.fromJson(cookie.getValue(), ArrayList.class);
+                            val.addAll(gson.fromJson(cookie2.getValue(), ArrayList.class));
+                            System.out.println(val);                  
+                            
+                            request.setAttribute("paragraphes", val);
+                            
+                            
+                            String history = gson.toJson(val);
+                           
+                            history = history.replaceAll("\"", "\\\\\'");
+                            request.setAttribute("history", history);
+
                             }
-                  request.setAttribute("history", history);
+                  }
          
                  }
                     
@@ -403,7 +422,7 @@ public class Controleur extends HttpServlet {
             //System.out.println(gson.toJson(listCookie));
             response.addCookie(cookie);
             Cookie cookieTemp;
-            cookieTemp = new Cookie("temp", gson.toJson(listCookieTemp));
+            cookieTemp = new Cookie("temp"+Integer.toString(idB), gson.toJson(listCookieTemp));
             request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
             response.addCookie(cookieTemp);
         }
@@ -429,24 +448,46 @@ public class Controleur extends HttpServlet {
     }
 
     private void actionGetHistory(HttpServletRequest request,
-        HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) {
+        HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) throws ServletException, IOException {
         String login = request.getParameter("utilisateur");
         int idU = userDAO.getIdFromLogin(login);
         request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
         String res = userBookHistoryDAO.getHistory(idB, idU);
         request.setAttribute("history", res);
-        // TODO l'ajouter dans les cookies ?
+        System.out.println(res);
+        
+        final GsonBuilder builder = new GsonBuilder();
+        final Gson gson = builder.create();
+            Cookie cookie = new Cookie(Integer.toString(idB), res.replaceAll("\'", "\""));
+            //System.out.println(gson.toJson(listCookie));
+            response.addCookie(cookie);
+            Cookie cookieTemp;
+            cookieTemp = new Cookie("temp"+idB, "[]");
+            request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+            response.addCookie(cookieTemp);
+        
+        response.addCookie(cookie);
+        System.out.println(request.getRequestURI());
+        
+        response.sendRedirect(request.getContextPath());
     }
 
     private void actionSaveHistory(HttpServletRequest request,
         HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) throws ServletException, IOException{
+        
+        System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
         String login = request.getParameter("utilisateur");
         int idU = userDAO.getIdFromLogin(login);
         request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
         userBookHistoryDAO.suppressHistory(idB, idU);
+        
+        
         String histo = request.getParameter("history");
+        
+        
+        
         userBookHistoryDAO.addHistory(idB, idU, histo);
         try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
@@ -464,10 +505,10 @@ public class Controleur extends HttpServlet {
 
     private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
         String title = request.getParameter("title");
-        int idBook = bookDAO.addBook(title);
-        request.setAttribute("idBook", idBook);
         String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
         int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
+        int idBook = bookDAO.addBook(title, idConnectedUser);
+        request.setAttribute("idBook", idBook);
         userAccessDAO.addNewAccess(idBook, idConnectedUser);
         //request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
@@ -481,10 +522,9 @@ public class Controleur extends HttpServlet {
            String paragraphTitle = request.getParameter("paragraphTitle");
            String paragraphContent = request.getParameter("paragraphContent");
            String author = (String) request.getSession().getAttribute("utilisateur");
-            // TO DO  Ajouter les booléens au formulaire
-           boolean isEnd = false;
-           boolean isValidate = false;
-           boolean isAccess = false;
+           boolean isEnd = Boolean.parseBoolean(request.getParameter("isEnd"));
+           boolean isValidate = true;
+           boolean isAccess = true;
            paragraphDAO.addParagraph(idBook,
                                      numParagraph,
                                      paragraphTitle,
@@ -494,16 +534,18 @@ public class Controleur extends HttpServlet {
                                      isValidate,
                                      isAccess);
            String[] choices = request.getParameterValues("choice");
-           for(int i = 0; i < choices.length; i++) {
-               paragraphDAO.addParagraph(idBook,
-                                         numParagraph + i + 1,
-                                         choices[i],
-                                         "La suite de l'histoire n'a pas encore été écrite",
-                                         author,
-                                         false,
-                                         false,
-                                         false);
-                choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
+           if (choices != null){
+                for(int i = 0; i < choices.length; i++) {
+                    paragraphDAO.addParagraph(idBook,
+                                              numParagraph + i + 1,
+                                              choices[i],
+                                              "La suite de l'histoire n'a pas encore été écrite",
+                                              author,
+                                              false,
+                                              false,
+                                              true);
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
+                }
            }
            try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
@@ -635,6 +677,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         request.setAttribute("paragraph", paragraph);
         Book book = bookDAO.getBook(idBook);
         request.setAttribute("book", book);
+        paragraphDAO.lockParagraph(idBook, numParagraph);
         request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
     }
 
@@ -645,6 +688,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
            request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
+    
        private void actionPostEditParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
@@ -663,7 +707,20 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                      isEnd,
                                      isValidate,
                                      isAccess);
-
+           String[] choices = request.getParameterValues("choice");
+           if (choices != null){
+                for(int i = 0; i < choices.length; i++) {
+                    paragraphDAO.addParagraph(idBook,
+                                              numParagraph + i + 1,
+                                              choices[i],
+                                              "La suite de l'histoire n'a pas encore été écrite",
+                                              author,
+                                              false,
+                                              false,
+                                              true);
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
+                }
+           }
            try (PrintWriter out = response.getWriter()) {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
