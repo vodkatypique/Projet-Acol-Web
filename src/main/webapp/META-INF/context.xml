@@ -65,5 +65,18 @@
     username="lepaillt"
   />
   
+  <Resource
+    auth="Container"
+    type="javax.sql.DataSource"
+    driverClassName="oracle.jdbc.OracleDriver"
+    url="jdbc:oracle:thin:@oracle1.ensimag.fr:1521:oracle1"
+    maxTotal="2"
+    maxIdle="1"
+    maxWaitMillis="20000"
+    name="jdbc/UserBookHistory"
+    password="lepaillt"
+    username="lepaillt"
+  />
+  
   <CookieProcessor className="org.apache.tomcat.util.http.LegacyCookieProcessor" />
   </Context>

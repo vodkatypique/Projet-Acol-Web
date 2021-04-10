@@ -131,7 +131,7 @@ public class Controleur extends HttpServlet {
         ChoiceDAO choiceDAO = new ChoiceDAO((dsChoice));
         UserDAO userDAO = new UserDAO(dsUser);
         UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
-        UserBookHistoryDAO UserBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
+        UserBookHistoryDAO userBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
 
         if (action.equals("createNewBook")) {
             actionCreateNewBook(request, response, bookDAO, userDAO, userAccessDAO);
@@ -153,7 +153,7 @@ public class Controleur extends HttpServlet {
         }
         else if(action.equals("uninviteUser")) {
             actionUninviteUser(request, response, userDAO, userAccessDAO);
-        }
+        } 
         else if(action.equals("uninviteEveryUser")) {
             actionUninviteEveryUser(request, response, userDAO, userAccessDAO);
         }
@@ -419,17 +419,30 @@ public class Controleur extends HttpServlet {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         String res = userBookHistoryDAO.getHistory(idB, idU);
         request.setAttribute("history", res);
+        // TODO l'ajouter dans les cookies ?
     }
 
     private void actionSaveHistory(HttpServletRequest request,
-        HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) {
+        HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) throws ServletException, IOException{
         String login = request.getParameter("utilisateur");
         int idU = userDAO.getIdFromLogin(login);
         request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
-        // userBookHistoryDAO.suppressHistory(idB, idU);
+        userBookHistoryDAO.suppressHistory(idB, idU);
         String histo = request.getParameter("history");
         userBookHistoryDAO.addHistory(idB, idU, histo);
+        try (PrintWriter out = response.getWriter()) {
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>History created</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1> L'historique a bien été sauvegardé! </h1>");
+            out.println("<a href=\"controleur?action=accueil\">Retour à l'accueil</a>");
+            out.println("</body>");
+            out.println("</html>");
+        }
     }
 
     private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
