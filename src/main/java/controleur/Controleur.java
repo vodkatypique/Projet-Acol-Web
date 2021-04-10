@@ -278,7 +278,16 @@ public class Controleur extends HttpServlet {
          List<String> authors = paragraphDAO.findAuthors(iB);
          request.setAttribute("authors", authors);
      }
-
+    
+    private HttpServletResponse setALtoCookie(ArrayList liste, Cookie cookie, HttpServletResponse response){
+        final GsonBuilder builder = new GsonBuilder();
+        final Gson gson = builder.create();
+        
+        cookie.setValue(gson.toJson(liste));
+        response.addCookie(cookie);
+        return response;
+    }
+    
     private void actionRead(HttpServletRequest request, 
         HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException {
     int idB = Integer.parseInt(request.getParameter("idBook"));
@@ -302,7 +311,7 @@ public class Controleur extends HttpServlet {
                     final GsonBuilder builder = new GsonBuilder();
                     final Gson gson = builder.create();
                     ArrayList<String> listCookie = gson.fromJson(cookie.getValue(), ArrayList.class);
-                    System.out.println(listCookie);
+                   
                     
                     if(listCookie.contains(Integer.toString(idP))){
                         System.out.println("COKK");
@@ -321,20 +330,21 @@ public class Controleur extends HttpServlet {
                                         )
                                 );
                                 
-                                System.out.println(listCookie);
-                                System.out.println(listCookie.indexOf(Integer.toString(idP))+1);
+                                
                                 
                                 listCookie = new ArrayList<String>(listCookie.subList(
                                         0,
                                         listCookie.indexOf(Integer.toString(idP))+1));
                                 
-                            System.out.println(gson.toJson(listCookieTemp));
-                            System.out.println(gson.toJson(listCookie));
-                            cookie2.setValue(gson.toJson(listCookieTemp));
-                            response.addCookie(cookie2);
-                            cookie.setValue(gson.toJson(listCookie)); 
                             
-                            response.addCookie(cookie);
+                            setALtoCookie(listCookieTemp, cookie2, response);
+                            //cookie2.setValue(gson.toJson(listCookieTemp));
+                            //response.addCookie(cookie2);
+                            
+                            setALtoCookie(listCookie, cookie, response);
+                            //cookie.setValue(gson.toJson(listCookie)); 
+                            //response.addCookie(cookie);
+                            
                             request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
                             String history = "";
                             for (String str : listCookie) {
@@ -359,15 +369,15 @@ public class Controleur extends HttpServlet {
                                     } else {
                                         listCookieTemp = new ArrayList<String>();
                                     }
-                                    cookie2.setValue(gson.toJson(listCookieTemp));
-                                    response.addCookie(cookie2);
+                                    setALtoCookie(listCookieTemp, cookie2, response);
+                                    //cookie2.setValue(gson.toJson(listCookieTemp));
+                                    //response.addCookie(cookie2);
                                 }                     
                             }   
                     }
-                    
-                  cookie.setValue(gson.toJson(listCookie));      
-                  
-                  response.addCookie(cookie);
+                  setALtoCookie(listCookie, cookie, response);
+                  //cookie.setValue(gson.toJson(listCookie));
+                  //response.addCookie(cookie);
                   request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
                             String history = "";
                             for (String str : listCookie) {
