@@ -89,7 +89,7 @@ VALUES (SeqUser.NEXTVAL, 'vodka', 'ba2a9145222781aa216c27cab0056c1ee4f407e291f30
 
 
 
-INSERT INTO Book(idBook, titleBook, isPublished, isOpen)
+INSERT INTO Book(idBook, titleBook, isPublished, isOpen, superAuthor)
 VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek !', 1, 1, 'Thibault');
 
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
