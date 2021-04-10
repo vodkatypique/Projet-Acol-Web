@@ -385,11 +385,24 @@ public class Controleur extends HttpServlet {
                   //cookie.setValue(gson.toJson(listCookie));
                   //response.addCookie(cookie);
                   request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
-                            String history = cookie.getValue();
+                  System.out.println("ON EST LA");
+                  
+                  for (Cookie cookie2 : cookies) {
+                            if (cookie2.getName().equals("temp")) {
+                                ArrayList val = gson.fromJson(cookie.getValue(), ArrayList.class);
+                            val.addAll(gson.fromJson(cookie2.getValue(), ArrayList.class));
+                            System.out.println(val);                  
+                            
+                            request.setAttribute("paragraphes", val);
+                            
+                            
+                            String history = gson.toJson(val);
                            
                             history = history.replaceAll("\"", "\\\\\'");
                             request.setAttribute("history", history);
-                  request.setAttribute("history", history);
+
+                            }
+                  }
          
                  }
                     
@@ -432,14 +445,29 @@ public class Controleur extends HttpServlet {
     }
 
     private void actionGetHistory(HttpServletRequest request,
-        HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) {
+        HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) throws ServletException, IOException {
         String login = request.getParameter("utilisateur");
         int idU = userDAO.getIdFromLogin(login);
         request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
         String res = userBookHistoryDAO.getHistory(idB, idU);
         request.setAttribute("history", res);
-        // TODO l'ajouter dans les cookies ?
+        System.out.println(res);
+        
+        final GsonBuilder builder = new GsonBuilder();
+        final Gson gson = builder.create();
+            Cookie cookie = new Cookie(Integer.toString(idB), res.replaceAll("\'", "\""));
+            //System.out.println(gson.toJson(listCookie));
+            response.addCookie(cookie);
+            Cookie cookieTemp;
+            cookieTemp = new Cookie("temp", "[]");
+            request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+            response.addCookie(cookieTemp);
+        
+        response.addCookie(cookie);
+        System.out.println(request.getContextPath());
+        
+        response.sendRedirect(request.getContextPath());
     }
 
     private void actionSaveHistory(HttpServletRequest request,
