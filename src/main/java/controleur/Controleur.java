@@ -317,7 +317,7 @@ public class Controleur extends HttpServlet {
                     if(listCookie.contains(Integer.toString(idP))){
                         System.out.println("COKK");
                         for (Cookie cookie2 : cookies) {
-                            if (cookie2.getName().equals("temp")) {
+                            if (cookie2.getName().equals("temp"+Integer.toString(idB))) {
                                 System.out.println("TEMP");
                                 System.out.println(listCookie.size());
                                 System.out.println(listCookie.size());
@@ -365,7 +365,7 @@ public class Controleur extends HttpServlet {
                         System.out.println("ICI");
                         listCookie.add(Integer.toString(idP));
                         for (Cookie cookie2 : cookies) {
-                            if (cookie2.getName().equals("temp")) {
+                            if (cookie2.getName().equals("temp"+Integer.toString(idB))) {
                                 ArrayList<String> listCookieTemp = gson.fromJson(cookie2.getValue(), ArrayList.class);
                                 if (listCookieTemp.size()>0){
                                     System.out.println(listCookieTemp.get(0));
@@ -388,7 +388,7 @@ public class Controleur extends HttpServlet {
                   System.out.println("ON EST LA");
                   
                   for (Cookie cookie2 : cookies) {
-                            if (cookie2.getName().equals("temp")) {
+                            if (cookie2.getName().equals("temp"+Integer.toString(idB))) {
                                 ArrayList val = gson.fromJson(cookie.getValue(), ArrayList.class);
                             val.addAll(gson.fromJson(cookie2.getValue(), ArrayList.class));
                             System.out.println(val);                  
@@ -419,7 +419,7 @@ public class Controleur extends HttpServlet {
             //System.out.println(gson.toJson(listCookie));
             response.addCookie(cookie);
             Cookie cookieTemp;
-            cookieTemp = new Cookie("temp", gson.toJson(listCookieTemp));
+            cookieTemp = new Cookie("temp"+Integer.toString(idB), gson.toJson(listCookieTemp));
             request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
             response.addCookie(cookieTemp);
         }
@@ -460,12 +460,12 @@ public class Controleur extends HttpServlet {
             //System.out.println(gson.toJson(listCookie));
             response.addCookie(cookie);
             Cookie cookieTemp;
-            cookieTemp = new Cookie("temp", "[]");
+            cookieTemp = new Cookie("temp"+idB, "[]");
             request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
             response.addCookie(cookieTemp);
         
         response.addCookie(cookie);
-        System.out.println(request.getContextPath());
+        System.out.println(request.getRequestURI());
         
         response.sendRedirect(request.getContextPath());
     }
