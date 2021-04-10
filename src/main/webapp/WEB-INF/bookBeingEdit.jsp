@@ -24,7 +24,18 @@
         
         <jsp:include page="/controleur?action=getChoices&idBook=${book.id}&idPara=${para.id}" />
         <c:forEach items="${choices}" var="choice"> <!-- ce sont des paragraphes -->
-            <div class='choice'><a href='controleur?action=getParagraph&view=edit&idBook=${book.id}&idPara=${choice.id}'>${choice.title}</a></div>
+            <c:choose>
+                <c:when test="${choice.isValidate}">
+                    <div class='choice'><a href='controleur?action=getParagraph&view=edit&idBook=${book.id}&idPara=${choice.id}'>${choice.title}</a></div>
+                </c:when>
+                <c:otherwise>
+                    <div class='choice'>
+                        <p>${choice.title} <button <c:if test="${choice.isAccessible}">disabled</c:if> 
+                                                  onclick="location.href='controleur?action=editParagraph&idBook=${book.id}&numParagraph=${choice.id}';">
+                                                  Ecrire ce choix</button><p>
+                    </div>                    
+                </c:otherwise>
+            </c:choose>
         </c:forEach> 
         <p></p>
         <p></p>

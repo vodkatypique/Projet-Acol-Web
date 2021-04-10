@@ -519,10 +519,9 @@ public class Controleur extends HttpServlet {
            String paragraphTitle = request.getParameter("paragraphTitle");
            String paragraphContent = request.getParameter("paragraphContent");
            String author = (String) request.getSession().getAttribute("utilisateur");
-            // TO DO  Ajouter les booléens au formulaire
-           boolean isEnd = false;
-           boolean isValidate = false;
-           boolean isAccess = false;
+           boolean isEnd = Boolean.parseBoolean(request.getParameter("isEnd"));
+           boolean isValidate = true;
+           boolean isAccess = true;
            paragraphDAO.addParagraph(idBook,
                                      numParagraph,
                                      paragraphTitle,
@@ -532,16 +531,18 @@ public class Controleur extends HttpServlet {
                                      isValidate,
                                      isAccess);
            String[] choices = request.getParameterValues("choice");
-           for(int i = 0; i < choices.length; i++) {
-               paragraphDAO.addParagraph(idBook,
-                                         numParagraph + i + 1,
-                                         choices[i],
-                                         "La suite de l'histoire n'a pas encore été écrite",
-                                         author,
-                                         false,
-                                         false,
-                                         false);
-                choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
+           if (choices != null){
+                for(int i = 0; i < choices.length; i++) {
+                    paragraphDAO.addParagraph(idBook,
+                                              numParagraph + i + 1,
+                                              choices[i],
+                                              "La suite de l'histoire n'a pas encore été écrite",
+                                              author,
+                                              false,
+                                              false,
+                                              true);
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
+                }
            }
            try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
@@ -667,6 +668,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         request.setAttribute("paragraph", paragraph);
         Book book = bookDAO.getBook(idBook);
         request.setAttribute("book", book);
+        paragraphDAO.lockParagraph(idBook, numParagraph);
         request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
     }
 
@@ -677,6 +679,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
            request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
+    
        private void actionPostEditParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
@@ -695,7 +698,20 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                      isEnd,
                                      isValidate,
                                      isAccess);
-
+           String[] choices = request.getParameterValues("choice");
+           if (choices != null){
+                for(int i = 0; i < choices.length; i++) {
+                    paragraphDAO.addParagraph(idBook,
+                                              numParagraph + i + 1,
+                                              choices[i],
+                                              "La suite de l'histoire n'a pas encore été écrite",
+                                              author,
+                                              false,
+                                              false,
+                                              true);
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
+                }
+           }
            try (PrintWriter out = response.getWriter()) {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
