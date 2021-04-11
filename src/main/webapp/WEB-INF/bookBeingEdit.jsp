@@ -34,9 +34,9 @@
                 </c:when>
                 <c:otherwise>
                     <div class='choice'>
-                        <p>${choice.title} <button <c:if test="${choice.isAccessible}">disabled</c:if> 
+                        <p>${choice.title} <button <c:if test="${!choice.isAccessible}"> disabled </c:if> 
                                                   onclick="location.href='controleur?action=editParagraph&idBook=${book.id}&numParagraph=${choice.id}';">
-                                                  Ecrire ce choix</button><p>
+                                                  Ecrire ce choix  </button><p>
                     </div>                    
                 </c:otherwise>
             </c:choose>
