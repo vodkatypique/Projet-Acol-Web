@@ -4,6 +4,7 @@
 
 DROP TABLE Choice;
 DROP TABLE UserBookHistory;
+DROP TABLE UserEditingParagraph;
 DROP TABLE UserAccess;
 DROP TABLE Paragraph;
 DROP TABLE UserTable;
@@ -70,6 +71,15 @@ CREATE TABLE Choice(
     numParagraphConditional INT,
     CONSTRAINT fk_Choice_idBook FOREIGN KEY (idBook) REFERENCES Book(idBook) ON DELETE CASCADE,
     CONSTRAINT pk_Choice PRIMARY KEY (idBook, numParagraphCurrent, numParagraphNext)
+);
+
+CREATE TABLE UserEditingParagraph(
+    idUser INT NOT NULL,
+    idBook INT NOT NULL,
+    numParagraph INT NOT NULL,
+    CONSTRAINT fk_Editing_Book FOREIGN KEY (idBook) REFERENCES Book(idBook) ON DELETE CASCADE,
+    CONSTRAINT fk_Editing_UserTable FOREIGN KEY (idUser) REFERENCES UserTable(idUser) ON DELETE CASCADE,
+    CONSTRAINT pk_Editing_UserEditParagraph PRIMARY KEY (idUser, idBook, numParagraph)
 );
 
 

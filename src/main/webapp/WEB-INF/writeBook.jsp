@@ -45,8 +45,8 @@
                 <input type="text" name="paragraphTitle" 
                        <% if(request.getAttribute("paragraph")!=null) { %>
                             value="${paragraph.title}"
-                       <%}%>
-                       value="Titre du paragraphe" required>
+                       <%} else { %>
+                       value="Titre du paragraphe" <%}%> required>
                 </p>
                 <textarea name="paragraphContent" style="resize: none; width: 600px; height: 300px;" 
                           required><% if(request.getAttribute("paragraph")!=null) { %>${paragraph.text}<%}%></textarea>
@@ -77,7 +77,12 @@
                 <input type="submit" value="Valider le paragraphe">
                 </p>
             </form>
+                  
                 <% if(request.getAttribute("paragraph") != null) { %>
+                <c:if test="${!paragraph.isValidate}">
+                       <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}'"> Annuler l'écriture de ce paragraphe </button>
+                </c:if>
+ 
                  <jsp:include page="/controleur?action=getChoices&idBook=${book.id}&idPara=${paragraph.id}" />
                  <c:if test="${choices.isEmpty()}">
                   <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}'"> supprimer ce paragraphe </button>

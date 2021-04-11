@@ -41,6 +41,10 @@ public class Paragraph {
        return this.numParagraph;
    }
    
+   public int getIdBook(){
+       return this.idBook;
+   }
+   
    public String getText()
    {
        return this.text;
