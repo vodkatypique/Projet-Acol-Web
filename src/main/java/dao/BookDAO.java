@@ -110,7 +110,7 @@ public class BookDAO extends AbstractDataBaseDAO {
     /**
      * Supprime l'ouvrage d'identifiant id dans la table bibliographie.
      */
-    public void suppressBook(int id) {
+    public void deleteBook(int id) {
         try (
 	     Connection conn = getConn();
 	     PreparedStatement st = conn.prepareStatement
@@ -119,7 +119,7 @@ public class BookDAO extends AbstractDataBaseDAO {
             st.setInt(1, id);
             st.executeUpdate();
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD  dans BookDAO (suppressBook) " + e.getMessage(), e);
+            throw new DAOException("Erreur BD  dans BookDAO (deleteBook) " + e.getMessage(), e);
         }       
     }
     
