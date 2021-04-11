@@ -6,6 +6,9 @@ import java.util.List;
 import javax.sql.DataSource;
 import modele.Book;
 import dao.ParagraphDAO;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.http.HttpServletResponse;
 import modele.Paragraph;
 import modele.UserBookHistory;
 
@@ -20,7 +23,7 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
      * Renvoie l'historique d'un utilisateur sur un livre sous la forme
      * d'une liste des numéros des différents paragraphes.
      */
-    public String getHistory(int idBook, int idUser) {
+    public String getHistory(int idBook, int idUser, HttpServletResponse response) throws IOException {
         List<Integer> result = new ArrayList<Integer>();
         try (
 	     Connection conn = getConn();
@@ -37,11 +40,23 @@ public class UserBookHistoryDAO extends AbstractDataBaseDAO {
                String str = rs.getString("history");
                return str;
             } else {
-                throw new DAOException("Erreur BD : idBook = " + idBook + "idUser" + idUser + " n'est pas dans la base history.");
+                try (PrintWriter out = response.getWriter()) {
+                    out.println("<!DOCTYPE html>");
+                    out.println("<html>");
+                    out.println("<head>");
+                    out.println("<title>Download failed !</title>");
+                    out.println("</head>");
+                    out.println("<body>");
+                    out.println("<h1> Aucun historique n'a été enregistré sur votre login. </h1>");
+                    out.println("<a href=\"controleur?action=accueil\">Retour à l'accueil</a>");
+                    out.println("</body>");
+                    out.println("</html>");
+                    return "";
+                }
             }
         } catch (SQLException e) {
             throw new DAOException("Erreur BD dans UserBookHistoryDAO (getHistory) " + e.getMessage(), e);
-	}
+        }
     }
 
     /**

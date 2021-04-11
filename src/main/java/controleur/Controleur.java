@@ -476,7 +476,7 @@ public class Controleur extends HttpServlet {
         int idU = userDAO.getIdFromLogin(login);
         request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
-        String res = userBookHistoryDAO.getHistory(idB, idU);
+        String res = userBookHistoryDAO.getHistory(idB, idU, response);
         request.setAttribute("history", res);
         System.out.println(res);
         
