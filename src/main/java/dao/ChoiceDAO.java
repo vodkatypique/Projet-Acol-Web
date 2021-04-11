@@ -169,4 +169,38 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
         }
     }
     
+        public boolean isDeletable(int idBook, int idParaNext) {
+                // Idée : On regarde tous les paragraphes non finaux pr lesquels idParaNext est un paragraphe inconditionnel
+                // Puis on regarde pour chacun de ces paragraphes s'ils y a d'autres choix inconditionnels
+        try (
+            Connection conn = getConn();
+            PreparedStatement st = conn.prepareStatement
+                ("SELECT P.numParagraph FROM Choice C JOIN Paragraph P " +
+"                 ON C.idBook = P.idBook AND C.numParagraphCurrent = P.numParagraph " +
+"                 WHERE C.idBook = ? AND C.numParagraphNext = ? AND C.numParagraphConditional = -1 AND P.isEnd = 0"); 
+            PreparedStatement st2 = conn.prepareStatement
+                ("SELECT *  FROM Choice " +
+"                WHERE idBook = ? AND numParagraphConditional = -1 AND numParagraphNext != ? AND numParagraphCurrent = ?"); )
+        {
+                 st.setInt(1, idBook);
+                 st.setInt(2, idParaNext);
+                 //st2.setInt(1, idBook);
+                 //st2.setInt(2, idParaNext);
+                 ResultSet rs = st.executeQuery();
+                 while(rs.next()) {
+                     int numCur = rs.getInt("numParagraph");
+                     st2.setInt(1, idBook);
+                     st2.setInt(2, idParaNext);
+                     st2.setInt(3, numCur);
+                     ResultSet rs2 = st2.executeQuery();
+                     if(!(rs.next())) { // S'il n'y a pas d'autres choix inconditionnels pour ce paragraphe là, c'est mort (pas supprimable)
+                         return false;
+                     }
+                 }
+                return true;
+            
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans ChoiceDAO (isDeletable) " + e.getMessage(), e);
+        }    
+    }    
 }
