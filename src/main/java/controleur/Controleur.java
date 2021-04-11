@@ -536,13 +536,19 @@ public class Controleur extends HttpServlet {
 
     private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
         String title = request.getParameter("title");
-        String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
-        int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
-        int idBook = bookDAO.addBook(title, loginConnectedUser);
-        request.setAttribute("idBook", idBook);
-        request.setAttribute("idPara", -1);
-        userAccessDAO.addNewAccess(idBook, idConnectedUser);
-        request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
+        boolean isAlready = bookDAO.isAlreadyWithTitle(title);
+        if(isAlready) {
+            request.setAttribute("errorTitle", title);
+            request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+        } else {
+             String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
+            int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
+            int idBook = bookDAO.addBook(title, loginConnectedUser);
+            request.setAttribute("idBook", idBook);
+            request.setAttribute("idPara", -1);
+            userAccessDAO.addNewAccess(idBook, idConnectedUser);
+            request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
+        }
     }
 
 
@@ -881,7 +887,6 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                     numParagraphConditional = Integer.parseInt(request.getParameter("conditionalToWhich"));
                 }
                 choiceDAO.addChoice(idBook, numParagraph, numNextParagraph, numParagraphConditional);
-                paragraphDAO.removeIsEnd(idBook, numParagraph); // le paragraphe a un choix donc ce n'est plus une conclusion
                 request.setAttribute("book", bookDAO.getBook(idBook));
                 request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
                 request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
