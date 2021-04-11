@@ -816,35 +816,26 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                      isEnd,
                                      isValidate,
                                      isAccess);
-                String[] choices = request.getParameterValues("choice");
-                String[] conditions = request.getParameterValues("condition");
-
-                if (choices != null){
-                     for(int i = 0; i < choices.length; i++) {
-                         paragraphDAO.addParagraph(idBook,
-                                                   numParagraph + i + 1,
-                                                   choices[i],
-                                                   "La suite de l'histoire n'a pas encore été écrite",
-                                                   author,
-                                                   false,
-                                                   false,
-                                                   true);
-                          choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, Integer.parseInt(conditions[i]));
-                     }
-                     userEditingParagraphDAO.deleteEditing(idBook, numParagraph);
-                     try (PrintWriter out = response.getWriter()) {
-                          out.println("<!DOCTYPE html>");
-                          out.println("<html>");
-                          out.println("<head>");
-                          out.println("<title>Book created</title>");
-                          out.println("</head>");
-                          out.println("<body>");
-                          out.println("<h1>Le paragraphe \"" + paragraphTitle + "\" a bien été modifié! </h1>");
-                          out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "\">Retour à l'édition</a>");
-                          out.println("</body>");
-                          out.println("</html>");
-                     }
-                 }
+           String[] choices = request.getParameterValues("choice");
+           String[] conditions = request.getParameterValues("condition");
+           String[] alreadyExist = request.getParameterValues("isAlreadyExist");
+           if (choices != null){
+                for(int i = 0; i < choices.length; i++) {
+                    if(alreadyExist[i].equals("true")){
+                        int numExist = Integer.parseInt(choices[i]);
+                        choiceDAO.addChoice(idBook, numParagraph, numExist, Integer.parseInt(conditions[i]));
+                    } else {
+                    paragraphDAO.addParagraph(idBook,
+                                              numParagraph + i + 1,
+                                              choices[i],
+                                              "La suite de l'histoire n'a pas encore été écrite",
+                                              author,
+                                              false,
+                                              false,
+                                              true);
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, Integer.parseInt(conditions[i]));
+                    }
+                }
            }
        }
 
