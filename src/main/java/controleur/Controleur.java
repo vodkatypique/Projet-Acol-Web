@@ -128,8 +128,10 @@ public class Controleur extends HttpServlet {
                 actionGetTypeOpen(request, response, bookDAO);
             } else if (action.equals("getInvitedUsers")) {
                 actionGetInvitedUsers(request, response, userDAO, userAccessDAO);
-              } else if(action.equals("cancelEditParagraph")){
+            } else if(action.equals("cancelEditParagraph")){
                   actionCancelEditParagraph(request, response, userEditingParagraphDAO, paragraphDAO, userDAO);
+            } else if(action.equals("deleteBook")){
+                  actionDeleteBook(request, response, bookDAO);
             }
             else {
                 invalidParameters(request, response);
@@ -923,5 +925,11 @@ private void actionGetInvitedUsers(HttpServletRequest request,
        boolean isOpen = bookDAO.getOpen(idBook);
        String typeOpen = (isOpen)? "ouverte" : "sur invitation";
        request.setAttribute("typeOpen", typeOpen);
+    }
+    
+    private void actionDeleteBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO) throws ServletException, IOException {
+       int idBook = Integer.parseInt(request.getParameter("idBook"));
+       bookDAO.deleteBook(idBook);
+       actionEdition(request, response, bookDAO);
     }
 }

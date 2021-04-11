@@ -59,6 +59,12 @@
                 <% textToDisplay = "Dépublier l'histoire";%>
             </c:if>
             <button type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}&isPublished=${book.isPublished}'"><%=textToDisplay%></button>
+            <table>
+                <tr>
+                    <td><button type='button' onclick="location.href = 'controleur?action=deleteBook&idBook=${book.id}'">Supprimer ce livre</button></td>
+                    <td><div class='orange'>Attention, cette action est irréversible !</div></td>
+                </tr>
+            </table>
         </c:if>
         
         <c:choose>
@@ -80,6 +86,6 @@
                 </div>
            </c:when>  
         </c:choose>
-        
+            
     </body>
 </html>
