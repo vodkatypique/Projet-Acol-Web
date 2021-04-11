@@ -8,6 +8,7 @@
 <html>
     <head>
 	<meta charset="UTF-8"/>
+        <link rel="stylesheet" type="text/css" href="styleInviteAuthors.css" />
         <% Book book = (Book) request.getAttribute("bookBeingRead");%>
         <% List<Paragraph> para = (ArrayList) request.getAttribute("paragraphsBeingRead");%> 
         <% request.setAttribute("para", request.getAttribute("para"));%> 
@@ -19,6 +20,15 @@
         <%@include file="historique.jsp" %>
         
         <a href="controleur">Retour au menu d'accueil</a>
+        
+        <jsp:include page="/controleur?action=authors&idBook=<%= book.getId()%>" />
+        <p></p>
+        <div class="blue">Cette histoire a été écrite par 
+            <c:forEach items="${authors}" var="author">
+                ${author} ; 
+            </c:forEach>
+        </div>      
+        
         <h2> <%= para.get(0).getTitle() %> </h2>
         <div class='paragraphText'><%=para.get(0).getText()%></div>
         

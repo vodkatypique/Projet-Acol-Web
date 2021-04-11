@@ -14,6 +14,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="styleInviteAuthors.css" />
         <title>Ecriture d'un livre</title>
         <script src="paragraphManager.js"></script>
     </head>
@@ -27,6 +28,9 @@
                 Titre de l'histoire :  <input type="text" name="title" required/>
             <input type="submit" value="Créer" >
             </form>
+            <c:if test="${errorTitle != null}">
+                <p class="red">Erreur : le nom de livre ${errorTitle} est déjà pris !</p>
+            </c:if>
             <% } else { 
             %>  
             <h2>Livre : ${book.title}</h2>

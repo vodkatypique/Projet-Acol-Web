@@ -182,4 +182,18 @@ public class BookDAO extends AbstractDataBaseDAO {
             throw new DAOException("Erreur BD dans BookDAO (getOpen) " + e.getMessage(), e);
 	}
     }
+    
+        
+    public boolean isAlreadyWithTitle(String title) {
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement("SELECT * FROM Book WHERE titleBook=?");
+	     ) {
+            st.setString(1, title);
+            ResultSet rs = st.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans BookDAO (isAlreadyWithTitle) " + e.getMessage(), e);
+	}
+    }
  }   
