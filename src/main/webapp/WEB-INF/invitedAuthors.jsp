@@ -17,10 +17,6 @@
         <jsp:include page="/controleur?action=getInvitedUsers&idBook=${idBook}" />
         <% List<String> aau = (List<String>) request.getAttribute("alreadyAddedUsers");%>
         
-        <%--String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
-        <c:set var = "loginCU" scope = "session" value = "<%= loginConnectedUser%>"/>--%>
-        
-        
 
         
         <table>
@@ -53,31 +49,7 @@
             </p>
         </form>
         ----------------------------------------------------------
-        <form method="post" action="controleur?action=addUserInvit" accept-charset="utf-8">
-            <p>
-            <input type="hidden" name="idBook" value="${idBook}">
-            <input type="text" name="userToAdd" placeholder="Login de l'utilisateur à ajouter">
-            <input type="submit" value="Ajouter">
-            </p>
-        </form>
-        
-        <% String er = (String) request.getAttribute("errorInAddedUser");
-        boolean cond = (er != null) ;%>
-        <c:if test="<%=cond%>"> <!-- le dernier nom d'utilisateur rentré n'existe pas -->
-            <p class="red">Erreur : l'utilisateur <%=er%> n'existe pas !</p>
-        </c:if>
-            
-        <% String er2 = (String) request.getAttribute("errorInAddedUser2");
-        boolean cond2 = (er2 != null) ;%>
-        <c:if test="<%=cond2%>"> <!-- le dernier nom d'utilisateur rentré est celui de l'utilisateur connecté -->
-            <p class="blue">Ne vous inquiétez pas, vous aurez bien-sûr accès à votre propre histoire ;-)</p>
-        </c:if>
-            
-        <% String er3 = (String) request.getAttribute("errorInAddedUser3");
-        boolean cond3 = (er3 != null) ;%>
-        <c:if test="<%=cond3%>"> <!-- le dernier nom d'utilisateur rentré est déjà parmi ceux inscrits -->
-            <p class="red">Vous avez déjà ajouté <%=er3%> précédemment !</p>
-        </c:if>
+        <%@include file="addInvitCommon.jsp" %>
             
         <form method="post" action="controleur?action=endInvitedAuthors" accept-charset="utf-8">
             <p>
@@ -89,7 +61,17 @@
         <form method="post" action="controleur?action=endInvitedAuthorsOpen" accept-charset="utf-8">
             <p>
             <input type="hidden" name="idBook" value="${idBook}">
-            <input type="submit" value="Rendre l'édition de l'histoire accessible à tous les utilisateurs du site et passer à la suite">
+            <table>
+                <tr>
+                    <td>
+                        <input type="submit" value="Rendre l'histoire ouverte"> 
+                    </td>
+                    <td>
+                        <div class="orange">Attention cette action est irréversible !</div>
+                    </td>
+                </tr>
+            </table>
+             L'édition de l'histoire sera alors accessible à tous les utilisateurs du site.
             </p>
         </form>
     </body>

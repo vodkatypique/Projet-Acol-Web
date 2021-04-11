@@ -14,9 +14,15 @@
         
         <a href="controleur">Retour au menu d'accueil</a>
         
+        <jsp:include page="/controleur?action=getTypeOpen&idBook=${book.id}" />
+        
+        <p></p>
+        <div class="blue"><p>paragraphe écrit par ${para.author} ;</p>
+        Cette histoire est ${typeOpen}.
+        </div>
+        
         <h2> ${para.title} </h2>
-        <p>paragraphe écrit par ${para.author}.</p>
-
+        
          <p><div class='paragraphText'>${para.text}</div></p>
          
         
@@ -45,13 +51,15 @@
         <p>---------------</p> <!-- faire du CSS plus propre -->
         
         <c:if test="${book.superAuthor.equals(utilisateur)}">
-            <a href='controleur?action=changeInvitations&idBook=${book.id}'>Changer les invitations</a>
+            <c:if test='${typeOpen.equals("sur invitation")}'>
+                <p><a href='controleur?action=changeInvitations&idBook=${book.id}&idPara=${para.id}'>Gérer les invitations</a></p>
+            </c:if>
             <% String textToDisplay = "Publier l'histoire";%>
             <c:if test="${book.isPublished == true}">
                 <% textToDisplay = "Dépublier l'histoire";%>
             </c:if>
             <button type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}&isPublished=${book.isPublished}'"><%=textToDisplay%></button>
-        </c:if></p>
+        </c:if>
         
         <c:choose>
            <c:when test = "${pubCode == -1}">
