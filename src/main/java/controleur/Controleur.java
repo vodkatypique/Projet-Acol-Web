@@ -797,6 +797,8 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                      isValidate,
                                      isAccess);
            String[] choices = request.getParameterValues("choice");
+           String[] conditions = request.getParameterValues("condition");
+
            if (choices != null){
                 for(int i = 0; i < choices.length; i++) {
                     paragraphDAO.addParagraph(idBook,
@@ -807,7 +809,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                               false,
                                               false,
                                               true);
-                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, Integer.parseInt(conditions[i]));
                 }
            }
            userEditingParagraphDAO.deleteEditing(idBook, numParagraph);

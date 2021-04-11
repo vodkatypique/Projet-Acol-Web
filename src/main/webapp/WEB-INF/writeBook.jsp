@@ -64,12 +64,19 @@
                           <% if(request.getAttribute("paragraph")==null || !((Paragraph) request.getAttribute("paragraph")).getIsValidate()) { %>
                 <table>
                     <tr>
+                        <th></th>
                         <th>Choix</th>
                     </tr>
                     <tr>
                         <th>
+                            <label>Paragraphe déjà existant <input type="checkbox" name="isAlreadyExist"
+                                                                   value = "true" onclick="changeInputChoice(this)"/></label>
+                            <input type="hidden" name="isAlreadyExist" value="false"/>
+                        </th>
+                        <th>
                             <input type="text" name="choice" required> 
                         </th>
+                            <th><input type="hidden" name="condition" value="-1"></th>
                     </tr>
                     <tr>
                         <th>
