@@ -545,7 +545,7 @@ public class Controleur extends HttpServlet {
            String paragraphTitle = request.getParameter("paragraphTitle");
            String paragraphContent = request.getParameter("paragraphContent");
            String author = (String) request.getSession().getAttribute("utilisateur");
-           boolean isEnd = Boolean.parseBoolean(request.getParameter("isEnd"));
+           boolean isEnd = request.getParameter("isEnd") != null;
            boolean isValidate = true;
            boolean isAccess = true;
            paragraphDAO.addParagraph(idBook,
@@ -744,7 +744,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            String paragraphTitle = request.getParameter("paragraphTitle");
            String paragraphContent = request.getParameter("paragraphContent");
            String author = (String) request.getSession().getAttribute("utilisateur");
-           boolean isEnd = Boolean.parseBoolean(request.getParameter("isEnd"));
+           boolean isEnd = request.getParameter("isEnd") != null;
            boolean isValidate = true;
            boolean isAccess = true;
            paragraphDAO.modifyParagraph(idBook,
