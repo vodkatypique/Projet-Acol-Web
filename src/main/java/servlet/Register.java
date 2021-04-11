@@ -5,6 +5,7 @@
  */
 package servlet;
 
+import dao.DAOException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -94,8 +95,19 @@ public class Register extends HttpServlet {
             }
             request.getRequestDispatcher("checkuser").forward(request,response);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Registration failed</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1> Ce login est déjà pris, veuillez recommencer avec un autre login. </h1>");
+            out.println("<a href=\"controleur?action=accueil\">Retour à l'accueil</a>");
+            out.println("</body>");
+            out.println("</html>");
+            }
         }
        
     }
@@ -131,6 +143,9 @@ public class Register extends HttpServlet {
                 /* r.next() renvoie vrai si et seulement si la réponse contient au moins 1 ligne */
                 return r.next();
             }
+        }
+        catch (SQLException e) {
+            throw new SQLException("Ce login est déjà pris.", e);  
         }
 
         /* Remarque : ici le bloc "try" a l’effet suivant :
