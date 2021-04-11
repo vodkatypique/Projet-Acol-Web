@@ -792,7 +792,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            boolean isValidate = true;
            boolean isAccess = true;
            boolean isIncond = true;
-           
+
            if(!isEnd) {
                // vérif qu'il existe au moins 1 choix inconditionnel, sinon pas possible de décocher isEnd et on doit renvoyer une erreur
                isIncond = choiceDAO.isAnyInconditionalChoice(idBook, numParagraph);
@@ -803,7 +803,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                    request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
                }
            }
-           
+
            if(isIncond) {
                paragraphDAO.modifyParagraph(idBook,
                                      numParagraph,
@@ -813,19 +813,20 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                      isEnd,
                                      isValidate,
                                      isAccess);
-                String[] choices = request.getParameterValues("choice");
-                if (choices != null){
-                     for(int i = 0; i < choices.length; i++) {
-                         paragraphDAO.addParagraph(idBook,
-                                                   numParagraph + i + 1,
-                                                   choices[i],
-                                                   "La suite de l'histoire n'a pas encore été écrite",
-                                                   author,
-                                                   false,
-                                                   false,
-                                                   true);
-                          choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, -1);
-                     }
+           String[] choices = request.getParameterValues("choice");
+           String[] conditions = request.getParameterValues("condition");
+
+           if (choices != null){
+                for(int i = 0; i < choices.length; i++) {
+                    paragraphDAO.addParagraph(idBook,
+                                              numParagraph + i + 1,
+                                              choices[i],
+                                              "La suite de l'histoire n'a pas encore été écrite",
+                                              author,
+                                              false,
+                                              false,
+                                              true);
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, Integer.parseInt(conditions[i]));
                 }
                 userEditingParagraphDAO.deleteEditing(idBook, numParagraph);
                 try (PrintWriter out = response.getWriter()) {
@@ -945,7 +946,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
        String typeOpen = (isOpen)? "ouverte" : "sur invitation";
        request.setAttribute("typeOpen", typeOpen);
     }
-    
+
     private void actionDeleteBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO) throws ServletException, IOException {
        int idBook = Integer.parseInt(request.getParameter("idBook"));
        bookDAO.deleteBook(idBook);
