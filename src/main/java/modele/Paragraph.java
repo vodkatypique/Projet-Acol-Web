@@ -31,6 +31,11 @@ public class Paragraph {
       return this.paragraphTitle;
    }
    
+   public int getIdBook()
+   {
+       return this.numParagraph;
+   }
+   
    public int getId()
    {
        return this.numParagraph;

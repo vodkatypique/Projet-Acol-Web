@@ -94,7 +94,7 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("edition")){
                 actionEdition(request, response, bookDAO);
             } else if (action.equals("read")){
-                actionRead(request, response, bookDAO, paragraphDAO);
+                actionRead(request, response, bookDAO, choiceDAO, paragraphDAO);
             } else if (action.equals("getChoices")){
                 actionChoices(request, response, choiceDAO);
             } else if (action.equals("writeBook")){
@@ -293,24 +293,34 @@ public class Controleur extends HttpServlet {
     }
     
     private void actionRead(HttpServletRequest request, 
-        HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException {
+        HttpServletResponse response, BookDAO bookDAO, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException {
     int idB = Integer.parseInt(request.getParameter("idBook"));
+    request.setAttribute("idBook", idB);
     Book book = bookDAO.getBook(idB);
     int idP = Integer.parseInt(request.getParameter("idPara"));
-    //List<Paragraph> paragraphBeingRead = new ArrayList<Paragraph>();
+    request.setAttribute("idPara", idP);
+    List<Paragraph> paragraphsBeingRead = new ArrayList<Paragraph>();
     Paragraph para = paragraphDAO.getParagraph(idB, idP);
     
-    //paragraphBeingRead.add(para);
+    paragraphsBeingRead.add(para);
     // il faut concaténer les paragraphes tant qu'il n'y a que que un choix.
-    //int choiceNumber = 1;
-    //boolean concat = false;
-    //while(choiceNumber == 1) {
-    //    concat = true;
-    //}
-    request.setAttribute("bookBeingRead", book);
-    request.setAttribute("paragraphBeingRead", para);
+    List<Paragraph> listChoices = choiceDAO.getListChoices(idB, idP);
+    int choiceNumber = listChoices.size();
+    Paragraph currentP = para;
     
+    while(choiceNumber == 1) {
+        currentP = listChoices.get(0);
+        paragraphsBeingRead.add(currentP);
+        listChoices = choiceDAO.getListChoices(idB, currentP.getId());
+        choiceNumber = listChoices.size();
+    }
+    
+   
     HttpSession session = request.getSession();
+    
+    request.setAttribute("idLastPara", currentP.getId());
+    request.setAttribute("bookBeingRead", book);
+    request.setAttribute("paragraphsBeingRead", paragraphsBeingRead);
     
     if (true){
     //if (null == session.getAttribute("utilisateur")){
