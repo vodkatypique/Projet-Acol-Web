@@ -150,8 +150,8 @@ VALUES (3, 2);
 
 
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
-VALUES (1, 1, 2, NULL);
+VALUES (1, 1, 2, -1);
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
-VALUES (1, 2, 3, NULL);
+VALUES (1, 2, 3, -1);
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
-VALUES (1, 2, 4, NULL);
+VALUES (1, 2, 4, -1);

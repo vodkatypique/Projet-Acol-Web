@@ -81,6 +81,9 @@
                 <input type="checkbox" id="isEnd" name="isEnd" value="isEnd" onclick="blockChoice(this)" 
                        <c:if test="${paragraph.isEnd}"> checked </c:if> >
                   <label for="isEnd">est une fin de l'histoire</label>
+                  <c:if test="${errorIncond != null}">
+                        <p class="red">Erreur : Ce paragraphe ne peut pas ne pas être une fin de l'histoire car il est rédigé et ne propose aucun choix inconditionnel</p>
+                  </c:if>
                 <p>
                 <input type="submit" value="Valider le paragraphe">
                 </p>

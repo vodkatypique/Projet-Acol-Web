@@ -90,11 +90,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
             st.setInt(1, idBook);
             st.setInt(2, current);
             st.setInt(3, next);
-            if (conditional != 0) {
-                st.setInt(4, conditional);
-            } else {
-                st.setNull(4, Types.INTEGER);
-            }
+            st.setInt(4, conditional);
             st.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erreur BD dans ChoiceDAO (addChoice) " + e.getMessage(), e);
@@ -155,6 +151,21 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
             
         } catch (SQLException e) {
             throw new DAOException("Erreur BD dans ChoiceDAO (isAlreadyHere) " + e.getMessage(), e);
+        }
+    }
+    
+    public boolean isAnyInconditionalChoice(int idBook, int idPara) {
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("SELECT * FROM Choice WHERE idBook = ? AND numParagraphCurrent = ? AND numParagraphConditional = -1");
+	     ) {
+            st.setInt(1, idBook);
+            st.setInt(2, idPara);
+            ResultSet rs = st.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans ChoiceDAO (isAnyInconditionalChoice) " + e.getMessage(), e);
         }
     }
     
