@@ -75,7 +75,8 @@
                     </tr>
                 </table>
                 <% } %>
-                  <input type="checkbox" id="isEnd" name="isEnd" value="isEnd" onclick="blockChoice(this)">
+                <input type="checkbox" id="isEnd" name="isEnd" value="isEnd" onclick="blockChoice(this)" 
+                       <c:if test="${paragraph.isEnd}"> checked </c:if> >
                   <label for="isEnd">est une fin de l'histoire</label>
                 <p>
                 <input type="submit" value="Valider le paragraphe">
