@@ -127,6 +127,9 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
         }
     }
     
+    /**
+     * Verrouille un paragraphe indiquant qu'il est en mode édition par un utilsateur
+     */
     public void lockParagraph(int idBook, int numParagraph) {
         String error;
         try (
@@ -137,7 +140,24 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
             st.setInt(1, idBook);   
             st.setInt(2, numParagraph);
         } catch (SQLException e) {
-            throw new DAOException("Erreur BD dans ParagraphDAO (modifyParagraph)" + e.getMessage(), e);
+            throw new DAOException("Erreur BD dans ParagraphDAO (lockParagraph)" + e.getMessage(), e);
+        }
+    }
+    
+        /**
+     * Déverouille un paragraphe quand un utilisateur à fini de l'éditer
+     */
+    public void unlockParagraph(int idBook, int numParagraph) {
+        String error;
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("UPDATE Paragraph SET isAccessible = 1 WHERE idBook = ? AND numParagraph = ?");
+	     ) {
+            st.setInt(1, idBook);   
+            st.setInt(2, numParagraph);
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans ParagraphDAO (unlockParagraph)" + e.getMessage(), e);
         }
     }
     

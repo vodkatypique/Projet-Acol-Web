@@ -22,6 +22,7 @@ import modele.Paragraph;
 import modele.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dao.UserEditingParagraphDAO;
 import modele.Choice;
 
 /**
@@ -47,6 +48,9 @@ public class Controleur extends HttpServlet {
 
     @Resource(name = "jdbc/UserBookHistory")
     private DataSource dsUserBookHistory;
+    
+    @Resource(name = "jdbc/UserEditingParagraph")
+    private DataSource dsUserEditingParagraph;
 
     /* pages d’erreurs */
     private void invalidParameters(HttpServletRequest request,
@@ -78,7 +82,8 @@ public class Controleur extends HttpServlet {
         UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
         ChoiceDAO choiceDAO = new ChoiceDAO(dsChoice);
         UserBookHistoryDAO userBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
-        
+        UserEditingParagraphDAO userEditingParagraphDAO =  new UserEditingParagraphDAO(dsUserEditingParagraph);
+
         try {
             // actions depuis la page ppale = liste des livres disponibles
             if (action == null || action.equals("accueil")) {
@@ -100,7 +105,7 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("writeBook")){
                 actionWriteBook(request, response);
             } else if (action.equals("editParagraph")){  // Rentre dans le menu d'édition d'un paragraphe
-                actionGetEditParagraph(request, response, bookDAO, paragraphDAO);
+                actionGetEditParagraph(request, response, bookDAO, paragraphDAO, userEditingParagraphDAO, userDAO);
             } else if (action.equals("getHistory")){
                 actionGetHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
@@ -111,14 +116,12 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("addChoiceToPara")){
                 actionAddChoiceToPara(request, response, paragraphDAO);
             }else if(action.equals("deleteParagraph")){
-                actionDeleteParagraph(request, response, paragraphDAO, choiceDAO);
+                actionDeleteParagraph(request, response, paragraphDAO, choiceDAO, userEditingParagraphDAO);
                 actionAddChoiceToPara(request, response, paragraphDAO);
             } else if(action.equals("isChoiceValid")) {
                 actionIsChoiceValid(request, response, choiceDAO);
-            } else if(action.equals("changeInvitations")) {
-                actionChangeInvitations(request, response);
-            } else if(action.equals("publishOrUnpublish")) {
-                actionPublishOrUnpublish(request, response, bookDAO, paragraphDAO);
+            } else if(action.equals("cancelEditParagraph")){
+                actionCancelEditParagraph(request, response, userEditingParagraphDAO, paragraphDAO, userDAO);
             }
             else {
                 invalidParameters(request, response);
@@ -140,7 +143,8 @@ public class Controleur extends HttpServlet {
         UserDAO userDAO = new UserDAO(dsUser);
         UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
         UserBookHistoryDAO userBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
-
+        UserEditingParagraphDAO userEditingParagraphDAO = new UserEditingParagraphDAO((dsUserEditingParagraph));
+        
         if (action.equals("createNewBook")) {
             actionCreateNewBook(request, response, bookDAO, userDAO, userAccessDAO);
         }else if(action.equals("createParagraph")) {
@@ -157,7 +161,7 @@ public class Controleur extends HttpServlet {
         else if (action.equals("endInvitedAuthorsOpen")) {
             actionEndInvitedAuthorsOpen(request, response, bookDAO, userDAO, userAccessDAO);
         } else if(action.equals("postEditParagraph")) {
-            actionPostEditParagraph(request, response, paragraphDAO, choiceDAO, bookDAO);
+            actionPostEditParagraph(request, response, paragraphDAO, choiceDAO, bookDAO, userEditingParagraphDAO);
         }
         else if(action.equals("uninviteUser")) {
             actionUninviteUser(request, response, userDAO, userAccessDAO);
@@ -571,7 +575,8 @@ public class Controleur extends HttpServlet {
     }
     
  private void actionDeleteParagraph(HttpServletRequest request,
-        HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO) throws IOException{
+                HttpServletResponse response, ParagraphDAO paragraphDAO, 
+                ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO) throws IOException{
         int idBook = Integer.parseInt(request.getParameter("idB"));
         int idPara = Integer.parseInt(request.getParameter("idP"));
         //On s'assure qu'il n'y a pas de choix après le paragraphe à supprimer
@@ -583,6 +588,7 @@ public class Controleur extends HttpServlet {
                 choiceDAO.suppressChoice(idBook, choice.getId(), idPara);
             }
             paragraphDAO.deleteParagraph(idBook, idPara);
+            userEditingParagraphDAO.deleteEditing(idBook, idPara);
             try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -678,16 +684,39 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
 
-    private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO)
+    private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO, 
+                                                UserEditingParagraphDAO userEditingParagraphDAO, UserDAO userDAO)
                throws ServletException, IOException{
         int idBook = Integer.parseInt(request.getParameter("idBook"));
         int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
         Paragraph paragraph = paragraphDAO.getParagraph(idBook, numParagraph);
-        request.setAttribute("paragraph", paragraph);
-        Book book = bookDAO.getBook(idBook);
-        request.setAttribute("book", book);
-        paragraphDAO.lockParagraph(idBook, numParagraph);
-        request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+        int idUser = userDAO.getIdFromLogin((String) request.getSession().getAttribute("utilisateur"));
+        Paragraph editParagraph = userEditingParagraphDAO.getParagraph(idUser);
+        if(editParagraph == null || (editParagraph.getIdBook() == idBook && editParagraph.getId() == numParagraph)){
+                request.setAttribute("paragraph", paragraph);
+                Book book = bookDAO.getBook(idBook);
+                request.setAttribute("book", book);
+                paragraphDAO.lockParagraph(idBook, numParagraph);
+                if(editParagraph == null){
+                    userEditingParagraphDAO.addEditing(idUser, idBook, numParagraph);
+                }
+                request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);   
+        } else {
+            try (PrintWriter out = response.getWriter()) {
+                out.println("<!DOCTYPE html>");
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<title>Double edition</title>");
+                out.println("</head>");
+                out.println("<body>");
+                out.println("Vous êtes déjà en train d'éditer un paragraphe");
+                out.println("<a href=\"controleur?action=editParagraph&idBook=" + editParagraph.getIdBook() + "&numParagraph=" + editParagraph.getId() + "\">"
+                        + "continuer l'édition de \""+ editParagraph.getTitle() + "\"</a>");
+                out.println("</body>");
+                out.println("</html>");
+                }
+                
+        }
     }
 
     private void actionDisplayParaEdit(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, BookDAO bookDAO) throws ServletException, IOException {
@@ -698,13 +727,13 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
     
-       private void actionPostEditParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
+       private void actionPostEditParagraph(HttpServletRequest request, HttpServletResponse response, 
+               ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO, UserEditingParagraphDAO userEditingParagraphDAO) throws ServletException, IOException{
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
            String paragraphTitle = request.getParameter("paragraphTitle");
            String paragraphContent = request.getParameter("paragraphContent");
            String author = (String) request.getSession().getAttribute("utilisateur");
-            // TO DO  Ajouter les booléens au formulaire
            boolean isEnd = Boolean.parseBoolean(request.getParameter("isEnd"));
            boolean isValidate = true;
            boolean isAccess = true;
@@ -730,6 +759,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                      choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, 0); // TO DO choix disponible avec condition
                 }
            }
+           userEditingParagraphDAO.deleteEditing(idBook, numParagraph);
            try (PrintWriter out = response.getWriter()) {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
@@ -742,6 +772,20 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 out.println("</body>");
                 out.println("</html>");
                 }
+       }
+       
+       private void actionCancelEditParagraph(HttpServletRequest request, HttpServletResponse response, 
+                            UserEditingParagraphDAO userEditingParagraphDAO, ParagraphDAO paragraphDAO, UserDAO userDAO) throws IOException{
+                
+                int idBook = Integer.parseInt(request.getParameter("idB"));
+                int numParagraph = Integer.parseInt(request.getParameter("idP"));
+                String login = (String) request.getSession().getAttribute("utilisateur");
+                int idUser = userDAO.getIdFromLogin(login);
+                if(userEditingParagraphDAO.getParagraph(idUser) != null){
+                    paragraphDAO.unlockParagraph(idBook, numParagraph);
+                    userEditingParagraphDAO.deleteEditing(idUser);
+                }
+                response.sendRedirect("controleur?action=edition");
        }
        
        private void actionAddChoiceToPara(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO) throws ServletException, IOException {
@@ -786,7 +830,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                               author,
                                               false,
                                               false,
-                                              false);
+                                              true);
                }
            } else { // on relie à un paragraphe déjà existant
                numNextParagraph = Integer.parseInt(request.getParameter("numNextParagraph"));
