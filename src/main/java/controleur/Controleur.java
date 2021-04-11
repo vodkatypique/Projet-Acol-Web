@@ -117,7 +117,6 @@ public class Controleur extends HttpServlet {
                 actionAddChoiceToPara(request, response, paragraphDAO);
             }else if(action.equals("deleteParagraph")){
                 actionDeleteParagraph(request, response, paragraphDAO, choiceDAO, userEditingParagraphDAO, bookDAO);
-                actionAddChoiceToPara(request, response, paragraphDAO);
             } else if(action.equals("isChoiceValid")) {
                 actionIsChoiceValid(request, response, choiceDAO);
             } else if(action.equals("changeInvitations")) {
@@ -602,37 +601,46 @@ public class Controleur extends HttpServlet {
 
  private void actionDeleteParagraph(HttpServletRequest request,
                 HttpServletResponse response, ParagraphDAO paragraphDAO,
-                ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO, BookDAO bookDAO) throws IOException{
+                ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO, BookDAO bookDAO) throws IOException, ServletException{
         int idBook = Integer.parseInt(request.getParameter("idB"));
         int idPara = Integer.parseInt(request.getParameter("idP"));
-        //On s'assure qu'il n'y a pas de choix après le paragraphe à supprimer
-        List<Paragraph> choices = choiceDAO.getListChoices(idBook, idPara);
-        if(choices.isEmpty()){
-            // On supprime les choix qui renvoie vers le paragraphe à supprimer
-            List<Paragraph> predecessorChoices = choiceDAO.getListPredecessorChoices(idBook, idPara);
-            for (Paragraph choice : predecessorChoices){
-                choiceDAO.suppressChoice(idBook, choice.getId(), idPara);
+        
+        boolean isDeletable = choiceDAO.isDeletable(idBook, idPara);
+        if(isDeletable) {
+                    //On s'assure qu'il n'y a pas de choix après le paragraphe à supprimer
+            List<Paragraph> choices = choiceDAO.getListChoices(idBook, idPara);
+            if(choices.isEmpty()){
+                // On supprime les choix qui renvoie vers le paragraphe à supprimer
+                List<Paragraph> predecessorChoices = choiceDAO.getListPredecessorChoices(idBook, idPara);
+                for (Paragraph choice : predecessorChoices){
+                    choiceDAO.suppressChoice(idBook, choice.getId(), idPara);
+                }
+                paragraphDAO.deleteParagraph(idBook, idPara);
+                userEditingParagraphDAO.deleteEditing(idBook, idPara);
+                if(idPara == 1) { // Si on supprime le 1er paragraphe d'un livre, on supprime carrément le livre
+                    bookDAO.deleteBook(idBook);
+                }
+                try (PrintWriter out = response.getWriter()) {
+                out.println("<!DOCTYPE html>");
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<title>Paragraph deleted</title>");
+                out.println("</head>");
+                out.println("<body>");
+                out.println("<h1>Le paragraphe a bien été supprimé! </h1>");
+                if(idPara == 1) {
+                    out.println("<h2>Puisqu'il s'agissait du seul paragraphe de l'histoire, le livre a également été supprimé. </h2>");
+                }
+                out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
+                out.println("</body>");
+                out.println("</html>");
+                }
             }
-            paragraphDAO.deleteParagraph(idBook, idPara);
-            userEditingParagraphDAO.deleteEditing(idBook, idPara);
-            if(idPara == 1) { // Si on supprime le 1er paragraphe d'un livre, on supprime carrément le livre
-                bookDAO.deleteBook(idBook);
-            }
-            try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Paragraph deleted</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Le paragraphe a bien été supprimé! </h1>");
-            if(idPara == 1) {
-                out.println("<h2>Puisqu'il s'agissait du seul paragraphe de l'histoire, le livre a également été supprimé. </h2>");
-            }
-            out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
-            out.println("</body>");
-            out.println("</html>");
-            }
+        } else {
+            request.setAttribute("errorDelete", "Ce paragraphe ne peut pas être supprimé car c'est le seul choix inconditionnel d'un des paragraphes non finaux de cette histoire !");
+            request.setAttribute("book", bookDAO.getBook(idBook));
+            request.setAttribute("paragraph", paragraphDAO.getParagraph(idBook, idPara));
+            request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         }
 
 
