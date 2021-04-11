@@ -151,4 +151,35 @@ public class BookDAO extends AbstractDataBaseDAO {
             throw new DAOException("Erreur BD dans BookDAO (inversePublication) " + e.getMessage(), e);
         }    
     }
+    
+    public void makeOpen(int idBook) {
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("UPDATE Book SET isOpen = 1 WHERE idBook = ?");
+	     ) {
+            st.setInt(1, idBook);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans BookDAO (makeOpen) " + e.getMessage(), e);
+        }
+    }
+    
+    public boolean getOpen(int idBook) {
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement("SELECT isOpen FROM Book WHERE idBook=?");
+	     ) {
+            st.setInt(1, idBook);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean("isOpen");
+            }
+            else {
+                throw new DAOException("Erreur dans BookDAO (getOpen) : livre inexistant");
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans BookDAO (getOpen) " + e.getMessage(), e);
+	}
+    }
  }   

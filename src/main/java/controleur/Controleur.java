@@ -48,7 +48,7 @@ public class Controleur extends HttpServlet {
 
     @Resource(name = "jdbc/UserBookHistory")
     private DataSource dsUserBookHistory;
-    
+
     @Resource(name = "jdbc/UserEditingParagraph")
     private DataSource dsUserEditingParagraph;
 
@@ -109,7 +109,7 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("getHistory")){
                 actionGetHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
-                
+
                 actionSaveHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("displayParaEdit")){
                 actionDisplayParaEdit(request, response, paragraphDAO, bookDAO);
@@ -120,8 +120,16 @@ public class Controleur extends HttpServlet {
                 actionAddChoiceToPara(request, response, paragraphDAO);
             } else if(action.equals("isChoiceValid")) {
                 actionIsChoiceValid(request, response, choiceDAO);
-            } else if(action.equals("cancelEditParagraph")){
-                actionCancelEditParagraph(request, response, userEditingParagraphDAO, paragraphDAO, userDAO);
+            } else if(action.equals("changeInvitations")) {
+                actionChangeInvitations(request, response);
+            } else if(action.equals("publishOrUnpublish")) {
+                actionPublishOrUnpublish(request, response, bookDAO, paragraphDAO);
+            } else if(action.equals("getTypeOpen")) {
+                actionGetTypeOpen(request, response, bookDAO);
+            } else if (action.equals("getInvitedUsers")) {
+                actionGetInvitedUsers(request, response, userDAO, userAccessDAO);
+              } else if(action.equals("cancelEditParagraph")){
+                  actionCancelEditParagraph(request, response, userEditingParagraphDAO, paragraphDAO, userDAO);
             }
             else {
                 invalidParameters(request, response);
@@ -144,7 +152,7 @@ public class Controleur extends HttpServlet {
         UserAccessDAO userAccessDAO = new UserAccessDAO(dsUserAccess);
         UserBookHistoryDAO userBookHistoryDAO = new UserBookHistoryDAO(dsUserBookHistory);
         UserEditingParagraphDAO userEditingParagraphDAO = new UserEditingParagraphDAO((dsUserEditingParagraph));
-        
+
         if (action.equals("createNewBook")) {
             actionCreateNewBook(request, response, bookDAO, userDAO, userAccessDAO);
         }else if(action.equals("createParagraph")) {
@@ -156,28 +164,29 @@ public class Controleur extends HttpServlet {
                 actionGetInvitedUsers(request, response, userDAO, userAccessDAO);
         }
         else if (action.equals("endInvitedAuthors")) {
-                actionEndInvitedAuthors(request, response, bookDAO);
+                actionEndInvitedAuthors(request, response, bookDAO, paragraphDAO);
         }
         else if (action.equals("endInvitedAuthorsOpen")) {
-            actionEndInvitedAuthorsOpen(request, response, bookDAO, userDAO, userAccessDAO);
+            actionEndInvitedAuthorsOpen(request, response, bookDAO, userDAO, userAccessDAO, paragraphDAO);
         } else if(action.equals("postEditParagraph")) {
             actionPostEditParagraph(request, response, paragraphDAO, choiceDAO, bookDAO, userEditingParagraphDAO);
         }
         else if(action.equals("uninviteUser")) {
             actionUninviteUser(request, response, userDAO, userAccessDAO);
-        } 
+        }
         else if(action.equals("uninviteEveryUser")) {
             actionUninviteEveryUser(request, response, userDAO, userAccessDAO);
         }
         else if(action.equals("choiceAdded")) {
             actionChoiceAdded(request, response, paragraphDAO, bookDAO, choiceDAO);
         } else if (action.equals("getChoices")){
-                actionChoices(request, response, choiceDAO);
-            } 
+            actionChoices(request, response, choiceDAO);
+        } else if(action.equals("getTypeOpen")) {
+            actionGetTypeOpen(request, response, bookDAO);
+        }
         else {
             invalidParameters(request, response);
         }
-
     }
 
     /**
@@ -269,7 +278,7 @@ public class Controleur extends HttpServlet {
          boolean is = false;
          int iB = Integer.parseInt(request.getParameter("idBook"));
          String login = (String) request.getSession().getAttribute("utilisateur");
-         
+
          if(login != null) {
              int iU = userDAO.getIdFromLogin(login);
              System.out.println(iU);
@@ -286,17 +295,17 @@ public class Controleur extends HttpServlet {
          List<String> authors = paragraphDAO.findAuthors(iB);
          request.setAttribute("authors", authors);
      }
-    
+
     private HttpServletResponse setALtoCookie(ArrayList liste, Cookie cookie, HttpServletResponse response){
         final GsonBuilder builder = new GsonBuilder();
         final Gson gson = builder.create();
-        
+
         cookie.setValue(gson.toJson(liste));
         response.addCookie(cookie);
         return response;
     }
-    
-    private void actionRead(HttpServletRequest request, 
+
+    private void actionRead(HttpServletRequest request,
         HttpServletResponse response, BookDAO bookDAO, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException {
     int idB = Integer.parseInt(request.getParameter("idBook"));
     request.setAttribute("idBook", idB);
@@ -305,27 +314,27 @@ public class Controleur extends HttpServlet {
     request.setAttribute("idPara", idP);
     List<Paragraph> paragraphsBeingRead = new ArrayList<Paragraph>();
     Paragraph para = paragraphDAO.getParagraph(idB, idP);
-    
+
     paragraphsBeingRead.add(para);
     // il faut concaténer les paragraphes tant qu'il n'y a que que un choix.
     List<Paragraph> listChoices = choiceDAO.getListChoices(idB, idP);
     int choiceNumber = listChoices.size();
     Paragraph currentP = para;
-    
+
     while(choiceNumber == 1) {
         currentP = listChoices.get(0);
         paragraphsBeingRead.add(currentP);
         listChoices = choiceDAO.getListChoices(idB, currentP.getId());
         choiceNumber = listChoices.size();
     }
-    
-   
+
+
     HttpSession session = request.getSession();
-    
+
     request.setAttribute("idLastPara", currentP.getId());
     request.setAttribute("bookBeingRead", book);
     request.setAttribute("paragraphsBeingRead", paragraphsBeingRead);
-    
+
     if (true){
     //if (null == session.getAttribute("utilisateur")){
         request.setAttribute("idBook", idB);
@@ -338,8 +347,8 @@ public class Controleur extends HttpServlet {
                     final GsonBuilder builder = new GsonBuilder();
                     final Gson gson = builder.create();
                     ArrayList<String> listCookie = gson.fromJson(cookie.getValue(), ArrayList.class);
-                   
-                    
+
+
                     if(listCookie.contains(Integer.toString(idP))){
                         System.out.println("COKK");
                         for (Cookie cookie2 : cookies) {
@@ -348,7 +357,7 @@ public class Controleur extends HttpServlet {
                                 System.out.println(listCookie.size());
                                 System.out.println(listCookie.size());
                                 ArrayList<String> listCookieTemp = gson.fromJson(cookie2.getValue(), ArrayList.class);
-                                
+
                                 listCookieTemp.addAll(
                                         0,
                                         listCookie.subList(
@@ -356,37 +365,37 @@ public class Controleur extends HttpServlet {
                                                 listCookie.size()
                                         )
                                 );
-                                
-                                
-                                
+
+
+
                                 listCookie = new ArrayList<String>(listCookie.subList(
                                         0,
                                         listCookie.indexOf(Integer.toString(idP))+1));
-                                
-                            
+
+
                             setALtoCookie(listCookieTemp, cookie2, response);
                             //cookie2.setValue(gson.toJson(listCookieTemp));
                             //response.addCookie(cookie2);
-                            
+
                             setALtoCookie(listCookie, cookie, response);
-                            //cookie.setValue(gson.toJson(listCookie)); 
+                            //cookie.setValue(gson.toJson(listCookie));
                             //response.addCookie(cookie);
-                            
+
                             ArrayList val = gson.fromJson(cookie.getValue(), ArrayList.class);
                             val.addAll(gson.fromJson(cookie2.getValue(), ArrayList.class));
-                            System.out.println(val);                  
-                            
+                            System.out.println(val);
+
                             request.setAttribute("paragraphes", val);
-                            
-                            
+
+
                             String history = gson.toJson(val);
-                           
+
                             history = history.replaceAll("\"", "\\\\\'");
                             request.setAttribute("history", history);
                             System.out.println("cookie2");
                             }
                         }
-                        
+
                     } else {
                         System.out.println("ICI");
                         listCookie.add(Integer.toString(idP));
@@ -397,41 +406,41 @@ public class Controleur extends HttpServlet {
                                     System.out.println(listCookieTemp.get(0));
                                     if (listCookieTemp.get(0).equals(Integer.toString(idP))){
                                         listCookieTemp.remove(0);
-                                        
+
                                     } else {
                                         listCookieTemp = new ArrayList<String>();
                                     }
                                     setALtoCookie(listCookieTemp, cookie2, response);
                                     //cookie2.setValue(gson.toJson(listCookieTemp));
                                     //response.addCookie(cookie2);
-                                }                     
-                            }   
+                                }
+                            }
                     }
                   setALtoCookie(listCookie, cookie, response);
                   //cookie.setValue(gson.toJson(listCookie));
                   //response.addCookie(cookie);
                   request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
                   System.out.println("ON EST LA");
-                  
+
                   for (Cookie cookie2 : cookies) {
                             if (cookie2.getName().equals("temp"+Integer.toString(idB))) {
                                 ArrayList val = gson.fromJson(cookie.getValue(), ArrayList.class);
                             val.addAll(gson.fromJson(cookie2.getValue(), ArrayList.class));
-                            System.out.println(val);                  
-                            
+                            System.out.println(val);
+
                             request.setAttribute("paragraphes", val);
-                            
-                            
+
+
                             String history = gson.toJson(val);
-                           
+
                             history = history.replaceAll("\"", "\\\\\'");
                             request.setAttribute("history", history);
 
                             }
                   }
-         
+
                  }
-                    
+
             }
         }
         if (!cook){
@@ -450,10 +459,10 @@ public class Controleur extends HttpServlet {
             response.addCookie(cookieTemp);
         }
     }
-    
+
     request.getRequestDispatcher("/WEB-INF/bookBeingRead.jsp").forward(request, response);
     }
-    
+
     request.getRequestDispatcher("/WEB-INF/bookBeingRead.jsp").forward(request, response);
     }
 
@@ -467,7 +476,6 @@ public class Controleur extends HttpServlet {
 
     private void actionWriteBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
-        //request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
 
     private void actionGetHistory(HttpServletRequest request,
@@ -479,7 +487,7 @@ public class Controleur extends HttpServlet {
         String res = userBookHistoryDAO.getHistory(idB, idU, response);
         request.setAttribute("history", res);
         System.out.println(res);
-        
+
         final GsonBuilder builder = new GsonBuilder();
         final Gson gson = builder.create();
             Cookie cookie = new Cookie(Integer.toString(idB), res.replaceAll("\'", "\""));
@@ -489,28 +497,28 @@ public class Controleur extends HttpServlet {
             cookieTemp = new Cookie("temp"+idB, "[]");
             request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
             response.addCookie(cookieTemp);
-        
+
         response.addCookie(cookie);
         System.out.println(request.getRequestURI());
-        
+
         response.sendRedirect(request.getContextPath());
     }
 
     private void actionSaveHistory(HttpServletRequest request,
         HttpServletResponse response, UserDAO userDAO, UserBookHistoryDAO userBookHistoryDAO) throws ServletException, IOException{
-        
+
         System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
         String login = request.getParameter("utilisateur");
         int idU = userDAO.getIdFromLogin(login);
         request.setAttribute("idUser", idU);
         int idB = Integer.parseInt(request.getParameter("idBook"));
         userBookHistoryDAO.suppressHistory(idB, idU);
-        
-        
+
+
         String histo = request.getParameter("history");
-        
-        
-        
+
+
+
         userBookHistoryDAO.addHistory(idB, idU, histo);
         try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
@@ -532,8 +540,8 @@ public class Controleur extends HttpServlet {
         int idConnectedUser = userDAO.getIdFromLogin(loginConnectedUser);
         int idBook = bookDAO.addBook(title, loginConnectedUser);
         request.setAttribute("idBook", idBook);
+        request.setAttribute("idPara", -1);
         userAccessDAO.addNewAccess(idBook, idConnectedUser);
-        //request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
 
@@ -583,9 +591,9 @@ public class Controleur extends HttpServlet {
             out.println("</html>");
         }
     }
-    
+
  private void actionDeleteParagraph(HttpServletRequest request,
-                HttpServletResponse response, ParagraphDAO paragraphDAO, 
+                HttpServletResponse response, ParagraphDAO paragraphDAO,
                 ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO) throws IOException{
         int idBook = Integer.parseInt(request.getParameter("idB"));
         int idPara = Integer.parseInt(request.getParameter("idP"));
@@ -612,8 +620,8 @@ public class Controleur extends HttpServlet {
             out.println("</html>");
             }
         }
-        
-        
+
+
  }
 
 private void actionAddUserInvit(HttpServletRequest request,
@@ -629,6 +637,7 @@ private void actionAddUserInvit(HttpServletRequest request,
             request.setAttribute("errorInAddedUser3", log);
         } else {
             userAccessDAO.addNewAccess(idBook, idUser);
+            request.setAttribute("validated", log);
         }
     } else if (idUser == idConnectedUser){
         request.setAttribute("errorInAddedUser2", log);
@@ -636,7 +645,15 @@ private void actionAddUserInvit(HttpServletRequest request,
         request.setAttribute("errorInAddedUser", log);
     }
     request.setAttribute("idBook", request.getParameter("idBook"));
-    request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
+    int idPara = Integer.parseInt(request.getParameter("idPara"));
+    if(idPara == -1) { // On vient des invits de départ
+        request.setAttribute("idPara", -1);
+        request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
+    } else { // On vient des invits ajoutées après
+        request.setAttribute("idPara", request.getParameter("idPara"));
+        request.getRequestDispatcher("/WEB-INF/addNewInvit.jsp").forward(request, response);
+    }
+
 }
 
 private void actionGetInvitedUsers(HttpServletRequest request,
@@ -652,13 +669,20 @@ private void actionGetInvitedUsers(HttpServletRequest request,
     request.setAttribute("alreadyAddedUsers", list);
 }
 
-    private void actionEndInvitedAuthors(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO) throws ServletException, IOException{
-        Book book = bookDAO.getBook(Integer.parseInt(request.getParameter("idBook")));
+    private void actionEndInvitedAuthors(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException{
+        int idBook = Integer.parseInt(request.getParameter("idBook"));
+        Book book = bookDAO.getBook(idBook);
         request.setAttribute("book", book);
-        request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+        if(request.getParameter("idPara") == null) { // on vient des choix d'invitations qd on crée le livre
+            request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
+        } else { // on vient de l'ajout d'invitation après coup
+            int idPara = Integer.parseInt(request.getParameter("idPara"));
+            request.setAttribute("para", paragraphDAO.getParagraph(idBook, idPara));
+            request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
+        }
 }
 
-    private void actionEndInvitedAuthorsOpen(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
+    private void actionEndInvitedAuthorsOpen(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException{
         //rendre accessible à tous
         List<Integer> listOfIds = userDAO.getListIdUser();
         int idBook = Integer.parseInt(request.getParameter("idBook"));
@@ -667,17 +691,19 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 userAccessDAO.addNewAccess(idBook, id);
             }
         }
-        actionEndInvitedAuthors(request, response, bookDAO);
+        bookDAO.makeOpen(idBook); // On met isOpen à un et cela ne pourra plus être modifié
+        actionEndInvitedAuthors(request, response, bookDAO, paragraphDAO);
 }
-    
+
     private void actionUninviteUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
         int idBook = Integer.parseInt(request.getParameter("idBook"));
         int idUser = userDAO.getIdFromLogin(request.getParameter("loginUser"));
         userAccessDAO.removeAccess(idBook, idUser);
         request.setAttribute("idBook", idBook);
+        request.setAttribute("idPara", -1);
         request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
-    
+
     private void actionUninviteEveryUser(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
         int idBook = Integer.parseInt(request.getParameter("idBook"));
         String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
@@ -685,16 +711,19 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         userAccessDAO.removeEveryAccess(idBook);
         userAccessDAO.addNewAccess(idBook, idConnectedUser);
         request.setAttribute("idBook", idBook);
-        request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
-    }
-    
-    private void actionChangeInvitations(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        int idBook = Integer.parseInt(request.getParameter("idBook"));
-        request.setAttribute("idBook", idBook);
+        request.setAttribute("idPara", -1);
         request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
     }
 
-    private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO, 
+    private void actionChangeInvitations(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        int idBook = Integer.parseInt(request.getParameter("idBook"));
+        request.setAttribute("idBook", idBook);
+        int idPara = Integer.parseInt(request.getParameter("idPara"));
+        request.setAttribute("idPara", idPara);
+        request.getRequestDispatcher("/WEB-INF/addNewInvit.jsp").forward(request, response);
+    }
+
+    private void actionGetEditParagraph(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO,
                                                 UserEditingParagraphDAO userEditingParagraphDAO, UserDAO userDAO)
                throws ServletException, IOException{
         int idBook = Integer.parseInt(request.getParameter("idBook"));
@@ -710,7 +739,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 if(editParagraph == null){
                     userEditingParagraphDAO.addEditing(idUser, idBook, numParagraph);
                 }
-                request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);   
+                request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         } else {
             try (PrintWriter out = response.getWriter()) {
                 out.println("<!DOCTYPE html>");
@@ -725,7 +754,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 out.println("</body>");
                 out.println("</html>");
                 }
-                
+
         }
     }
 
@@ -736,8 +765,8 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
            request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
-    
-       private void actionPostEditParagraph(HttpServletRequest request, HttpServletResponse response, 
+
+       private void actionPostEditParagraph(HttpServletRequest request, HttpServletResponse response,
                ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO, UserEditingParagraphDAO userEditingParagraphDAO) throws ServletException, IOException{
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
@@ -783,10 +812,10 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 out.println("</html>");
                 }
        }
-       
-       private void actionCancelEditParagraph(HttpServletRequest request, HttpServletResponse response, 
+
+       private void actionCancelEditParagraph(HttpServletRequest request, HttpServletResponse response,
                             UserEditingParagraphDAO userEditingParagraphDAO, ParagraphDAO paragraphDAO, UserDAO userDAO) throws IOException{
-                
+
                 int idBook = Integer.parseInt(request.getParameter("idB"));
                 int numParagraph = Integer.parseInt(request.getParameter("idP"));
                 String login = (String) request.getSession().getAttribute("utilisateur");
@@ -797,7 +826,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 }
                 response.sendRedirect("controleur?action=edition");
        }
-       
+
        private void actionAddChoiceToPara(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO) throws ServletException, IOException {
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
@@ -812,7 +841,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                request.getRequestDispatcher("/WEB-INF/addChoiceAlreadyExists.jsp").forward(request, response);
            }
     }
-       
+
     private void actionChoiceAdded(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, BookDAO bookDAO, ChoiceDAO choiceDAO) throws ServletException, IOException {
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
@@ -857,9 +886,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
                 request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
            }
-          
+
     }
-    
+
     private void actionIsChoiceValid(HttpServletRequest request, HttpServletResponse response, ChoiceDAO choiceDAO) throws ServletException, IOException {
        int idBook = Integer.parseInt(request.getParameter("idBook"));
        int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
@@ -871,16 +900,23 @@ private void actionGetInvitedUsers(HttpServletRequest request,
        }
        request.setAttribute("isChoiceValid", res);
     }
-    
+
     private void actionPublishOrUnpublish(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException {
        int idBook = Integer.parseInt(request.getParameter("idBook"));
        int idPara = Integer.parseInt(request.getParameter("idPara"));
-       boolean isPublished = Boolean.parseBoolean(request.getParameter("idPublished"));
+       boolean isPublished = Boolean.parseBoolean(request.getParameter("isPublished"));
        boolean isError = !(bookDAO.inversePublication(idBook, !isPublished));
        int pubCode = (isError)? -1 : ((isPublished)? 0 : 1); // 1 = publiée avec succès, 0 = dépubliée avec succès, -1 = échec
        request.setAttribute("pubCode", pubCode);
        request.setAttribute("book", bookDAO.getBook(idBook));
        request.setAttribute("para", paragraphDAO.getParagraph(idBook, idPara));
        request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
+    }
+
+    private void actionGetTypeOpen(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO) throws ServletException, IOException {
+       int idBook = Integer.parseInt(request.getParameter("idBook"));
+       boolean isOpen = bookDAO.getOpen(idBook);
+       String typeOpen = (isOpen)? "ouverte" : "sur invitation";
+       request.setAttribute("typeOpen", typeOpen);
     }
 }
