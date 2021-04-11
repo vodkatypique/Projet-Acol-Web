@@ -681,6 +681,8 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         int idBook = Integer.parseInt(request.getParameter("idBook"));
         Book book = bookDAO.getBook(idBook);
         request.setAttribute("book", book);
+        List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
+        request.setAttribute("listPara", list);
         if(request.getParameter("idPara") == null) { // on vient des choix d'invitations qd on crée le livre
             request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         } else { // on vient de l'ajout d'invitation après coup
@@ -743,6 +745,8 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 request.setAttribute("paragraph", paragraph);
                 Book book = bookDAO.getBook(idBook);
                 request.setAttribute("book", book);
+                List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
+                request.setAttribute("listPara", list);
                 paragraphDAO.lockParagraph(idBook, numParagraph);
                 if(editParagraph == null){
                     userEditingParagraphDAO.addEditing(idUser, idBook, numParagraph);

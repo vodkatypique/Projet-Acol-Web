@@ -9,6 +9,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
+<select name="conditionalToWhich" disabled="true" id="selector" style="visibility:hidden;"> 
+                <c:forEach items="${listPara}" var="para">
+                    <c:if test="${para.id != numParagraph}"> <!-- pas conditionnel à lui-même, aucun sens -->
+                        <option value="${para.id}">${para.title}</option>
+                    </c:if>
+                </c:forEach>
+</select>
 
 <!DOCTYPE html>
 <html>
@@ -21,7 +28,7 @@
     <body>
         <h1>Menu d'édition </h1>
 
-        <%
+            <%
             if(request.getAttribute("book") == null){
             %>
             <form method="post" action="controleur?action=createNewBook" accept-charset="utf-8">
@@ -58,20 +65,16 @@
                 <table>
                     <tr>
                         <th>Choix</th>
-                        <th></th>
                     </tr>
                     <tr>
                         <th>
-                            <input type="text" name="choice" required>  <!-- TO DO retirer les choix (avec js) quand la case isEnd est cochée -->
-                        </th>
-                        <th>
+                            <input type="text" name="choice" required> 
                         </th>
                     </tr>
                     <tr>
                         <th>
                            <button onclick="addChoice(this)" form="">Ajouter</button>
                        </th>
-                       <th></th>
                     </tr>
                 </table>
                 <% } %>
