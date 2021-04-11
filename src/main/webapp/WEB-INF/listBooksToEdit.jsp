@@ -18,11 +18,11 @@
             <h2> Connectez-vous pour accéder à l'édition </h2>
          <%} else {%>
             <h2> Liste des histoires que vous pouvez éditer : </h2>
-            <table>
+            <table class="table">
                 <tr>
                     <!--Image représentant l'histoire ?-->
-                    <th>Titre</th>
-                    <th>Liste des auteurs</th>
+                    <th scope="col">Titre</th>
+                    <th scope="col">Liste des auteurs</th>
                 </tr>
                 <c:forEach items="${books}" var="book">
                     
@@ -30,7 +30,7 @@
                     <% boolean cond = (boolean) request.getAttribute("isAccess");%>
                     <c:if test="<%=cond%>">
                         <tr>
-                            <td></td>
+                            
                             <td>
                                 <a href="controleur?action=getBook&view=edit&id=${book.id}">
                                     ${book.title} 
@@ -46,7 +46,7 @@
                     </c:if>
                 </c:forEach>
             </table>
-            <a href="controleur?action=writeBook"> Commencer à écrire un nouveau livre </a>
+            <a href="controleur?action=writeBook" class="btn btn-secondary"> Commencer à écrire un nouveau livre </a>
         <%}%>
     </body>
 </html>
