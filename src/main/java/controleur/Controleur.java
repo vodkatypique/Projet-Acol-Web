@@ -673,7 +673,7 @@ public class Controleur extends HttpServlet {
                 out.println("<title>Paragraph deleted</title>");
                 out.println("</head>");
                 out.println("<body>");
-                out.println("<h1>Le paragraphe a bien été supprimé! </h1>");
+                out.println("<h1>Le paragraphe \"" + request.getParameter("title") +"\" a bien été supprimé! </h1>");
                 if(idPara == 1) {
                     out.println("<h2>Puisqu'il s'agissait du seul paragraphe de l'histoire, le livre a également été supprimé. </h2>");
                 }
@@ -946,15 +946,17 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            boolean isNew = Boolean.parseBoolean(request.getParameter("isNew"));
            boolean isError = false;
            if (isNew) {
-               String choiceText = request.getParameter("choiceText");
-               isError = paragraphDAO.isParagraphWithThisTitle(choiceText);
-               if (isError) {
-                   request.setAttribute("previousError", choiceText);
-                   request.setAttribute("idBook", idBook);
-                   request.setAttribute("numParagraph", numParagraph);
-                   List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
-                   request.setAttribute("listPara", list);
-                   request.getRequestDispatcher("/WEB-INF/addNewChoice.jsp").forward(request, response);
+                 String choiceText = request.getParameter("choiceText");
+                 if(request.getParameter("confirmation") == null) { // On est pas dans le cas de la confirmation qu'on veut créer un paragraphe du même titre
+                     isError = paragraphDAO.isParagraphWithThisTitle(choiceText);
+                 }
+                 if (isError) {
+                     request.setAttribute("previousError", choiceText);
+                     request.setAttribute("idBook", idBook);
+                     request.setAttribute("numParagraph", numParagraph);
+                     List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
+                     request.setAttribute("listPara", list);
+                     request.getRequestDispatcher("/WEB-INF/addNewChoice.jsp").forward(request, response);
                } else {
                     numNextParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
                     paragraphDAO.addParagraph(idBook,

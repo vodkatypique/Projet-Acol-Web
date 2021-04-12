@@ -225,7 +225,7 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
                      st2.setInt(2, idParaNext);
                      st2.setInt(3, numCur);
                      ResultSet rs2 = st2.executeQuery();
-                     if(!(rs.next())) { // S'il n'y a pas d'autres choix inconditionnels pour ce paragraphe là, c'est mort (pas supprimable)
+                     if(!(rs2.next())) { // S'il n'y a pas d'autres choix inconditionnels pour ce paragraphe là, c'est mort (pas supprimable)
                          return false;
                      }
                  }
