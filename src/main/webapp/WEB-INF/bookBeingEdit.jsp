@@ -80,6 +80,26 @@
                 
                 <button class="list-group-item list-group-item-danger list-group-item-action" type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}&isPublished=${book.isPublished}'"><%=textToDisplay%></button>
                 
+                <c:choose>
+               <c:when test = "${pubCode == -1}">
+                    <div class='red'>
+                        Erreur de publication : l'histoire doit contenir au moins un paragraphe qui "est une fin de l'histoire" !
+                    </div>
+               </c:when>
+
+                <c:when test = "${pubCode == 0}">
+                    <div class='green'>
+                        L'histoire a bien été dépubliée !
+                    </div>
+               </c:when>  
+
+                <c:when test = "${pubCode == 1}">
+                    <div class='green'>
+                        L'histoire a bien été publiée !
+                    </div>
+               </c:when>  
+            </c:choose>
+                
                 <button type='button' class="btn btn-danger list-group-item list-group-item-action" onclick="location.href = 'controleur?action=deleteBook&idBook=${book.id}'">Supprimer ce livre</button>                
                
             </c:if>
