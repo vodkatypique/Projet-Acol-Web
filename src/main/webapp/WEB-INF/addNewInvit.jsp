@@ -21,7 +21,9 @@
                 <div class="form-group">
                     <input type="hidden" name="idBook" value="${idBook}">
                     <input type="hidden" name="idPara" value="${idPara}">
-            
+                    <c:if test="${previousPara != null}">
+                        <input type="hidden" name="previousPara" value="${previousPara}" >
+                    </c:if>
                     
                     <div class="d-flex justify-content-center py-1">
                      <button type="submit" class="btn btn-primary">Retour</button>
@@ -30,15 +32,17 @@
               
                
             </form>
-        
-        ----------------------------------------------------------    
+           
         <form method="post" action="controleur?action=endInvitedAuthorsOpen" accept-charset="utf-8">
             <p>
             <input type="hidden" name="idBook" value="${idBook}">
             <input type="hidden" name="idPara" value="${idPara}">
+            <c:if test="${previousPara != null}">
+                <input type="hidden" name="previousPara" value="${previousPara}" >
+            </c:if>
             <button type="submit" class="btn btn-warning">Rendre l'histoire Ouverte</button>
             <div class="alert alert-warning">
-  <strong>Warning!</strong> Indicates a warning that might need attention.
+  <strong>Attention!</strong> Attention cette action est irréversible !
 </div>
              L'édition de l'histoire sera alors accessible à tous les utilisateurs du site.
             </p>

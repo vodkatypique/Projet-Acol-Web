@@ -12,3 +12,8 @@
         </select></td>
     </tr>
 </table>
+<input type="hidden" name="idBook" value="${idBook}" >
+<input type="hidden" name="numParagraph" value="${numParagraph}" >
+<c:if test="${previousPara != null}">
+    <input type="hidden" name="previousPara" value="${previousPara}" >
+</c:if>

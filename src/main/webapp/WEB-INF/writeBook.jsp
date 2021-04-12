@@ -74,9 +74,17 @@
                 <% if(request.getAttribute("paragraph")!=null) { %>
                   <input type="hidden" name="numParagraph" value="${paragraph.id}" >
                 <% } %>
+
                 
                 <div class="form-group">
                 <input class="form-control" type="text" name="paragraphTitle" 
+
+                <% if(request.getAttribute("previousPara")!=null) { %>
+                  <input type="hidden" name="previousPara" value="${previousPara}" >
+                <% } %>
+                
+                <input class="form-control" type="text" name="paragraphTitle" 
+
                        <% if(request.getAttribute("paragraph")!=null) { %>
                             value="${paragraph.title}"
                        <%} else { %>
