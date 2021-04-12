@@ -12,6 +12,16 @@
             <a class="nav-link" href='controleur?action=read&idBook=${idBook}&idPara=${para}'>${para}</a>
         </li>
       </c:forEach>
+        <div class="d-flex justify-content-between">
+            <c:choose>
+                <c:when test='${utilisateur != null}'>
+                    <button class='btn btn-sm btn-outline-secondary' onclick="location.href ='controleur?action=saveHistory&utilisateur=${utilisateur}&idBook=${idBook}&history=${history}'">Sauvegarder l'historique </button><br>
+                    <button class='btn btn-sm btn-outline-secondary' onclick="location.href ='controleur?action=getHistory&utilisateur=${utilisateur}&idBook=${idBook}'">Telecharger un historique pour ce livre </button><br>
+                </c:when>
+                <c:otherwise>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </ul>
   </div>
 </nav>
@@ -20,13 +30,3 @@
     display: flex!important;
 }
         </style>
-
-
-<c:choose>
-    <c:when test='${utilisateur != null}'>
-        <button onclick="location.href ='controleur?action=saveHistory&utilisateur=${utilisateur}&idBook=${idBook}&history=${history}'">Sauvegarder l'historique </button><br>
-        <button onclick="location.href ='controleur?action=getHistory&utilisateur=${utilisateur}&idBook=${idBook}'">Telecharger un historique pour ce livre </button><br>
-    </c:when>
-    <c:otherwise>
-    </c:otherwise>
-</c:choose>

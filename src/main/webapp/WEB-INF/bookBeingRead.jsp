@@ -15,11 +15,14 @@
 	<title>Lecture du livre <%= book%></title>
     </head>
     <body>
+        
         <% request.setAttribute("currentPageAction", "read"); %>
+        
         <%@include file="co_deco.jsp" %>
+        <a href="controleur">Retour au menu d'accueil</a><!-- comment -->
+        <hr>
         <%@include file="historique.jsp" %>
         
-        <a href="controleur">Retour au menu d'accueil</a>
         
         <jsp:include page="/controleur?action=authors&idBook=<%= book.getId()%>" />
         <p></p>
@@ -43,10 +46,14 @@
                     
         <jsp:include page="/controleur?action=getChoicesRead&idBook=<%= book.getId()%>&idPara=${idLastPara}&paragraphes=${paragraphes}" />
         
+        <hr>
+        <div class="list-group list-group-flush">
+
         <c:choose>
             <c:when test='${choices != null}'>
                 <c:forEach items="${choices}" var="choice"> <!-- ce sont des paragraphes -->
-                    <div class='choice'><a href='controleur?action=read&idBook=<%= book.getId()%>&idPara=${choice.id}'>${choice.title}</a></div>
+                        
+                    <a class="list-group-item list-group-item-action" href='controleur?action=read&idBook=<%= book.getId()%>&idPara=${choice.id}'>${choice.title}</a></div>
                 </c:forEach>
             </c:when>
         </c:choose>

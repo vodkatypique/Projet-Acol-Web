@@ -1,10 +1,17 @@
 <form method="post" action="controleur?action=addUserInvit" accept-charset="utf-8">
-    <p>
     <input type="hidden" name="idBook" value="${idBook}">
     <input type="hidden" name="idPara" value="${idPara}">
-    <input type="text" name="userToAdd" placeholder="Login de l'utilisateur à ajouter">
-    <input type="submit" value="Ajouter">
-    </p>
+    
+    <div class="form-group">
+    
+    <input class="form-control" type="text" name="userToAdd" placeholder="Login de l'utilisateur à ajouter">
+    </div>
+    
+    <div class="d-flex justify-content-center py-3">
+                     <button class="btn btn-primary" type="submit" value="Ajouter">Ajouter</button>
+                    </div>
+    
+    
 </form>
 
 <% String er = (String) request.getAttribute("errorInAddedUser");

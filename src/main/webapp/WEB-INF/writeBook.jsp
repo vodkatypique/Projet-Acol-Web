@@ -25,44 +25,74 @@
         <link rel="stylesheet" type="text/css" href="styleInviteAuthors.css" />
         <title>Ecriture d'un livre</title>
         <script src="paragraphManager.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+
     </head>
     <body>
         <h1>Menu d'édition </h1>
-
+            <div class="col-md-6 offset-md-3">
             <%
             if(request.getAttribute("book") == null){
             %>
+            
             <form method="post" action="controleur?action=createNewBook" accept-charset="utf-8">
-                Titre de l'histoire :  <input type="text" name="title" required/>
-            <input type="submit" value="Créer" >
+                <div class="form-group">
+                    <div class="d-flex justify-content-center">
+                    <label for="title">Titre de l'histoire</label>
+                    </div>
+                    <input type="text" class="form-control" name="title" id="title" placeholder="Titre" required>
+                    
+                </div>
+                    <div class="d-flex justify-content-center py-3">
+                     <button type="submit" class="btn btn-primary">Créer</button>
+                    </div>
+              
+               
             </form>
+                
+            
             <c:if test="${errorTitle != null}">
-                <p class="red">Erreur : le nom de livre ${errorTitle} est déjà pris !</p>
+                <div class="alert alert-danger" role="alert">
+                    Erreur : le nom de livre ${errorTitle} est déjà pris !
+                </div>
             </c:if>
             <% } else { 
             %>  
             <h2>Livre : ${book.title}</h2>
-            Edition de paragraphe
-            <p>
+            
+            <p class="font-weight-light">Edition de paragraphe</p>
+            
             <form method="post" 
                   <% if(request.getAttribute("paragraph")!=null) { %>
                                action="controleur?action=postEditParagraph"
                   <%} else {%> action="controleur?action=createParagraph" <%}%>
                   accept-charset="utf-8">
                 <input type="hidden" name="idBook" value="${book.id}" >
+                
                 <% if(request.getAttribute("paragraph")!=null) { %>
                   <input type="hidden" name="numParagraph" value="${paragraph.id}" >
                 <% } %>
-                <p>
-                <input type="text" name="paragraphTitle" 
+                
+                <div class="form-group">
+                <input class="form-control" type="text" name="paragraphTitle" 
                        <% if(request.getAttribute("paragraph")!=null) { %>
                             value="${paragraph.title}"
                        <%} else { %>
                        value="Titre du paragraphe" <%}%> required>
-                </p>
-                <textarea name="paragraphContent" style="resize: none; width: 600px; height: 300px;" 
-                          required><% if(request.getAttribute("paragraph")!=null) { %>${paragraph.text}<%}%></textarea>
+                </div>
+                
+                <div class="form-group">
+                <textarea class="form-control" name="paragraphContent" style="resize: none; width: 600px; height: 300px;" 
+                          required>
+                    <% if(request.getAttribute("paragraph")!=null) { %>${paragraph.text}<%}%>
+                </textarea>
+                
+                </div>
+                          
                           <% if(request.getAttribute("paragraph")==null || !((Paragraph) request.getAttribute("paragraph")).getIsValidate()) { %>
+                          
                 <table>
                     <tr>
                         <th></th>
@@ -81,10 +111,13 @@
                     </tr>
                     <tr>
                         <th>
-                           <button onclick="addChoice(this)" form="">Ajouter</button>
+                           <button class="btn btn-info" onclick="addChoice(this)" form="">Ajouter</button>
                        </th>
                     </tr>
                 </table>
+                          
+                          
+                          
                 <% } %>
                 <input type="checkbox" id="isEnd" name="isEnd" value="isEnd" onclick="blockChoice(this)" 
                        <c:if test="${paragraph.isEnd}"> checked </c:if> >
@@ -94,7 +127,7 @@
                   </c:if>
                 <p>
                     <input type="hidden" name="isNewParagraph" value="${!paragraph.isValidate}"/>
-                <input type="submit" value="Valider le paragraphe">
+                <button class="btn btn-success" type="submit" value="Valider le paragraphe">Valider le paragraphe</button>
                 </p>
             </form>
                   
@@ -117,17 +150,17 @@
                         }
                     }%>
                  <c:if test="<%=hasNoValidateChoice%>">
-                    <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}'"> supprimer ce paragraphe </button>
+                    <button class="btn btn-warning" onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}'"> supprimer ce paragraphe </button>
                     <p class='red'>${errorDelete}</p>
                  </c:if>
                   <%} %>
-            </p>
+           
             
             
             <%}
         %>
             
-        
+            </div>  
     </body>
 </html>
 

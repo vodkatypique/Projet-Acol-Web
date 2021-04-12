@@ -16,28 +16,30 @@
         
         <%@include file="addInvitCommon.jsp" %>
             
-        <form method="post" action="controleur?action=endInvitedAuthors" accept-charset="utf-8">
-            <p>
-            <input type="hidden" name="idBook" value="${idBook}">
-            <input type="hidden" name="idPara" value="${idPara}">
-            <input type="submit" value="Retour">
-            </p>
-        </form>
+        <div class="col-md-6 offset-md-3">
+            <form method="post" action="controleur?action=endInvitedAuthors" accept-charset="utf-8">
+                <div class="form-group">
+                    <input type="hidden" name="idBook" value="${idBook}">
+                    <input type="hidden" name="idPara" value="${idPara}">
+            
+                    
+                    <div class="d-flex justify-content-center py-1">
+                     <button type="submit" class="btn btn-primary">Retour</button>
+                     
+                    </div>
+              
+               
+            </form>
+        
         ----------------------------------------------------------    
         <form method="post" action="controleur?action=endInvitedAuthorsOpen" accept-charset="utf-8">
             <p>
             <input type="hidden" name="idBook" value="${idBook}">
             <input type="hidden" name="idPara" value="${idPara}">
-            <table>
-                <tr>
-                    <td>
-                        <input type="submit" value="Rendre l'histoire ouverte"> 
-                    </td>
-                    <td>
-                        <div class="orange">Attention cette action est irréversible !</div>
-                    </td>
-                </tr>
-            </table>
+            <button type="submit" class="btn btn-warning">Rendre l'histoire Ouverte</button>
+            <div class="alert alert-warning">
+  <strong>Warning!</strong> Indicates a warning that might need attention.
+</div>
              L'édition de l'histoire sera alors accessible à tous les utilisateurs du site.
             </p>
         </form>
