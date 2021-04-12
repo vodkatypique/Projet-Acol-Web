@@ -41,7 +41,7 @@
             </c:when>
         </c:choose>
                     
-        <jsp:include page="/controleur?action=getChoices&idBook=<%= book.getId()%>&idPara=${idLastPara}" />
+        <jsp:include page="/controleur?action=getChoicesRead&idBook=<%= book.getId()%>&idPara=${idLastPara}&paragraphes=${paragraphes}" />
         
         <c:choose>
             <c:when test='${choices != null}'>

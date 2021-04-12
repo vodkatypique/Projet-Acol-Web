@@ -26,7 +26,7 @@
          <p><div class='paragraphText'>${para.text}</div></p>
          
         
-        <jsp:include page="/controleur?action=getChoices&idBook=${book.id}&idPara=${para.id}" />
+        <jsp:include page="/controleur?action=getAllChoices&idBook=${book.id}&idPara=${para.id}" />
         <c:forEach items="${choices}" var="choice"> <!-- ce sont des paragraphes -->
             <c:choose>
                 <c:when test="${choice.isValidate}">

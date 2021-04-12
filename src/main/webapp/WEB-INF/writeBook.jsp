@@ -87,7 +87,7 @@
                        <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}'"> Annuler l'écriture de ce paragraphe </button>
                 </c:if>
  
-                 <jsp:include page="/controleur?action=getChoices&idBook=${book.id}&idPara=${paragraph.id}" />
+                 <jsp:include page="/controleur?action=getAllChoices&idBook=${book.id}&idPara=${paragraph.id}" />
                  <c:if test="${choices.isEmpty()}">
                   <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}'"> supprimer ce paragraphe </button>
                  </c:if>

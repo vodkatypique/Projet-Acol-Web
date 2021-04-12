@@ -100,8 +100,10 @@ public class Controleur extends HttpServlet {
                 actionEdition(request, response, bookDAO);
             } else if (action.equals("read")){
                 actionRead(request, response, bookDAO, choiceDAO, paragraphDAO);
-            } else if (action.equals("getChoices")){
+            } else if (action.equals("getAllChoices")){
                 actionChoices(request, response, choiceDAO);
+            } else if (action.equals("getChoicesRead")){
+            actionChoicesRead(request, response, choiceDAO, paragraphDAO);
             } else if (action.equals("writeBook")){
                 actionWriteBook(request, response);
             } else if (action.equals("editParagraph")){  // Rentre dans le menu d'édition d'un paragraphe
@@ -181,8 +183,10 @@ public class Controleur extends HttpServlet {
         }
         else if(action.equals("choiceAdded")) {
             actionChoiceAdded(request, response, paragraphDAO, bookDAO, choiceDAO);
-        } else if (action.equals("getChoices")){
+        } else if (action.equals("getAllChoices")){
             actionChoices(request, response, choiceDAO);
+        } else if (action.equals("getChoicesRead")){
+            actionChoicesRead(request, response, choiceDAO, paragraphDAO);
         } else if(action.equals("getTypeOpen")) {
             actionGetTypeOpen(request, response, bookDAO);
         }
@@ -473,6 +477,49 @@ public class Controleur extends HttpServlet {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idP = Integer.parseInt(request.getParameter("idPara"));
         List<Paragraph> res = choiceDAO.getListChoices(idB, idP);
+        request.setAttribute("choices", res);
+    }
+    
+    List<Paragraph> choicesConditionalRead(HttpServletRequest request,
+        HttpServletResponse response, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO, 
+        List<Choice> choices) {
+        
+        
+        final GsonBuilder builder = new GsonBuilder();
+        final Gson gson = builder.create();
+        
+        String paragraphes = request.getParameter("paragraphes");
+        ArrayList<Double> listHisto = gson.fromJson(paragraphes, ArrayList.class);
+        int idB = Integer.parseInt(request.getParameter("idBook"));
+        
+        List<Paragraph> result = new ArrayList<Paragraph>();
+        for(Choice c : choices) {
+            int cond = c.getNumParagraphConditional();
+            if(cond == -1) {
+                result.add(paragraphDAO.getParagraph(idB, c.getNumParagraphNext()));
+            }
+            else if(listHisto != null){
+                for(double i : listHisto) {
+                    if(i == cond) {
+                        result.add(paragraphDAO.getParagraph(idB, c.getNumParagraphNext()));
+                        break;
+                    }
+                }
+            }
+        }
+              
+        return result;
+    }
+    
+    
+    
+    private void actionChoicesRead(HttpServletRequest request,
+        HttpServletResponse response, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO) {
+        int idB = Integer.parseInt(request.getParameter("idBook"));
+        int idP = Integer.parseInt(request.getParameter("idPara"));
+        
+        List<Paragraph> res = choicesConditionalRead(request, response, choiceDAO, paragraphDAO,
+                choiceDAO.getListChoicesRead(idB, idP));
         request.setAttribute("choices", res);
     }
 
