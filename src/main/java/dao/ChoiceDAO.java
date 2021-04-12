@@ -47,6 +47,38 @@ public class ChoiceDAO extends AbstractDataBaseDAO {
 	return result;
     }
     
+    
+    /**
+     * Renvoie la liste des choix sous forme de paragraphes, pour le paragraphe du livre courrant
+     * en prenant en compte les choix conditionnels
+     */    
+    public List<Choice> getListChoicesRead(int idBook, int numParagraphCurrent) {
+        List<Choice> result = new ArrayList<Choice>();
+        try (
+	     Connection conn = getConn();
+	     PreparedStatement st = conn.prepareStatement
+	       ("SELECT * FROM Choice JOIN Paragraph ON Choice.idBook = Paragraph.idBook AND Choice.numParagraphNext = Paragraph.numParagraph WHERE Choice.idBook = ? AND numParagraphCurrent = ?");
+	     ) {
+            st.setInt(1, idBook);
+            st.setInt(2, numParagraphCurrent);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                Choice choice =
+                    new Choice(
+                            rs.getInt("idBook"),
+                            rs.getInt("numParagraphCurrent"),
+                            rs.getInt("numParagraphNext"),
+                            rs.getInt("numParagraphConditional")
+                    );
+                result.add(choice);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Erreur BD dans ChoiceDAO (getListChoicesRead) " + e.getMessage(), e);
+	}
+	return result;
+    }
+     
+
     public List<Paragraph> getListPredecessorChoices(int idBook, int numParagraphCurrent) {
         List<Paragraph> result = new ArrayList<Paragraph>();
         try (
