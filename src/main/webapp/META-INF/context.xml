@@ -9,8 +9,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Book"
-    password="serrandn"
-    username="serrandn"
+    password="capletc"
+    username="capletc"
   />
   
   <Resource
@@ -22,8 +22,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserTable"
-    password="serrandn"
-    username="serrandn"
+    password="capletc"
+    username="capletc"
   />
   
   <Resource
@@ -35,8 +35,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserAccess"
-    password="serrandn"
-    username="serrandn"
+    password="capletc"
+    username="capletc"
   />
   
   <Resource
@@ -48,8 +48,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Paragraph"
-    password="serrandn"
-    username="serrandn"
+    password="capletc"
+    username="capletc"
   />
   
   <Resource
@@ -61,8 +61,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Choice"
-    password="serrandn"
-    username="serrandn"
+    password="capletc"
+    username="capletc"
   />
   
   <Resource
@@ -74,8 +74,21 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserBookHistory"
-    password="lepaillt"
-    username="lepaillt"
+    password="capletc"
+    username="capletc"
+  />
+  
+  <Resource
+    auth="Container"
+    type="javax.sql.DataSource"
+    driverClassName="oracle.jdbc.OracleDriver"
+    url="jdbc:oracle:thin:@oracle1.ensimag.fr:1521:oracle1"
+    maxTotal="2"
+    maxIdle="1"
+    maxWaitMillis="20000"
+    name="jdbc/UserEditingParagraph"
+    password="capletc"
+    username="capletc"
   />
   
   <CookieProcessor className="org.apache.tomcat.util.http.LegacyCookieProcessor" />

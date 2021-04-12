@@ -13,5 +13,7 @@
     </head>
     <body>
         <h1>"${valeurMystere}" c'est moi</h1>
+        <h1>"${valeurMystere2}" c'est moi2</h1>
+        <h1>"${valeurMystere3}" c'est moi3</h1>
     </body>
 </html>

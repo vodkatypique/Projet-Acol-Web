@@ -33,7 +33,7 @@ public class Paragraph {
    
    public int getIdBook()
    {
-       return this.numParagraph;
+       return this.idBook;
    }
    
    public int getId()

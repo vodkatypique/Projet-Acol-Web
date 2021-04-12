@@ -9,6 +9,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
+<select name="conditionalToWhich" disabled="true" id="selector" style="visibility:hidden;"> 
+                <c:forEach items="${listPara}" var="para">
+                    <c:if test="${para.id != numParagraph}"> <!-- pas conditionnel à lui-même, aucun sens -->
+                        <option value="${para.id}">${para.title}</option>
+                    </c:if>
+                </c:forEach>
+</select>
 
 <!DOCTYPE html>
 <html>
@@ -21,7 +28,7 @@
     <body>
         <h1>Menu d'édition </h1>
 
-        <%
+            <%
             if(request.getAttribute("book") == null){
             %>
             <form method="post" action="controleur?action=createNewBook" accept-charset="utf-8">
@@ -57,26 +64,33 @@
                           <% if(request.getAttribute("paragraph")==null || !((Paragraph) request.getAttribute("paragraph")).getIsValidate()) { %>
                 <table>
                     <tr>
-                        <th>Choix</th>
                         <th></th>
+                        <th>Choix</th>
                     </tr>
                     <tr>
                         <th>
-                            <input type="text" name="choice" required>  <!-- TO DO retirer les choix (avec js) quand la case isEnd est cochée -->
+                            <label>Paragraphe déjà existant <input type="checkbox" name="isAlreadyExist"
+                                                                   value = "true" onclick="changeInputChoice(this)"/></label>
+                            <input type="hidden" name="isAlreadyExist" value="false"/>
                         </th>
                         <th>
+                            <input type="text" name="choice" required> 
                         </th>
+                            <th><input type="hidden" name="condition" value="-1"></th>
                     </tr>
                     <tr>
                         <th>
                            <button onclick="addChoice(this)" form="">Ajouter</button>
                        </th>
-                       <th></th>
                     </tr>
                 </table>
                 <% } %>
-                  <input type="checkbox" id="isEnd" name="isEnd" value="isEnd" onclick="blockChoice(this)">
+                <input type="checkbox" id="isEnd" name="isEnd" value="isEnd" onclick="blockChoice(this)" 
+                       <c:if test="${paragraph.isEnd}"> checked </c:if> >
                   <label for="isEnd">est une fin de l'histoire</label>
+                  <c:if test="${errorIncond != null}">
+                        <p class="red">Erreur : Ce paragraphe ne peut pas ne pas être une fin de l'histoire car il est rédigé et ne propose aucun choix inconditionnel</p>
+                  </c:if>
                 <p>
                 <input type="submit" value="Valider le paragraphe">
                 </p>
@@ -89,7 +103,8 @@
  
                  <jsp:include page="/controleur?action=getAllChoices&idBook=${book.id}&idPara=${paragraph.id}" />
                  <c:if test="${choices.isEmpty()}">
-                  <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}'"> supprimer ce paragraphe </button>
+                    <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}'"> supprimer ce paragraphe </button>
+                    <p class='red'>${errorDelete}</p>
                  </c:if>
                   <%} %>
             </p>
