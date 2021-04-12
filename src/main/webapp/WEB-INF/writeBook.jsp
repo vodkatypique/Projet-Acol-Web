@@ -92,6 +92,7 @@
                         <p class="red">Erreur : Ce paragraphe ne peut pas ne pas être une fin de l'histoire car il est rédigé et ne propose aucun choix inconditionnel</p>
                   </c:if>
                 <p>
+                    <input type=hidden" name="isNewParagraph" value="${paragraph.isValidate}"/>
                 <input type="submit" value="Valider le paragraphe">
                 </p>
             </form>
