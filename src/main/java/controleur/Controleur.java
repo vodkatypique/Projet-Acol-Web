@@ -111,7 +111,6 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("getHistory")){
                 actionGetHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
-
                 actionSaveHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("displayParaEdit")){
                 actionDisplayParaEdit(request, response, paragraphDAO, bookDAO);
@@ -272,6 +271,8 @@ public class Controleur extends HttpServlet {
             Book book = bookDAO.getBook(idB);
             request.setAttribute("para", para);
             request.setAttribute("book", book);
+            int previousPara = Integer.parseInt(request.getParameter("previousPara"));
+            request.setAttribute("previousPara", previousPara);
             getServletContext().getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
         }
         else invalidParameters(request, response);
@@ -763,6 +764,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         } else { // on vient de l'ajout d'invitation après coup
             int idPara = Integer.parseInt(request.getParameter("idPara"));
             request.setAttribute("para", paragraphDAO.getParagraph(idBook, idPara));
+            if(request.getParameter("previousPara") != null) {
+                request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+            }
             request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
         }
 }
@@ -805,6 +809,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         request.setAttribute("idBook", idBook);
         int idPara = Integer.parseInt(request.getParameter("idPara"));
         request.setAttribute("idPara", idPara);
+        if(request.getParameter("previousPara") != null) {
+            request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+        }
         request.getRequestDispatcher("/WEB-INF/addNewInvit.jsp").forward(request, response);
     }
 
@@ -850,6 +857,10 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
            request.setAttribute("book", bookDAO.getBook(idBook));
            request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
+           if(request.getParameter("previousPara") != null && !(request.getParameter("previousPara").equals("null"))) {
+               int previousPara = Integer.parseInt(request.getParameter("previousPara"));
+               request.setAttribute("previousPara", previousPara);
+           }
            request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
 
@@ -917,7 +928,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                      out.println("</head>");
                      out.println("<body>");
                      out.println("<h1>Le paragraphe \"" + paragraphTitle + "\" a bien été modifié! </h1>");
-                     out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "\">Retour à l'édition</a>");
+                     out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "&previousPara=" + request.getParameter("previousPara") + "\">Retour à l'édition</a>");
                      out.println("</body>");
                      out.println("</html>");
                  }
@@ -994,6 +1005,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 choiceDAO.addChoice(idBook, numParagraph, numNextParagraph, numParagraphConditional);
                 request.setAttribute("book", bookDAO.getBook(idBook));
                 request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
+                if(request.getParameter("previousPara") != null) {
+                    request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+                }
                 request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
            }
     }
@@ -1019,6 +1033,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
        request.setAttribute("pubCode", pubCode);
        request.setAttribute("book", bookDAO.getBook(idBook));
        request.setAttribute("para", paragraphDAO.getParagraph(idBook, idPara));
+       if(request.getParameter("previousPara") != null) {
+            request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+        }
        request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
 

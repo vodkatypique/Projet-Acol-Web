@@ -13,10 +13,6 @@
     <body>
         <h1>Ajouter un choix</h1>
         <form method="post" action="controleur?action=choiceAdded" accept-charset="utf-8">
-                <input type="hidden" name="idBook" value="${idBook}" >
-                <input type="hidden" name="numParagraph" value="${numParagraph}" >
-                <input type="hidden" name="isNew" value="true" >
-                
                 <c:choose>
                     <c:when test="${previousError != null}">
                         <input type="hidden" name="confirmation" value="true" >
@@ -28,10 +24,11 @@
                 </c:choose>
      
                 <%@include file="addChoiceCommonPart.jsp" %>
+                <input type="hidden" name="isNew" value="true" >
                 <c:if test="${previousError != null}">
                     <div class='orange'>/!\ Un paragraphe du même nom ("${previousError}") existe déjà... Êtes-vous sûr de vouloir créer ce choix ?</div>
                 </c:if>
-                <input type="submit" value="Valider" >
+                <input type="submit" value="Valider" > <button type='button' onclick="location.href='controleur?action=displayParaEdit&idBook=${idBook}&numParagraph=${numParagraph}';">Retour</button>
         </form>
     </body>
 </html>

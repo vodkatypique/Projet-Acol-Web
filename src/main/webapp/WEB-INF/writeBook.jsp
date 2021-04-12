@@ -53,6 +53,9 @@
                 <% if(request.getAttribute("paragraph")!=null) { %>
                   <input type="hidden" name="numParagraph" value="${paragraph.id}" >
                 <% } %>
+                <% if(request.getAttribute("previousPara")!=null) { %>
+                  <input type="hidden" name="previousPara" value="${previousPara}" >
+                <% } %>
                 <p>
                 <input type="text" name="paragraphTitle" 
                        <% if(request.getAttribute("paragraph")!=null) { %>

@@ -20,6 +20,9 @@
             <p>
             <input type="hidden" name="idBook" value="${idBook}">
             <input type="hidden" name="idPara" value="${idPara}">
+            <c:if test="${previousPara != null}">
+                <input type="hidden" name="previousPara" value="${previousPara}" >
+            </c:if>
             <input type="submit" value="Retour">
             </p>
         </form>
@@ -28,6 +31,9 @@
             <p>
             <input type="hidden" name="idBook" value="${idBook}">
             <input type="hidden" name="idPara" value="${idPara}">
+            <c:if test="${previousPara != null}">
+                <input type="hidden" name="previousPara" value="${previousPara}" >
+            </c:if>
             <table>
                 <tr>
                     <td>
