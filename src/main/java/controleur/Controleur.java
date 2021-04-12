@@ -948,7 +948,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            if (isNew) {
                  String choiceText = request.getParameter("choiceText");
                  if(request.getParameter("confirmation") == null) { // On est pas dans le cas de la confirmation qu'on veut créer un paragraphe du même titre
-                     isError = paragraphDAO.isParagraphWithThisTitle(choiceText);
+                     isError = paragraphDAO.isParagraphWithThisTitle(idBook, choiceText);
                  }
                  if (isError) {
                      request.setAttribute("previousError", choiceText);
