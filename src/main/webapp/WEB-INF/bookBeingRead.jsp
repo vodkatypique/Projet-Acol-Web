@@ -48,14 +48,16 @@
         
         <hr>
         <div class="list-group list-group-flush">
-
+            
         <c:choose>
             <c:when test='${choices != null}'>
                 <c:forEach items="${choices}" var="choice"> <!-- ce sont des paragraphes -->
                         
-                    <a class="list-group-item list-group-item-action" href='controleur?action=read&idBook=<%= book.getId()%>&idPara=${choice.id}'>${choice.title}</a></div>
+                    <a class="list-group-item list-group-item-action" href='controleur?action=read&idBook=<%= book.getId()%>&idPara=${choice.id}'>${choice.title}</a>
+                
                 </c:forEach>
             </c:when>
         </c:choose>
+    </div>
     </body>
 </html>
