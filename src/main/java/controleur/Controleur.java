@@ -601,7 +601,6 @@ public class Controleur extends HttpServlet {
 
 
     private void actionCreateParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
-           // TODO not yet implemented
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
            String paragraphTitle = request.getParameter("paragraphTitle");
@@ -629,7 +628,7 @@ public class Controleur extends HttpServlet {
                                               false,
                                               false,
                                               true);
-                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, -1); // TO DO choix disponible avec condition
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, -1);
                 }
            }
            try (PrintWriter out = response.getWriter()) {
@@ -886,19 +885,19 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                                    true);
                           choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, Integer.parseInt(conditions[i]));
                      }
-                     userEditingParagraphDAO.deleteEditing(idBook, numParagraph);
-                     try (PrintWriter out = response.getWriter()) {
-                          out.println("<!DOCTYPE html>");
-                          out.println("<html>");
-                          out.println("<head>");
-                          out.println("<title>Book created</title>");
-                          out.println("</head>");
-                          out.println("<body>");
-                          out.println("<h1>Le paragraphe \"" + paragraphTitle + "\" a bien été modifié! </h1>");
-                          out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "\">Retour à l'édition</a>");
-                          out.println("</body>");
-                          out.println("</html>");
-                     }
+                }
+                userEditingParagraphDAO.deleteEditing(idBook, numParagraph);
+                try (PrintWriter out = response.getWriter()) {
+                     out.println("<!DOCTYPE html>");
+                     out.println("<html>");
+                     out.println("<head>");
+                     out.println("<title>Book created</title>");
+                     out.println("</head>");
+                     out.println("<body>");
+                     out.println("<h1>Le paragraphe \"" + paragraphTitle + "\" a bien été modifié! </h1>");
+                     out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "\">Retour à l'édition</a>");
+                     out.println("</body>");
+                     out.println("</html>");
                  }
            }
        }
