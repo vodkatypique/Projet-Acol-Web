@@ -71,7 +71,7 @@
                         <th>
                             <label>Paragraphe déjà existant <input type="checkbox" name="isAlreadyExist"
                                                                    value = "true" onclick="changeInputChoice(this)"/></label>
-                            <input type="hidden" name="isAlreadyExist" value="false"/>
+                                <input type="hidden" name="isAlreadyExist" value="false"/>
                         </th>
                         <th>
                             <input type="text" name="choice" required> 

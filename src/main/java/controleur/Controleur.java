@@ -478,19 +478,19 @@ public class Controleur extends HttpServlet {
         List<Paragraph> res = choiceDAO.getListChoices(idB, idP);
         request.setAttribute("choices", res);
     }
-    
+
     List<Paragraph> choicesConditionalRead(HttpServletRequest request,
-        HttpServletResponse response, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO, 
+        HttpServletResponse response, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO,
         List<Choice> choices) {
-        
-        
+
+
         final GsonBuilder builder = new GsonBuilder();
         final Gson gson = builder.create();
-        
+
         String paragraphes = request.getParameter("paragraphes");
         ArrayList<Double> listHisto = gson.fromJson(paragraphes, ArrayList.class);
         int idB = Integer.parseInt(request.getParameter("idBook"));
-        
+
         List<Paragraph> result = new ArrayList<Paragraph>();
         for(Choice c : choices) {
             int cond = c.getNumParagraphConditional();
@@ -506,17 +506,17 @@ public class Controleur extends HttpServlet {
                 }
             }
         }
-              
+
         return result;
     }
-    
-    
-    
+
+
+
     private void actionChoicesRead(HttpServletRequest request,
         HttpServletResponse response, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO) {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idP = Integer.parseInt(request.getParameter("idPara"));
-        
+
         List<Paragraph> res = choicesConditionalRead(request, response, choiceDAO, paragraphDAO,
                 choiceDAO.getListChoicesRead(idB, idP));
         request.setAttribute("choices", res);
@@ -650,7 +650,7 @@ public class Controleur extends HttpServlet {
                 ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO, BookDAO bookDAO) throws IOException, ServletException{
         int idBook = Integer.parseInt(request.getParameter("idB"));
         int idPara = Integer.parseInt(request.getParameter("idP"));
-        
+
         boolean isDeletable = choiceDAO.isDeletable(idBook, idPara);
         if(isDeletable) {
                     //On s'assure qu'il n'y a pas de choix après le paragraphe à supprimer
@@ -849,8 +849,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            boolean isValidate = true;
            boolean isAccess = true;
            boolean isIncond = true;
-
-           if(!isEnd) {
+           boolean isNewParagraph = Boolean.parseBoolean(request.getParameter("isNewParagraph"));
+           
+           if((!isNewParagraph) && (!isEnd)) {
                // vérif qu'il existe au moins 1 choix inconditionnel, sinon pas possible de décocher isEnd et on doit renvoyer une erreur
                isIncond = choiceDAO.isAnyInconditionalChoice(idBook, numParagraph);
                if(!isIncond) {
@@ -872,9 +873,13 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                      isAccess);
                 String[] choices = request.getParameterValues("choice");
                 String[] conditions = request.getParameterValues("condition");
-
+                String[] alreadyExist = request.getParameterValues("isAlreadyExist");
                 if (choices != null){
                      for(int i = 0; i < choices.length; i++) {
+                         if(alreadyExist[i].equals("true")){
+                             int numExist = Integer.parseInt(choices[i]);
+                             choiceDAO.addChoice(idBook, numParagraph, numExist, Integer.parseInt(conditions[i]));
+                         } else {
                          paragraphDAO.addParagraph(idBook,
                                                    numParagraph + i + 1,
                                                    choices[i],
@@ -884,6 +889,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                                    false,
                                                    true);
                           choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, Integer.parseInt(conditions[i]));
+                         }
                      }
                 }
                 userEditingParagraphDAO.deleteEditing(idBook, numParagraph);
