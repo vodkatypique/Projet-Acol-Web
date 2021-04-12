@@ -9,8 +9,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Book"
-    password="capletc"
-    username="capletc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -22,8 +22,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserTable"
-    password="capletc"
-    username="capletc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -35,8 +35,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserAccess"
-    password="capletc"
-    username="capletc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -48,8 +48,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Paragraph"
-    password="capletc"
-    username="capletc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -61,8 +61,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/Choice"
-    password="capletc"
-    username="capletc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -74,8 +74,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserBookHistory"
-    password="capletc"
-    username="capletc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <Resource
@@ -87,8 +87,8 @@
     maxIdle="1"
     maxWaitMillis="20000"
     name="jdbc/UserEditingParagraph"
-    password="capletc"
-    username="capletc"
+    password="serrandn"
+    username="serrandn"
   />
   
   <CookieProcessor className="org.apache.tomcat.util.http.LegacyCookieProcessor" />

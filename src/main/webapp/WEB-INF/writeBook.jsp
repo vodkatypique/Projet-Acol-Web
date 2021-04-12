@@ -4,6 +4,7 @@
     Author     : nicolas
 --%>
 
+<%@page import="java.util.List"%>
 <%@page import="dao.ChoiceDAO"%>
 <%@page import="modele.Paragraph"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -103,8 +104,20 @@
                 </c:if>
  
                  <jsp:include page="/controleur?action=getAllChoices&idBook=${book.id}&idPara=${paragraph.id}" />
-                 <c:if test="${choices.isEmpty()}">
-                    <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}'"> supprimer ce paragraphe </button>
+                 <%     /* On peut supprimer uniquement si :
+                        - il n'y a aucun choix après ce paragraphe
+                        - Tous les choix suivant ne sont pas validé ou actuellement édité par quelqu'un
+                            */
+                     List<Paragraph> choices = (List<Paragraph>) request.getAttribute("choices");
+                    boolean hasNoValidateChoice = true;
+                    for(Paragraph choice : choices){
+                        if(!choice.getIsAccessible() || choice.getIsValidate()){
+                            hasNoValidateChoice = false;
+                            break;
+                        }
+                    }%>
+                 <c:if test="<%=hasNoValidateChoice%>">
+                    <button onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}'"> supprimer ce paragraphe </button>
                     <p class='red'>${errorDelete}</p>
                  </c:if>
                   <%} %>

@@ -653,13 +653,28 @@ public class Controleur extends HttpServlet {
 
         boolean isDeletable = choiceDAO.isDeletable(idBook, idPara);
         if(isDeletable) {
-                    //On s'assure qu'il n'y a pas de choix après le paragraphe à supprimer
-            List<Paragraph> choices = choiceDAO.getListChoices(idBook, idPara);
-            if(choices.isEmpty()){
+                    /* On peut supprimer uniquement si :
+                        - il n'y a aucun choix après ce paragraphe
+                        - Tous les choix suivant ne sont pas validé ou actuellement édité par quelqu'un
+             */
+            List<Paragraph> nextChoices = choiceDAO.getListChoices(idBook, idPara);
+            boolean hasNoValidateChoice = true;
+            for (Paragraph choice : nextChoices) {
+                if (!choice.getIsAccessible() || choice.getIsValidate()) {
+                    hasNoValidateChoice = false;
+                    break;
+                }
+            }
+            if(hasNoValidateChoice){
                 // On supprime les choix qui renvoie vers le paragraphe à supprimer
                 List<Paragraph> predecessorChoices = choiceDAO.getListPredecessorChoices(idBook, idPara);
                 for (Paragraph choice : predecessorChoices){
                     choiceDAO.suppressChoice(idBook, choice.getId(), idPara);
+                }
+                // On supprime les choix du paragraphe qui n'ont pas été validés
+                for (Paragraph choice : nextChoices){
+                    choiceDAO.suppressChoice(idBook, idPara, choice.getId());
+                    paragraphDAO.deleteParagraph(idBook, choice.getId());
                 }
                 paragraphDAO.deleteParagraph(idBook, idPara);
                 userEditingParagraphDAO.deleteEditing(idBook, idPara);
@@ -880,15 +895,16 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                              int numExist = Integer.parseInt(choices[i]);
                              choiceDAO.addChoice(idBook, numParagraph, numExist, Integer.parseInt(conditions[i]));
                          } else {
+                         int lastNumParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook);
                          paragraphDAO.addParagraph(idBook,
-                                                   numParagraph + i + 1,
+                                                   lastNumParagraph + i + 1,
                                                    choices[i],
                                                    "La suite de l'histoire n'a pas encore été écrite",
                                                    author,
                                                    false,
                                                    false,
                                                    true);
-                          choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, Integer.parseInt(conditions[i]));
+                          choiceDAO.addChoice(idBook, numParagraph, lastNumParagraph + i +1, Integer.parseInt(conditions[i]));
                          }
                      }
                 }
