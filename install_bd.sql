@@ -103,7 +103,7 @@ INSERT INTO Book(idBook, titleBook, isPublished, isOpen, superAuthor)
 VALUES (SeqBook.NEXTVAL, 'Les aventures de Shrek !', 1, 1, 'Thibault');
 
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
-VALUES (SeqBook.CURRVAL, 1, 'Il était une fois, dans un marée,',  
+VALUES (SeqBook.CURRVAL, 1, 'Il était une fois, dans un marais,',  
 'un joli ogre tout vert y vivait paisiblement dans un tronc d''arbre.',
  'Thibault', 0, 1, 1);
 INSERT INTO Paragraph(idBook, numParagraph, paragraphTitle, text, author, isEnd, isValidate, isAccessible)
@@ -154,4 +154,4 @@ VALUES (1, 1, 2, -1);
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
 VALUES (1, 2, 3, -1);
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
-VALUES (1, 2, 4, 1);
+VALUES (1, 2, 4, 3);

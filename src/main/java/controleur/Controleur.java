@@ -335,7 +335,7 @@ public class Controleur extends HttpServlet {
 
 
     HttpSession session = request.getSession();
-
+    idP = currentP.getId();
     request.setAttribute("idLastPara", currentP.getId());
     request.setAttribute("bookBeingRead", book);
     request.setAttribute("paragraphsBeingRead", paragraphsBeingRead);
@@ -452,7 +452,9 @@ public class Controleur extends HttpServlet {
             System.out.println("what");
             List<String> listCookie = new ArrayList<String>();
             List<String> listCookieTemp = new ArrayList<String>();
-            listCookie.add(Integer.toString(idP));
+            for(Paragraph par : paragraphsBeingRead) {
+                listCookie.add(Integer.toString(par.getId()));
+            }
             final GsonBuilder builder = new GsonBuilder();
             final Gson gson = builder.create();
             Cookie cookie = new Cookie(Integer.toString(idB), gson.toJson(listCookie));
@@ -460,7 +462,11 @@ public class Controleur extends HttpServlet {
             response.addCookie(cookie);
             Cookie cookieTemp;
             cookieTemp = new Cookie("temp"+Integer.toString(idB), gson.toJson(listCookieTemp));
-            request.setAttribute("paragraphes", gson.fromJson(cookie.getValue(), ArrayList.class));
+            ArrayList val = gson.fromJson(cookie.getValue(), ArrayList.class);
+            request.setAttribute("paragraphes", val);
+            String history = gson.toJson(val);
+            history = history.replaceAll("\"", "\\\\\'");
+            request.setAttribute("history", history);
             response.addCookie(cookieTemp);
         }
     }
@@ -471,6 +477,25 @@ public class Controleur extends HttpServlet {
     request.getRequestDispatcher("/WEB-INF/bookBeingRead.jsp").forward(request, response);
     }
 
+    
+    private boolean canTerminate(HttpServletRequest request,
+        HttpServletResponse response, ParagraphDAO paragraphDAO, 
+        ChoiceDAO choiceDAO, int idBook, Paragraph paragraph, ArrayList<Double> history) {
+        
+        if(paragraph.getIsEnd()){return true;}
+        
+        List<Choice> allChoices = choiceDAO.getListChoicesRead(idBook, paragraph.getId());
+        List<Paragraph> nextParagraphs = choicesConditionalRead(request, response, paragraphDAO, allChoices, history);
+        
+        
+        for(Paragraph p : nextParagraphs){
+            ArrayList<Double> newHistory = history;
+            newHistory.add((double) p.getId());
+            if (canTerminate(request, response, paragraphDAO, choiceDAO, idBook, p, newHistory)){return true;}
+        }
+        return false;
+    }
+    
     private void actionChoices(HttpServletRequest request,
         HttpServletResponse response, ChoiceDAO choiceDAO) {
         int idB = Integer.parseInt(request.getParameter("idBook"));
@@ -480,15 +505,9 @@ public class Controleur extends HttpServlet {
     }
     
     List<Paragraph> choicesConditionalRead(HttpServletRequest request,
-        HttpServletResponse response, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO, 
-        List<Choice> choices) {
+        HttpServletResponse response, ParagraphDAO paragraphDAO, 
+        List<Choice> choices, ArrayList<Double> history) {
         
-        
-        final GsonBuilder builder = new GsonBuilder();
-        final Gson gson = builder.create();
-        
-        String paragraphes = request.getParameter("paragraphes");
-        ArrayList<Double> listHisto = gson.fromJson(paragraphes, ArrayList.class);
         int idB = Integer.parseInt(request.getParameter("idBook"));
         
         List<Paragraph> result = new ArrayList<Paragraph>();
@@ -497,8 +516,8 @@ public class Controleur extends HttpServlet {
             if(cond == -1) {
                 result.add(paragraphDAO.getParagraph(idB, c.getNumParagraphNext()));
             }
-            else if(listHisto != null){
-                for(double i : listHisto) {
+            else if(history != null){
+                for(double i : history) {
                     if(i == cond) {
                         result.add(paragraphDAO.getParagraph(idB, c.getNumParagraphNext()));
                         break;
@@ -516,10 +535,23 @@ public class Controleur extends HttpServlet {
         HttpServletResponse response, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO) {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idP = Integer.parseInt(request.getParameter("idPara"));
+        Paragraph para = paragraphDAO.getParagraph(idB, idP);
         
-        List<Paragraph> res = choicesConditionalRead(request, response, choiceDAO, paragraphDAO,
-                choiceDAO.getListChoicesRead(idB, idP));
-        request.setAttribute("choices", res);
+        final GsonBuilder builder = new GsonBuilder();
+        final Gson gson = builder.create();
+        String paragraphes = request.getParameter("paragraphes");
+        ArrayList<Double> listHisto = gson.fromJson(paragraphes, ArrayList.class);
+        
+        List<Paragraph> res = choicesConditionalRead(request, response, paragraphDAO,
+                choiceDAO.getListChoicesRead(idB, idP), listHisto);
+        
+        List<Paragraph> canEnd = new ArrayList<Paragraph>();
+        for(Paragraph paragraphToTest : res){
+            if(canTerminate(request, response, paragraphDAO, choiceDAO, idB, paragraphToTest, listHisto)) {
+                canEnd.add(paragraphToTest);
+            }
+        }
+        request.setAttribute("choices", canEnd);
     }
 
     private void actionWriteBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
