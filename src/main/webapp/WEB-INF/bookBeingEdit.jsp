@@ -30,7 +30,7 @@
         <c:forEach items="${choices}" var="choice"> <!-- ce sont des paragraphes -->
             <c:choose>
                 <c:when test="${choice.isValidate}">
-                    <div class='choice'><a href='controleur?action=getParagraph&view=edit&idBook=${book.id}&idPara=${choice.id}'>${choice.title}</a></div>
+                    <div class='choice'><a href='controleur?action=getParagraph&view=edit&idBook=${book.id}&idPara=${choice.id}&previousPara=${para.id}'>${choice.title}</a></div>
                 </c:when>
                 <c:otherwise>
                     <div class='choice'>
@@ -43,6 +43,14 @@
         </c:forEach> 
         <p></p>
         <p>---------------</p> <!-- faire du CSS plus propre -->
+        
+        <c:if test='${previousPara != null}'> <!-- On vient d'un paragraphe -->
+            <button type='button' onclick="location.href='controleur?action=displayParaEdit&idBook=${book.id}&numParagraph=${previousPara}';">Retour au paragraphe précédent</button>
+            <!--Note : il peut y avoir plusieurs paragraphes menant à celui sur lequel on est dc il faut bien sauvegarder celui sur lequel on était avant-->
+            <p></p>
+            <p>---------------</p> <!-- faire du CSS plus propre -->
+        </c:if>
+        
         <p><c:if test="${para.author.equals(utilisateur)}">
                 <a href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}">Modifier le contenu du paragraphe</a>
         </c:if></p>
@@ -59,6 +67,27 @@
                 <% textToDisplay = "Dépublier l'histoire";%>
             </c:if>
             <button type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}&isPublished=${book.isPublished}'"><%=textToDisplay%></button>
+                    
+            <c:choose>
+               <c:when test = "${pubCode == -1}">
+                    <div class='red'>
+                        Erreur de publication : l'histoire doit contenir au moins un paragraphe qui "est une fin de l'histoire" !
+                    </div>
+               </c:when>
+
+                <c:when test = "${pubCode == 0}">
+                    <div class='green'>
+                        L'histoire a bien été dépubliée !
+                    </div>
+               </c:when>  
+
+                <c:when test = "${pubCode == 1}">
+                    <div class='green'>
+                        L'histoire a bien été publiée !
+                    </div>
+               </c:when>  
+            </c:choose>
+            
             <table>
                 <tr>
                     <td><button type='button' onclick="location.href = 'controleur?action=deleteBook&idBook=${book.id}'">Supprimer ce livre</button></td>
@@ -66,26 +95,5 @@
                 </tr>
             </table>
         </c:if>
-        
-        <c:choose>
-           <c:when test = "${pubCode == -1}">
-                <div class='red'>
-                    Erreur de publication : l'histoire doit contenir au moins un paragraphe qui "est une fin de l'histoire" !
-                </div>
-           </c:when>
-
-            <c:when test = "${pubCode == 0}">
-                <div class='green'>
-                    L'histoire a bien été dépubliée !
-                </div>
-           </c:when>  
-            
-            <c:when test = "${pubCode == 1}">
-                <div class='green'>
-                    L'histoire a bien été publiée !
-                </div>
-           </c:when>  
-        </c:choose>
-            
     </body>
 </html>

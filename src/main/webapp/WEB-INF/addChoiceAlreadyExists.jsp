@@ -15,9 +15,6 @@
         <h2>A quel paragraphe voulez-vous lier ce choix ?</h2>
         
         <form method="post" action="controleur?action=choiceAdded" accept-charset="utf-8">
-            <input type="hidden" name="idBook" value="${idBook}" >
-            <input type="hidden" name="numParagraph" value="${numParagraph}" >
-            <input type="hidden" name="isNew" value="false" >
             <c:forEach items="${listPara}" var="para">
                 <jsp:include page="/controleur?action=isChoiceValid&idBook=${idBook}&numParagraph=${numParagraph}&numNextParagraph=${para.id}" />
                 <c:if test="${isChoiceValid}">
@@ -25,7 +22,8 @@
                 </c:if>
             </c:forEach>
             <%@include file="addChoiceCommonPart.jsp" %>
-            <input type="submit" value="Valider" >            
+            <input type="hidden" name="isNew" value="false" >
+            <input type="submit" value="Valider" > <button type='button' onclick="location.href='controleur?action=displayParaEdit&idBook=${idBook}&numParagraph=${numParagraph}';">Retour</button>           
         </form>
     </body>
 </html>

@@ -219,13 +219,14 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
         }
     }
     
-    public boolean isParagraphWithThisTitle(String text) {
+    public boolean isParagraphWithThisTitle(int idBook, String text) {
         try (
 	     Connection conn = getConn();
              PreparedStatement st = conn.prepareStatement
-	       ("SELECT * FROM Paragraph WHERE paragraphTitle = ?");
+	       ("SELECT * FROM Paragraph WHERE idBook = ? AND paragraphTitle = ?");
             ) {
-            st.setString(1, text);
+            st.setInt(1, idBook);
+            st.setString(2, text);
             ResultSet rs = st.executeQuery();
             return rs.next();
         } catch (SQLException e) {

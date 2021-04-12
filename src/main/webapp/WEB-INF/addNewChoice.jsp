@@ -13,15 +13,22 @@
     <body>
         <h1>Ajouter un choix</h1>
         <form method="post" action="controleur?action=choiceAdded" accept-charset="utf-8">
-                <input type="hidden" name="idBook" value="${idBook}" >
-                <input type="hidden" name="numParagraph" value="${numParagraph}" >
-                <input type="hidden" name="isNew" value="true" >
-                <input type="text" name="choiceText" placeHolder="Entrer ici le contenu du nouveau choix" >
+                <c:choose>
+                    <c:when test="${previousError != null}">
+                        <input type="hidden" name="confirmation" value="true" >
+                        <input type="text" name="choiceText" value="${previousError}" >
+                    </c:when>
+                    <c:otherwise>
+                       <input type="text" name="choiceText" placeHolder="Entrer ici le contenu du nouveau choix" >
+                    </c:otherwise>
+                </c:choose>
+     
                 <%@include file="addChoiceCommonPart.jsp" %>
-                <input type="submit" value="Valider" >
+                <input type="hidden" name="isNew" value="true" >
+                <c:if test="${previousError != null}">
+                    <div class='orange'>/!\ Un paragraphe du même nom ("${previousError}") existe déjà... Êtes-vous sûr de vouloir créer ce choix ?</div>
+                </c:if>
+                <input type="submit" value="Valider" > <button type='button' onclick="location.href='controleur?action=displayParaEdit&idBook=${idBook}&numParagraph=${numParagraph}';">Retour</button>
         </form>
-        <c:if test="${previousError != null}">
-            <div class='red'>Un paragraphe du même nom ("${previousError}") existe déjà !</div>
-        </c:if>
     </body>
 </html>

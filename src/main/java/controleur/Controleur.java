@@ -111,7 +111,6 @@ public class Controleur extends HttpServlet {
             } else if (action.equals("getHistory")){
                 actionGetHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("saveHistory")){
-
                 actionSaveHistory(request, response, userDAO, userBookHistoryDAO);
             } else if (action.equals("displayParaEdit")){
                 actionDisplayParaEdit(request, response, paragraphDAO, bookDAO);
@@ -272,6 +271,8 @@ public class Controleur extends HttpServlet {
             Book book = bookDAO.getBook(idB);
             request.setAttribute("para", para);
             request.setAttribute("book", book);
+            int previousPara = Integer.parseInt(request.getParameter("previousPara"));
+            request.setAttribute("previousPara", previousPara);
             getServletContext().getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
         }
         else invalidParameters(request, response);
@@ -503,13 +504,13 @@ public class Controleur extends HttpServlet {
         List<Paragraph> res = choiceDAO.getListChoices(idB, idP);
         request.setAttribute("choices", res);
     }
-    
+
     List<Paragraph> choicesConditionalRead(HttpServletRequest request,
         HttpServletResponse response, ParagraphDAO paragraphDAO, 
         List<Choice> choices, ArrayList<Double> history) {
-        
+
         int idB = Integer.parseInt(request.getParameter("idBook"));
-        
+
         List<Paragraph> result = new ArrayList<Paragraph>();
         for(Choice c : choices) {
             int cond = c.getNumParagraphConditional();
@@ -525,16 +526,17 @@ public class Controleur extends HttpServlet {
                 }
             }
         }
-              
+
         return result;
     }
-    
-    
-    
+
+
+
     private void actionChoicesRead(HttpServletRequest request,
         HttpServletResponse response, ChoiceDAO choiceDAO, ParagraphDAO paragraphDAO) {
         int idB = Integer.parseInt(request.getParameter("idBook"));
         int idP = Integer.parseInt(request.getParameter("idPara"));
+        
         Paragraph para = paragraphDAO.getParagraph(idB, idP);
         
         final GsonBuilder builder = new GsonBuilder();
@@ -633,7 +635,6 @@ public class Controleur extends HttpServlet {
 
 
     private void actionCreateParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
-           // TODO not yet implemented
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
            String paragraphTitle = request.getParameter("paragraphTitle");
@@ -661,7 +662,7 @@ public class Controleur extends HttpServlet {
                                               false,
                                               false,
                                               true);
-                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, -1); // TO DO choix disponible avec condition
+                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, -1);
                 }
            }
            try (PrintWriter out = response.getWriter()) {
@@ -683,16 +684,31 @@ public class Controleur extends HttpServlet {
                 ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO, BookDAO bookDAO) throws IOException, ServletException{
         int idBook = Integer.parseInt(request.getParameter("idB"));
         int idPara = Integer.parseInt(request.getParameter("idP"));
-        
+
         boolean isDeletable = choiceDAO.isDeletable(idBook, idPara);
         if(isDeletable) {
-                    //On s'assure qu'il n'y a pas de choix après le paragraphe à supprimer
-            List<Paragraph> choices = choiceDAO.getListChoices(idBook, idPara);
-            if(choices.isEmpty()){
+                    /* On peut supprimer uniquement si :
+                        - il n'y a aucun choix après ce paragraphe
+                        - Tous les choix suivant ne sont pas validé ou actuellement édité par quelqu'un
+             */
+            List<Paragraph> nextChoices = choiceDAO.getListChoices(idBook, idPara);
+            boolean hasNoValidateChoice = true;
+            for (Paragraph choice : nextChoices) {
+                if (!choice.getIsAccessible() || choice.getIsValidate()) {
+                    hasNoValidateChoice = false;
+                    break;
+                }
+            }
+            if(hasNoValidateChoice){
                 // On supprime les choix qui renvoie vers le paragraphe à supprimer
                 List<Paragraph> predecessorChoices = choiceDAO.getListPredecessorChoices(idBook, idPara);
                 for (Paragraph choice : predecessorChoices){
                     choiceDAO.suppressChoice(idBook, choice.getId(), idPara);
+                }
+                // On supprime les choix du paragraphe qui n'ont pas été validés
+                for (Paragraph choice : nextChoices){
+                    choiceDAO.suppressChoice(idBook, idPara, choice.getId());
+                    paragraphDAO.deleteParagraph(idBook, choice.getId());
                 }
                 paragraphDAO.deleteParagraph(idBook, idPara);
                 userEditingParagraphDAO.deleteEditing(idBook, idPara);
@@ -706,7 +722,7 @@ public class Controleur extends HttpServlet {
                 out.println("<title>Paragraph deleted</title>");
                 out.println("</head>");
                 out.println("<body>");
-                out.println("<h1>Le paragraphe a bien été supprimé! </h1>");
+                out.println("<h1>Le paragraphe \"" + request.getParameter("title") +"\" a bien été supprimé! </h1>");
                 if(idPara == 1) {
                     out.println("<h2>Puisqu'il s'agissait du seul paragraphe de l'histoire, le livre a également été supprimé. </h2>");
                 }
@@ -781,6 +797,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         } else { // on vient de l'ajout d'invitation après coup
             int idPara = Integer.parseInt(request.getParameter("idPara"));
             request.setAttribute("para", paragraphDAO.getParagraph(idBook, idPara));
+            if(request.getParameter("previousPara") != null) {
+                request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+            }
             request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
         }
 }
@@ -823,6 +842,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         request.setAttribute("idBook", idBook);
         int idPara = Integer.parseInt(request.getParameter("idPara"));
         request.setAttribute("idPara", idPara);
+        if(request.getParameter("previousPara") != null) {
+            request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+        }
         request.getRequestDispatcher("/WEB-INF/addNewInvit.jsp").forward(request, response);
     }
 
@@ -868,6 +890,10 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
            request.setAttribute("book", bookDAO.getBook(idBook));
            request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
+           if(request.getParameter("previousPara") != null && !(request.getParameter("previousPara").equals("null"))) {
+               int previousPara = Integer.parseInt(request.getParameter("previousPara"));
+               request.setAttribute("previousPara", previousPara);
+           }
            request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
 
@@ -882,8 +908,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            boolean isValidate = true;
            boolean isAccess = true;
            boolean isIncond = true;
-
-           if(!isEnd) {
+           boolean isNewParagraph = Boolean.parseBoolean(request.getParameter("isNewParagraph"));
+           
+           if((!isNewParagraph) && (!isEnd)) {
                // vérif qu'il existe au moins 1 choix inconditionnel, sinon pas possible de décocher isEnd et on doit renvoyer une erreur
                isIncond = choiceDAO.isAnyInconditionalChoice(idBook, numParagraph);
                if(!isIncond) {
@@ -905,32 +932,38 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                                      isAccess);
                 String[] choices = request.getParameterValues("choice");
                 String[] conditions = request.getParameterValues("condition");
-
+                String[] alreadyExist = request.getParameterValues("isAlreadyExist");
                 if (choices != null){
                      for(int i = 0; i < choices.length; i++) {
+                         if(alreadyExist[i].equals("true")){
+                             int numExist = Integer.parseInt(choices[i]);
+                             choiceDAO.addChoice(idBook, numParagraph, numExist, Integer.parseInt(conditions[i]));
+                         } else {
+                         int lastNumParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook);
                          paragraphDAO.addParagraph(idBook,
-                                                   numParagraph + i + 1,
+                                                   lastNumParagraph + i + 1,
                                                    choices[i],
                                                    "La suite de l'histoire n'a pas encore été écrite",
                                                    author,
                                                    false,
                                                    false,
                                                    true);
-                          choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, Integer.parseInt(conditions[i]));
+                          choiceDAO.addChoice(idBook, numParagraph, lastNumParagraph + i +1, Integer.parseInt(conditions[i]));
+                         }
                      }
-                     userEditingParagraphDAO.deleteEditing(idBook, numParagraph);
-                     try (PrintWriter out = response.getWriter()) {
-                          out.println("<!DOCTYPE html>");
-                          out.println("<html>");
-                          out.println("<head>");
-                          out.println("<title>Book created</title>");
-                          out.println("</head>");
-                          out.println("<body>");
-                          out.println("<h1>Le paragraphe \"" + paragraphTitle + "\" a bien été modifié! </h1>");
-                          out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "\">Retour à l'édition</a>");
-                          out.println("</body>");
-                          out.println("</html>");
-                     }
+                }
+                userEditingParagraphDAO.deleteEditing(idBook, numParagraph);
+                try (PrintWriter out = response.getWriter()) {
+                     out.println("<!DOCTYPE html>");
+                     out.println("<html>");
+                     out.println("<head>");
+                     out.println("<title>Book created</title>");
+                     out.println("</head>");
+                     out.println("<body>");
+                     out.println("<h1>Le paragraphe \"" + paragraphTitle + "\" a bien été modifié! </h1>");
+                     out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "&previousPara=" + request.getParameter("previousPara") + "\">Retour à l'édition</a>");
+                     out.println("</body>");
+                     out.println("</html>");
                  }
            }
        }
@@ -973,15 +1006,17 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            boolean isNew = Boolean.parseBoolean(request.getParameter("isNew"));
            boolean isError = false;
            if (isNew) {
-               String choiceText = request.getParameter("choiceText");
-               isError = paragraphDAO.isParagraphWithThisTitle(choiceText);
-               if (isError) {
-                   request.setAttribute("previousError", choiceText);
-                   request.setAttribute("idBook", idBook);
-                   request.setAttribute("numParagraph", numParagraph);
-                   List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
-                   request.setAttribute("listPara", list);
-                   request.getRequestDispatcher("/WEB-INF/addNewChoice.jsp").forward(request, response);
+                 String choiceText = request.getParameter("choiceText");
+                 if(request.getParameter("confirmation") == null) { // On est pas dans le cas de la confirmation qu'on veut créer un paragraphe du même titre
+                     isError = paragraphDAO.isParagraphWithThisTitle(idBook, choiceText);
+                 }
+                 if (isError) {
+                     request.setAttribute("previousError", choiceText);
+                     request.setAttribute("idBook", idBook);
+                     request.setAttribute("numParagraph", numParagraph);
+                     List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
+                     request.setAttribute("listPara", list);
+                     request.getRequestDispatcher("/WEB-INF/addNewChoice.jsp").forward(request, response);
                } else {
                     numNextParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
                     paragraphDAO.addParagraph(idBook,
@@ -1003,6 +1038,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 choiceDAO.addChoice(idBook, numParagraph, numNextParagraph, numParagraphConditional);
                 request.setAttribute("book", bookDAO.getBook(idBook));
                 request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
+                if(request.getParameter("previousPara") != null) {
+                    request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+                }
                 request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
            }
     }
@@ -1028,6 +1066,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
        request.setAttribute("pubCode", pubCode);
        request.setAttribute("book", bookDAO.getBook(idBook));
        request.setAttribute("para", paragraphDAO.getParagraph(idBook, idPara));
+       if(request.getParameter("previousPara") != null) {
+            request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+        }
        request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
     }
 

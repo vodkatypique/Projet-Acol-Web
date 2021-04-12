@@ -46,7 +46,7 @@ function addChoice(lien) {
      defaultCondtionnal.name = "condition";
      defaultCondtionnal.value = "-1";
      new_th0.appendChild(labelAlreadyExist);
-     new_th0.appendChild(defaultCondtionnal);
+     new_th0.appendChild(defaultExist);
      new_th1.appendChild(new_choice);
      new_th2.appendChild(LabelConditionnal);
      new_th2.appendChild(defaultCondtionnal);
@@ -65,11 +65,16 @@ function blockChoice(checkbox){
             var table = document.getElementsByTagName("table");
             var listInput = table[0].getElementsByTagName("input");
             var listButton = table[0].getElementsByTagName("button");
+            var listSelector = table[0].getElementsByTagName("select");    
+             
             for(var i=0; i < listInput.length; i++) {
                 listInput[i].disabled = checkbox.checked;
             }
             for(var i=0; i < listButton.length; i++){
                 listButton[i].disabled = checkbox.checked;
+            }
+            for(var i=0; i < listSelector.length; i++){
+                listSelector[i].disabled = checkbox.checked;
             }
 }
 
