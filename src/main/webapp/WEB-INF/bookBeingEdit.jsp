@@ -12,7 +12,8 @@
     <body>
         <%@include file="co_deco.jsp" %>
         
-        <a href="controleur">Retour au menu d'accueil</a><!-- comment -->
+        <a href="controleur">Retour au menu d'accueil</a>
+        <p><a href="controleur?action=edition">Retour à la page d'édition</a></p>
         <hr>
         
         <jsp:include page="/controleur?action=getTypeOpen&idBook=${book.id}" />
@@ -100,8 +101,8 @@
                </c:when>  
             </c:choose>
                 
-                <button type='button' class="btn btn-danger list-group-item list-group-item-action" onclick="location.href = 'controleur?action=deleteBook&idBook=${book.id}'">Supprimer ce livre</button>                
-               
+                <button type='button' class="btn btn-danger list-group-item list-group-item-action" onclick="location.href = 'controleur?action=deleteBook&idBook=${book.id}'">Supprimer ce livre <span class='orange'>(Attention, cette action est irréversible !)</span></button>                
+                
             </c:if>
         </div>
     </body>

@@ -684,6 +684,7 @@ public class Controleur extends HttpServlet {
                 ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO, BookDAO bookDAO) throws IOException, ServletException{
         int idBook = Integer.parseInt(request.getParameter("idB"));
         int idPara = Integer.parseInt(request.getParameter("idP"));
+        request.getRequestDispatcher("/WEB-INF/test.jsp").forward(request, response);
 
         boolean isDeletable = choiceDAO.isDeletable(idBook, idPara);
         if(isDeletable) {
