@@ -64,7 +64,7 @@
 
         <div class="list-group list-group-flush">
             <c:if test="${para.author.equals(utilisateur)}">
-                <a class="list-group-item list-group-item-action" href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>">Modifier le contenu du paragraphe</a>
+                <a class="list-group-item list-group-item-action" href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}&previousPara=${para.id}">Modifier le contenu du paragraphe</a>
             </c:if>
             <a class="list-group-item list-group-item-action" href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>&isNew=false">Ajouter un choix lié à un paragraphe déjà existant</a>
             <a class="list-group-item list-group-item-action" href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>&isNew=true">Ajouter un nouveau choix</a>
