@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="projet-acol-web">
+  <ClassDiagramComponents>
+    <Class name="Controleur" package="controleur" visibility="public" xPosition="20.0" yPosition="20.0">
+      <Fields>
+        <Field name="dsBook" type="DataSource" visibility="private"/>
+        <Field name="dsParagraph" type="DataSource" visibility="private"/>
+        <Field name="dsUser" type="DataSource" visibility="private"/>
+        <Field name="dsUserAccess" type="DataSource" visibility="private"/>
+        <Field name="dsChoice" type="DataSource" visibility="private"/>
+        <Field name="dsUserBookHistory" type="DataSource" visibility="private"/>
+        <Field name="dsUserEditingParagraph" type="DataSource" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="invalidParameters" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="erreurBD" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="DAOException" name="e"/>
+        </Method>
+        <Method name="doGet" returnType="void" visibility="public">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="doPost" returnType="void" visibility="public">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="actionIndex" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="actionDisplay" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+        </Method>
+        <Method name="actionEdition" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+        </Method>
+        <Method name="actionGetBook" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="actionGetParagraph" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+        </Method>
+        <Method name="actionGetAccess" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserAccessDAO" name="userAccessDAO"/>
+        </Method>
+        <Method name="actionGetAuthors" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="setALtoCookie" returnType="HttpServletResponse" visibility="private">
+          <Argument type="ArrayList" name="liste"/>
+          <Argument type="Cookie" name="cookie"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="actionRead" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="ChoiceDAO" name="choiceDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="canTerminate" returnType="boolean" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="ChoiceDAO" name="choiceDAO"/>
+          <Argument type="int" name="idBook"/>
+          <Argument type="Paragraph" name="paragraph"/>
+          <Argument type="ArrayList&lt;Double&gt;" name="history"/>
+        </Method>
+        <Method name="actionChoices" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ChoiceDAO" name="choiceDAO"/>
+        </Method>
+        <Method name="choicesConditionalRead" returnType="List&lt;Paragraph&gt;" visibility="package">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="List&lt;Choice&gt;" name="choices"/>
+          <Argument type="ArrayList&lt;Double&gt;" name="history"/>
+        </Method>
+        <Method name="actionChoicesRead" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ChoiceDAO" name="choiceDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="actionWriteBook" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="actionGetHistory" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserBookHistoryDAO" name="userBookHistoryDAO"/>
+        </Method>
+        <Method name="actionSaveHistory" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserBookHistoryDAO" name="userBookHistoryDAO"/>
+        </Method>
+        <Method name="actionCreateNewBook" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserAccessDAO" name="userAccessDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="actionDeleteParagraph" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="ChoiceDAO" name="choiceDAO"/>
+          <Argument type="UserEditingParagraphDAO" name="userEditingParagraphDAO"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+        </Method>
+        <Method name="actionAddUserInvit" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserAccessDAO" name="userAccessDAO"/>
+        </Method>
+        <Method name="actionGetInvitedUsers" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserAccessDAO" name="userAccessDAO"/>
+        </Method>
+        <Method name="actionEndInvitedAuthors" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="actionEndInvitedAuthorsOpen" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserAccessDAO" name="userAccessDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="actionUninviteUser" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserAccessDAO" name="userAccessDAO"/>
+        </Method>
+        <Method name="actionUninviteEveryUser" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="UserDAO" name="userDAO"/>
+          <Argument type="UserAccessDAO" name="userAccessDAO"/>
+        </Method>
+        <Method name="actionChangeInvitations" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="actionGetEditParagraph" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="UserEditingParagraphDAO" name="userEditingParagraphDAO"/>
+          <Argument type="UserDAO" name="userDAO"/>
+        </Method>
+        <Method name="actionDisplayParaEdit" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+        </Method>
+        <Method name="actionPostEditParagraph" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="ChoiceDAO" name="choiceDAO"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="UserEditingParagraphDAO" name="userEditingParagraphDAO"/>
+        </Method>
+        <Method name="actionCancelEditParagraph" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="UserEditingParagraphDAO" name="userEditingParagraphDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="UserDAO" name="userDAO"/>
+        </Method>
+        <Method name="actionAddChoiceToPara" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="actionChoiceAdded" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="ChoiceDAO" name="choiceDAO"/>
+        </Method>
+        <Method name="actionIsChoiceValid" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="ChoiceDAO" name="choiceDAO"/>
+        </Method>
+        <Method name="actionPublishOrUnpublish" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+          <Argument type="ParagraphDAO" name="paragraphDAO"/>
+        </Method>
+        <Method name="actionGetTypeOpen" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+        </Method>
+        <Method name="actionDeleteBook" returnType="void" visibility="private">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+          <Argument type="BookDAO" name="bookDAO"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="AbstractDataBaseDAO" package="dao" visibility="public" isAbstract="true" xPosition="320.0" yPosition="20.0">
+      <Fields>
+        <Field name="dataSource" type="DataSource" visibility="protected" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="protected">
+          <Argument type="DataSource" name="ds"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getConn" returnType="Connection" visibility="protected"/>
+      </Methods>
+    </Class>
+    <Class name="BookDAO" package="dao" visibility="public" xPosition="620.0" yPosition="20.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="DataSource" name="ds"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getBooksList" returnType="List&lt;Book&gt;" visibility="public"/>
+        <Method name="addBook" returnType="int" visibility="public">
+          <Argument type="String" name="titre"/>
+          <Argument type="String" name="superAuthor"/>
+        </Method>
+        <Method name="getBook" returnType="Book" visibility="public">
+          <Argument type="int" name="id"/>
+        </Method>
+        <Method name="modifyBook" returnType="void" visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="String" name="title"/>
+          <Argument type="boolean" name="isPublished"/>
+          <Argument type="boolean" name="isOpen"/>
+          <Argument type="String" name="superAuthor"/>
+        </Method>
+        <Method name="deleteBook" returnType="void" visibility="public">
+          <Argument type="int" name="id"/>
+        </Method>
+        <Method name="inversePublication" returnType="boolean" visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="boolean" name="toSet"/>
+        </Method>
+        <Method name="makeOpen" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+        </Method>
+        <Method name="getOpen" returnType="boolean" visibility="public">
+          <Argument type="int" name="idBook"/>
+        </Method>
+        <Method name="isAlreadyWithTitle" returnType="boolean" visibility="public">
+          <Argument type="String" name="title"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="ChoiceDAO" package="dao" visibility="public" xPosition="920.0" yPosition="20.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="DataSource" name="ds"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getListChoices" returnType="List&lt;Paragraph&gt;" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraphCurrent"/>
+        </Method>
+        <Method name="getListChoicesRead" returnType="List&lt;Choice&gt;" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraphCurrent"/>
+        </Method>
+        <Method name="getListPredecessorChoices" returnType="List&lt;Paragraph&gt;" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraphCurrent"/>
+        </Method>
+        <Method name="addChoice" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="current"/>
+          <Argument type="int" name="next"/>
+          <Argument type="int" name="conditional"/>
+        </Method>
+        <Method name="modifyChoice" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraphCurrent"/>
+          <Argument type="int" name="numParagraphNext"/>
+          <Argument type="int" name="numParagraphConditional"/>
+        </Method>
+        <Method name="suppressChoice" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="current"/>
+          <Argument type="int" name="next"/>
+        </Method>
+        <Method name="isAlreadyHere" returnType="boolean" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="current"/>
+          <Argument type="int" name="next"/>
+        </Method>
+        <Method name="isAnyInconditionalChoice" returnType="boolean" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idPara"/>
+        </Method>
+        <Method name="isDeletable" returnType="boolean" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idParaNext"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="DAOException" package="dao" visibility="public" xPosition="1220.0" yPosition="20.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+        <Constructor visibility="public">
+          <Argument type="String" name="message"/>
+        </Constructor>
+        <Constructor visibility="public">
+          <Argument type="String" name="message"/>
+          <Argument type="Throwable" name="cause"/>
+        </Constructor>
+      </Constructors>
+      <Methods/>
+    </Class>
+    <Class name="ParagraphDAO" package="dao" visibility="public" xPosition="1520.0" yPosition="20.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="DataSource" name="ds"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getListParagraphs" returnType="List&lt;Paragraph&gt;" visibility="public">
+          <Argument type="int" name="idBook"/>
+        </Method>
+        <Method name="addParagraph" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraph"/>
+          <Argument type="String" name="title"/>
+          <Argument type="String" name="text"/>
+          <Argument type="String" name="author"/>
+          <Argument type="boolean" name="isEnd"/>
+          <Argument type="boolean" name="isValidate"/>
+          <Argument type="boolean" name="isAccess"/>
+        </Method>
+        <Method name="getParagraph" returnType="Paragraph" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idParagraph"/>
+        </Method>
+        <Method name="modifyParagraph" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraph"/>
+          <Argument type="String" name="title"/>
+          <Argument type="String" name="text"/>
+          <Argument type="String" name="author"/>
+          <Argument type="boolean" name="isEnd"/>
+          <Argument type="boolean" name="isValidate"/>
+          <Argument type="boolean" name="isAccess"/>
+        </Method>
+        <Method name="lockParagraph" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraph"/>
+        </Method>
+        <Method name="unlockParagraph" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraph"/>
+        </Method>
+        <Method name="deleteParagraph" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idPara"/>
+        </Method>
+        <Method name="findAuthors" returnType="List&lt;String&gt;" visibility="public">
+          <Argument type="int" name="idBook"/>
+        </Method>
+        <Method name="getCurrentMaxNumParagraph" returnType="int" visibility="public">
+          <Argument type="int" name="idBook"/>
+        </Method>
+        <Method name="isParagraphWithThisTitle" returnType="boolean" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="String" name="text"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="UserAccessDAO" package="dao" visibility="public" xPosition="1820.0" yPosition="20.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="DataSource" name="ds"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="accessBook" returnType="boolean" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idUser"/>
+        </Method>
+        <Method name="addNewAccess" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idUser"/>
+        </Method>
+        <Method name="removeAccess" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idUser"/>
+        </Method>
+        <Method name="removeEveryAccess" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+        </Method>
+        <Method name="getAllUsersAllowed" returnType="List&lt;Integer&gt;" visibility="public">
+          <Argument type="int" name="idBook"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="UserBookHistoryDAO" package="dao" visibility="public" xPosition="2120.0" yPosition="20.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="DataSource" name="ds"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getHistory" returnType="String" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idUser"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="addHistory" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idUser"/>
+          <Argument type="String" name="history"/>
+        </Method>
+        <Method name="suppressHistory" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idUser"/>
+        </Method>
+        <Method name="addChoice" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idUser"/>
+          <Argument type="int" name="numParagraph"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="UserDAO" package="dao" visibility="public" xPosition="20.0" yPosition="420.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="DataSource" name="ds"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getListUser" returnType="List&lt;User&gt;" visibility="public"/>
+        <Method name="getListIdUser" returnType="List&lt;Integer&gt;" visibility="public"/>
+        <Method name="addUser" returnType="void" visibility="public">
+          <Argument type="String" name="idUser"/>
+          <Argument type="String" name="login"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="getUser" returnType="User" visibility="public">
+          <Argument type="int" name="id"/>
+        </Method>
+        <Method name="getLoginFromId" returnType="String" visibility="public">
+          <Argument type="int" name="id"/>
+        </Method>
+        <Method name="getIdFromLogin" returnType="int" visibility="public">
+          <Argument type="String" name="login"/>
+        </Method>
+        <Method name="modifyUser" returnType="void" visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="String" name="login"/>
+          <Argument type="String" name="password"/>
+        </Method>
+        <Method name="suppressUser" returnType="void" visibility="public">
+          <Argument type="int" name="id"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="UserEditingParagraphDAO" package="dao" visibility="public" xPosition="320.0" yPosition="420.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="DataSource" name="ds"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getParagraph" returnType="Paragraph" visibility="public">
+          <Argument type="int" name="idUser"/>
+        </Method>
+        <Method name="getParagraph" returnType="Paragraph" visibility="public">
+          <Argument type="int" name="idUser"/>
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraph"/>
+        </Method>
+        <Method name="addEditing" returnType="void" visibility="public">
+          <Argument type="int" name="idUser"/>
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraph"/>
+        </Method>
+        <Method name="deleteEditing" returnType="void" visibility="public">
+          <Argument type="int" name="idUser"/>
+        </Method>
+        <Method name="deleteEditing" returnType="void" visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="numParagraph"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="Book" package="modele" visibility="public" xPosition="620.0" yPosition="420.0">
+      <Fields>
+        <Field name="idBook" type="int" visibility="private" isFinal="true"/>
+        <Field name="titleBook" type="String" visibility="private"/>
+        <Field name="isPublished" type="boolean" visibility="private"/>
+        <Field name="isOpen" type="boolean" visibility="private"/>
+        <Field name="superAuthor" type="String" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="String" name="titre"/>
+          <Argument type="boolean" name="isPublished"/>
+          <Argument type="boolean" name="isOpen"/>
+          <Argument type="String" name="superAuthor"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getIsPublished" returnType="boolean" visibility="public"/>
+        <Method name="getOpenStatut" returnType="boolean" visibility="public"/>
+        <Method name="getTitle" returnType="String" visibility="public"/>
+        <Method name="getId" returnType="int" visibility="public"/>
+        <Method name="getSuperAuthor" returnType="String" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Choice" package="modele" visibility="public" xPosition="920.0" yPosition="420.0">
+      <Fields>
+        <Field name="idBook" type="int" visibility="private" isFinal="true"/>
+        <Field name="numParagraphCurrent" type="int" visibility="private"/>
+        <Field name="numParagraphNext" type="int" visibility="private"/>
+        <Field name="numParagraphConditional" type="int" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="int" name="current"/>
+          <Argument type="int" name="next"/>
+          <Argument type="int" name="conditional"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getIdBook" returnType="int" visibility="public"/>
+        <Method name="getNumParagraphCurrent" returnType="int" visibility="public"/>
+        <Method name="getNumParagraphNext" returnType="int" visibility="public"/>
+        <Method name="getNumParagraphConditional" returnType="int" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Paragraph" package="modele" visibility="public" xPosition="1220.0" yPosition="420.0">
+      <Fields>
+        <Field name="idBook" type="int" visibility="private" isFinal="true"/>
+        <Field name="numParagraph" type="int" visibility="private" isFinal="true"/>
+        <Field name="paragraphTitle" type="String" visibility="private"/>
+        <Field name="text" type="String" visibility="private"/>
+        <Field name="author" type="String" visibility="private"/>
+        <Field name="isEnd" type="boolean" visibility="private"/>
+        <Field name="isValidate" type="boolean" visibility="private"/>
+        <Field name="isAccessible" type="boolean" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="int" name="numParagraph"/>
+          <Argument type="String" name="title"/>
+          <Argument type="String" name="text"/>
+          <Argument type="String" name="author"/>
+          <Argument type="boolean" name="isEnd"/>
+          <Argument type="boolean" name="isValidate"/>
+          <Argument type="boolean" name="isAccessible"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getAuthor" returnType="String" visibility="public"/>
+        <Method name="getTitle" returnType="String" visibility="public"/>
+        <Method name="getIdBook" returnType="int" visibility="public"/>
+        <Method name="getId" returnType="int" visibility="public"/>
+        <Method name="getText" returnType="String" visibility="public"/>
+        <Method name="getIsEnd" returnType="boolean" visibility="public"/>
+        <Method name="getIsAccessible" returnType="boolean" visibility="public"/>
+        <Method name="getIsValidate" returnType="boolean" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="User" package="modele" visibility="public" xPosition="1520.0" yPosition="420.0">
+      <Fields>
+        <Field name="idUser" type="int" visibility="private" isFinal="true"/>
+        <Field name="login" type="String" visibility="private"/>
+        <Field name="password" type="String" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="id"/>
+          <Argument type="String" name="login"/>
+          <Argument type="String" name="password"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getId" returnType="int" visibility="public"/>
+        <Method name="getLogin" returnType="String" visibility="public"/>
+        <Method name="getPassword" returnType="String" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="UserBookHistory" package="modele" visibility="public" xPosition="1820.0" yPosition="420.0">
+      <Fields>
+        <Field name="idBook" type="int" visibility="private" isFinal="true"/>
+        <Field name="idUser" type="int" visibility="private"/>
+        <Field name="history" type="String" visibility="private"/>
+        <Field name="numJump" type="int" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="int" name="idBook"/>
+          <Argument type="int" name="idUser"/>
+          <Argument type="String" name="history"/>
+          <Argument type="int" name="numJump"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getIdBook" returnType="int" visibility="public"/>
+        <Method name="getIdUser" returnType="int" visibility="public"/>
+        <Method name="getHistory" returnType="String" visibility="public"/>
+        <Method name="getNumJump" returnType="int" visibility="public"/>
+        <Method name="toString" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="CheckUser" package="servlet" visibility="public" xPosition="2120.0" yPosition="420.0">
+      <Fields>
+        <Field name="ds" type="DataSource" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="processRequest" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="doGet" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="doPost" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="getServletInfo" returnType="String" visibility="public"/>
+        <Method name="isLoginValid" returnType="boolean" visibility="public">
+          <Argument type="String" name="login"/>
+          <Argument type="String" name="mdp"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="Logout" package="servlet" visibility="public" xPosition="20.0" yPosition="820.0">
+      <Fields/>
+      <Constructors/>
+      <Methods>
+        <Method name="processRequest" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="doGet" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="doPost" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="getServletInfo" returnType="String" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Register" package="servlet" visibility="public" xPosition="320.0" yPosition="820.0">
+      <Fields>
+        <Field name="ds" type="DataSource" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="processRequest" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="doGet" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="doPost" returnType="void" visibility="protected">
+          <Argument type="HttpServletRequest" name="request"/>
+          <Argument type="HttpServletResponse" name="response"/>
+        </Method>
+        <Method name="getServletInfo" returnType="String" visibility="public"/>
+        <Method name="inscription" returnType="boolean" visibility="public">
+          <Argument type="String" name="login"/>
+          <Argument type="String" name="mdp"/>
+        </Method>
+      </Methods>
+    </Class>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations>
+    <UseRelation source="controleur.Controleur" target="modele.Book" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="dao.ParagraphDAO" target="modele.Paragraph" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="controleur.Controleur" target="modele.Choice" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="dao.ParagraphDAO" target="dao.AbstractDataBaseDAO"/>
+    <UseRelation source="dao.BookDAO" target="modele.Book" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="dao.ChoiceDAO" target="modele.Paragraph" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="controleur.Controleur" target="modele.UserBookHistory" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="dao.UserDAO" target="modele.User" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="dao.UserEditingParagraphDAO" target="modele.Paragraph" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="dao.ChoiceDAO" target="dao.AbstractDataBaseDAO"/>
+    <IsRelation name="is" source="dao.UserEditingParagraphDAO" target="dao.AbstractDataBaseDAO"/>
+    <UseRelation source="controleur.Controleur" target="modele.User" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="dao.BookDAO" target="dao.AbstractDataBaseDAO"/>
+    <UseRelation source="controleur.Controleur" target="dao.DAOException" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="dao.UserAccessDAO" target="dao.AbstractDataBaseDAO"/>
+    <UseRelation source="controleur.Controleur" target="modele.Paragraph" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="dao.ChoiceDAO" target="modele.Choice" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <IsRelation name="is" source="dao.UserDAO" target="dao.AbstractDataBaseDAO"/>
+    <IsRelation name="is" source="dao.UserBookHistoryDAO" target="dao.AbstractDataBaseDAO"/>
+  </ClassDiagramRelations>
+</ClassDiagram>
