@@ -152,10 +152,17 @@
                             break;
                         }
                     }%>
-                 <c:if test="<%=hasNoValidateChoice%>">
-                    <button class="btn btn-warning" onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}&previousPara=${previousPara}'"> supprimer ce paragraphe </button>
+                    <button class="btn btn-warning" 
+                        <c:choose>
+                           <c:when test="<%=hasNoValidateChoice%>">
+                               onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}&previousPara=${previousPara}'"
+                           </c:when>
+                           <c:otherwise>
+                               disabled
+                           </c:otherwise>
+                       </c:choose>
+                    > supprimer ce paragraphe </button>
                     <p class='red'>${errorDelete}</p>
-                 </c:if>
                     
             </c:otherwise>    
             </c:choose> 
