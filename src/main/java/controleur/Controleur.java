@@ -835,7 +835,12 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         Paragraph paragraph = paragraphDAO.getParagraph(idBook, numParagraph);
         int idUser = userDAO.getIdFromLogin((String) request.getSession().getAttribute("utilisateur"));
         Paragraph editParagraph = userEditingParagraphDAO.getParagraph(idUser);
-        if(editParagraph == null || (editParagraph.getIdBook() == idBook && editParagraph.getId() == numParagraph)){
+        if(!(editParagraph !=null && editParagraph.getIdBook() == idBook && editParagraph.getId() == numParagraph) && !paragraph.getIsAccessible()){
+            request.getRequestDispatcher("controleur?action=getParagraph&view=edit"
+                    +"&idBook="+ idBook
+                    +"&idPara="+ numParagraph
+                    +"&previousPara="+ request.getParameter("previousPara"));
+        } else if((editParagraph == null && paragraph.getIsAccessible()) || (editParagraph.getIdBook() == idBook && editParagraph.getId() == numParagraph)){          
                 request.setAttribute("paragraph", paragraph);
                 Book book = bookDAO.getBook(idBook);
                 request.setAttribute("book", book);
