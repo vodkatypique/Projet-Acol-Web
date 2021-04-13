@@ -42,7 +42,7 @@
                 <c:otherwise>
                     <div class='choice'>
                         <p>${choice.title} <button <c:if test="${!choice.isAccessible}"> disabled </c:if> 
-                                                  onclick="location.href='controleur?action=editParagraph&idBook=${book.id}&numParagraph=${choice.id}';">
+                                                  onclick="location.href='controleur?action=editParagraph&idBook=${book.id}&numParagraph=${choice.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>';">
                                                   Ecrire ce choix  </button><p>
                     </div>                    
                 </c:otherwise>
@@ -64,7 +64,7 @@
 
         <div class="list-group list-group-flush">
             <c:if test="${para.author.equals(utilisateur)}">
-                <a class="list-group-item list-group-item-action" href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}">Modifier le contenu du paragraphe</a>
+                <a class="list-group-item list-group-item-action" href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>">Modifier le contenu du paragraphe</a>
             </c:if>
             <a class="list-group-item list-group-item-action" href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>&isNew=false">Ajouter un choix lié à un paragraphe déjà existant</a>
             <a class="list-group-item list-group-item-action" href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>&isNew=true">Ajouter un nouveau choix</a>
@@ -79,7 +79,7 @@
                     <% textToDisplay = "Dépublier l'histoire";%>
                 </c:if>
                 
-                <button class="list-group-item list-group-item-danger list-group-item-action" type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}&isPublished=${book.isPublished}'"><%=textToDisplay%></button>
+                <button class="list-group-item list-group-item-danger list-group-item-action" type='button' onclick="location.href = 'controleur?action=publishOrUnpublish&idBook=${book.id}&idPara=${para.id}&isPublished=${book.isPublished}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>'"><%=textToDisplay%></button>
                 
                 <c:choose>
                <c:when test = "${pubCode == -1}">

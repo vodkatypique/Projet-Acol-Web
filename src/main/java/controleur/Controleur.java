@@ -648,8 +648,7 @@ public class Controleur extends HttpServlet {
                 ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO, BookDAO bookDAO) throws IOException, ServletException{
         int idBook = Integer.parseInt(request.getParameter("idB"));
         int idPara = Integer.parseInt(request.getParameter("idP"));
-        //request.getRequestDispatcher("/WEB-INF/test.jsp").forward(request, response);
-
+        
         boolean isDeletable = choiceDAO.isDeletable(idBook, idPara);
         if(isDeletable) {
                     /* On peut supprimer uniquement si :
@@ -684,14 +683,19 @@ public class Controleur extends HttpServlet {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
                 out.println("<head>");
-                out.println("<title>Paragraph deleted</title>");
+                out.println("<title>Paragraphe supprimé</title>");
                 out.println("</head>");
                 out.println("<body>");
                 out.println("<h1>Le paragraphe \"" + request.getParameter("title") +"\" a bien été supprimé! </h1>");
                 if(idPara == 1) {
                     out.println("<h2>Puisqu'il s'agissait du seul paragraphe de l'histoire, le livre a également été supprimé. </h2>");
                 }
-                out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
+                if(request.getParameter("previousPara") != null && request.getParameter("previousPara") != "") {
+                    int previousPara = Integer.parseInt(request.getParameter("previousPara"));
+                    out.println("<a href=\"controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + previousPara + "\">Retour à l'édition</a>");
+                } else {
+                    out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
+                }
                 out.println("</body>");
                 out.println("</html>");
                 }
@@ -700,6 +704,10 @@ public class Controleur extends HttpServlet {
             request.setAttribute("errorDelete", "Ce paragraphe ne peut pas être supprimé car c'est le seul choix inconditionnel d'un des paragraphes non finaux de cette histoire !");
             request.setAttribute("book", bookDAO.getBook(idBook));
             request.setAttribute("paragraph", paragraphDAO.getParagraph(idBook, idPara));
+            if(request.getParameter("previousPara") != null && !(request.getParameter("previousPara").equals(""))) {
+                int previousPara = Integer.parseInt(request.getParameter("previousPara"));
+                request.setAttribute("previousPara", previousPara);
+            }
             request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         }
 
@@ -837,6 +845,10 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 if(editParagraph == null){
                     userEditingParagraphDAO.addEditing(idUser, idBook, numParagraph);
                 }
+                if(request.getParameter("previousPara") != null) {
+                    int previousPara = Integer.parseInt(request.getParameter("previousPara"));
+                    request.setAttribute("previousPara", previousPara);
+                }
                 request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         } else {
             try (PrintWriter out = response.getWriter()) {
@@ -888,6 +900,10 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                    request.setAttribute("errorIncond", 1);
                    request.setAttribute("book", bookDAO.getBook(idBook));
                    request.setAttribute("paragraph", paragraphDAO.getParagraph(idBook, numParagraph));
+                if(request.getParameter("previousPara") != null) {
+                    int previousPara = Integer.parseInt(request.getParameter("previousPara"));
+                    request.setAttribute("previousPara", previousPara);
+                }
                    request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
                }
            }

@@ -153,7 +153,7 @@
                         }
                     }%>
                  <c:if test="<%=hasNoValidateChoice%>">
-                    <button class="btn btn-warning" onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}'"> supprimer ce paragraphe </button>
+                    <button class="btn btn-warning" onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}&previousPara=${previousPara}'"> supprimer ce paragraphe </button>
                     <p class='red'>${errorDelete}</p>
                  </c:if>
                     
