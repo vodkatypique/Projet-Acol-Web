@@ -967,8 +967,12 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                     userEditingParagraphDAO.deleteEditing(idUser);
                 }
                 String previous = request.getParameter("previous");
-                if (previous.length() > 0) {                  
-                    response.sendRedirect("controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + previous);       
+                if (previous.length() > 0) {
+                    if(request.getParameter("view").equals("modifier")){
+                        response.sendRedirect("controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + numParagraph + "&previousPara=" + previous);       
+                    } else {
+                        response.sendRedirect("controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + previous);       
+                    }
                 } else {
                     response.sendRedirect("controleur?action=edition");
                 }

@@ -128,11 +128,11 @@
             </form>
                                        <c:choose>
                          <c:when test="${paragraph.isValidate}">
-                             <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}&previous=${paragraph.id}'"> 
+                             <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}&previous=${previousPara}&view=modifier'"> 
                                 Annuler la modification du paragraphe
                          </c:when>
                          <c:otherwise>
-                             <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}&previous=${previousPara}'">
+                             <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}&previous=${previousPara}&view=ecrire'">
                                 Annuler l'écriture du paragraphe 
                          </c:otherwise>
                      </c:choose>
