@@ -24,7 +24,6 @@
                     <c:if test="${previousPara != null}">
                         <input type="hidden" name="previousPara" value="${previousPara}" >
                     </c:if>
-                    
                     <div class="d-flex justify-content-center py-1">
                      <button type="submit" class="btn btn-primary">Retour</button>
                      

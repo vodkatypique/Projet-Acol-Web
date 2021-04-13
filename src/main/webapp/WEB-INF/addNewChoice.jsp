@@ -28,7 +28,7 @@
                 <c:if test="${previousError != null}">
                     <div class='orange'>/!\ Un paragraphe du même nom ("${previousError}") existe déjà... Êtes-vous sûr de vouloir créer ce choix ?</div>
                 </c:if>
-                <input type="submit" value="Valider" > <button type='button' onclick="location.href='controleur?action=displayParaEdit&idBook=${idBook}&numParagraph=${numParagraph}';">Retour</button>
+                <input type="submit" value="Valider" > <button type='button' onclick="location.href='controleur?action=displayParaEdit&idBook=${idBook}&numParagraph=${numParagraph}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>';">Retour</button>
         </form>
     </body>
 </html>

@@ -648,7 +648,7 @@ public class Controleur extends HttpServlet {
                 ChoiceDAO choiceDAO, UserEditingParagraphDAO userEditingParagraphDAO, BookDAO bookDAO) throws IOException, ServletException{
         int idBook = Integer.parseInt(request.getParameter("idB"));
         int idPara = Integer.parseInt(request.getParameter("idP"));
-        request.getRequestDispatcher("/WEB-INF/test.jsp").forward(request, response);
+        //request.getRequestDispatcher("/WEB-INF/test.jsp").forward(request, response);
 
         boolean isDeletable = choiceDAO.isDeletable(idBook, idPara);
         if(isDeletable) {
@@ -708,6 +708,9 @@ public class Controleur extends HttpServlet {
 
 private void actionAddUserInvit(HttpServletRequest request,
         HttpServletResponse response, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException {
+    if(request.getParameter("previousPara") != null) {
+        request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+    }
     String log = request.getParameter("userToAdd");
     int idUser = userDAO.getIdFromLogin(log);
     String loginConnectedUser = (String) request.getSession().getAttribute("utilisateur");
@@ -957,6 +960,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
            request.setAttribute("numParagraph", numParagraph);
            List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
            request.setAttribute("listPara", list);
+            if(request.getParameter("previousPara") != null) {
+                request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+            }
            if (Boolean.parseBoolean(request.getParameter("isNew"))) {
                request.getRequestDispatcher("/WEB-INF/addNewChoice.jsp").forward(request, response);
            }
@@ -966,6 +972,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
     }
 
     private void actionChoiceAdded(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, BookDAO bookDAO, ChoiceDAO choiceDAO) throws ServletException, IOException {
+            if(request.getParameter("previousPara") != null) {
+                request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
+            }
            int idBook = Integer.parseInt(request.getParameter("idBook"));
            int numParagraph = Integer.parseInt(request.getParameter("numParagraph"));
            int numNextParagraph = 0;
@@ -1006,9 +1015,6 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 choiceDAO.addChoice(idBook, numParagraph, numNextParagraph, numParagraphConditional);
                 request.setAttribute("book", bookDAO.getBook(idBook));
                 request.setAttribute("para", paragraphDAO.getParagraph(idBook, numParagraph));
-                if(request.getParameter("previousPara") != null) {
-                    request.setAttribute("previousPara", Integer.parseInt(request.getParameter("previousPara")));
-                }
                 request.getRequestDispatcher("/WEB-INF/bookBeingEdit.jsp").forward(request, response);
            }
     }

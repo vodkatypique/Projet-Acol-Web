@@ -66,12 +66,12 @@
             <c:if test="${para.author.equals(utilisateur)}">
                 <a class="list-group-item list-group-item-action" href="controleur?action=editParagraph&idBook=${book.id}&numParagraph=${para.id}">Modifier le contenu du paragraphe</a>
             </c:if>
-            <a class="list-group-item list-group-item-action" href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}&isNew=false">Ajouter un choix lié à un paragraphe déjà existant</a>
-            <a class="list-group-item list-group-item-action" href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}&isNew=true">Ajouter un nouveau choix</a>
+            <a class="list-group-item list-group-item-action" href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>&isNew=false">Ajouter un choix lié à un paragraphe déjà existant</a>
+            <a class="list-group-item list-group-item-action" href="controleur?action=addChoiceToPara&idBook=${book.id}&numParagraph=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>&isNew=true">Ajouter un nouveau choix</a>
             
             <c:if test="${book.superAuthor.equals(utilisateur)}">
                 <c:if test='${typeOpen.equals("sur invitation")}'>
-                    <a class="list-group-item list-group-item-action" href='controleur?action=changeInvitations&idBook=${book.id}&idPara=${para.id}'>Gérer les invitations</a>
+                    <a class="list-group-item list-group-item-action" href='controleur?action=changeInvitations&idBook=${book.id}&idPara=${para.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>'>Gérer les invitations</a>
                 </c:if>
                     
                 <% String textToDisplay = "Publier l'histoire";%>

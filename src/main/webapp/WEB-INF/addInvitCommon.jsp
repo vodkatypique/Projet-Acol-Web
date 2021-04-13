@@ -1,6 +1,9 @@
 <form method="post" action="controleur?action=addUserInvit" accept-charset="utf-8">
     <input type="hidden" name="idBook" value="${idBook}">
     <input type="hidden" name="idPara" value="${idPara}">
+    <c:if test="${previousPara != null}">
+        <input type="hidden" name="previousPara" value="${previousPara}" >
+    </c:if>
     
     <div class="form-group">
     
