@@ -157,6 +157,7 @@ public class ParagraphDAO extends AbstractDataBaseDAO {
 	     ) {
             st.setInt(1, idBook);   
             st.setInt(2, numParagraph);
+            st.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException("Erreur BD dans ParagraphDAO (unlockParagraph)" + e.getMessage(), e);
         }
