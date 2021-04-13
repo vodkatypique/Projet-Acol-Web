@@ -76,7 +76,6 @@
 
                 
                 <div class="form-group">
-                <input class="form-control" type="text" name="paragraphTitle" 
 
                 <c:if test="${not empty previousPara}">
                   <input type="hidden" name="previousPara" value="${previousPara}" >
