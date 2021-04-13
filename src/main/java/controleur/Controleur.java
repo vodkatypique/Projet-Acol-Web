@@ -966,7 +966,12 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                     paragraphDAO.unlockParagraph(idBook, numParagraph);
                     userEditingParagraphDAO.deleteEditing(idUser);
                 }
-                response.sendRedirect("controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + request.getParameter("previous"));
+                String previous = request.getParameter("previous");
+                if (previous.length() > 0) {                  
+                    response.sendRedirect("controleur?action=displayParaEdit&idBook=" + idBook + "&numParagraph=" + previous);       
+                } else {
+                    response.sendRedirect("controleur?action=edition");
+                }
        }
 
        private void actionAddChoiceToPara(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO) throws ServletException, IOException {

@@ -76,7 +76,6 @@
 
                 
                 <div class="form-group">
-                <input class="form-control" type="text" name="paragraphTitle" 
 
                 <c:if test="${not empty previousPara}">
                   <input type="hidden" name="previousPara" value="${previousPara}" >
@@ -127,13 +126,13 @@
                 <button class="btn btn-success" type="submit" value="Valider le paragraphe">Valider le paragraphe</button>
                 </p>
             </form>
-                  
-                 <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}&previous=${previousPara}'"> 
-                     <c:choose>
+                                       <c:choose>
                          <c:when test="${paragraph.isValidate}">
+                             <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}&previous=${paragraph.id}'"> 
                                 Annuler la modification du paragraphe
                          </c:when>
                          <c:otherwise>
+                             <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}&previous=${previousPara}'">
                                 Annuler l'écriture du paragraphe 
                          </c:otherwise>
                      </c:choose>
