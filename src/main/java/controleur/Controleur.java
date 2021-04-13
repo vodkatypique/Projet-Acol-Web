@@ -489,8 +489,10 @@ public class Controleur extends HttpServlet {
         
         for(Paragraph p : nextParagraphs){
             ArrayList<Double> newHistory = history;
-            newHistory.add((double) p.getId());
-            if (canTerminate(request, response, paragraphDAO, choiceDAO, idBook, p, newHistory)){return true;}
+            if(!newHistory.contains((double) p.getId())){
+                newHistory.add((double) p.getId());
+                if (canTerminate(request, response, paragraphDAO, choiceDAO, idBook, p, newHistory)){return true;}
+            }
         }
         return false;
     }
