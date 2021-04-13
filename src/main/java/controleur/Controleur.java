@@ -156,9 +156,7 @@ public class Controleur extends HttpServlet {
         UserEditingParagraphDAO userEditingParagraphDAO = new UserEditingParagraphDAO((dsUserEditingParagraph));
 
         if (action.equals("createNewBook")) {
-            actionCreateNewBook(request, response, bookDAO, userDAO, userAccessDAO);
-        }else if(action.equals("createParagraph")) {
-            actionCreateParagraph(request, response, paragraphDAO, choiceDAO, bookDAO);
+            actionCreateNewBook(request, response, bookDAO, userDAO, userAccessDAO, paragraphDAO);
         } else if (action.equals("addUserInvit")){
                 actionAddUserInvit(request, response, userDAO, userAccessDAO);
             }
@@ -616,7 +614,8 @@ public class Controleur extends HttpServlet {
         }
     }
 
-    private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response, BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO) throws ServletException, IOException{
+    private void actionCreateNewBook(HttpServletRequest request, HttpServletResponse response,
+                BookDAO bookDAO, UserDAO userDAO, UserAccessDAO userAccessDAO, ParagraphDAO paragraphDAO) throws ServletException, IOException{
         String title = request.getParameter("title");
         boolean isAlready = bookDAO.isAlreadyWithTitle(title);
         if(isAlready) {
@@ -629,53 +628,18 @@ public class Controleur extends HttpServlet {
             request.setAttribute("idBook", idBook);
             request.setAttribute("idPara", -1);
             userAccessDAO.addNewAccess(idBook, idConnectedUser);
+            
+            // Créé le 1er paragraphe
+            paragraphDAO.addParagraph(idBook,
+                          1,
+                          title,
+                          "Il était une fois ...",
+                          (String) request.getSession().getAttribute("utilisateur"),
+                          false,
+                          false,
+                          true);
+            
             request.getRequestDispatcher("/WEB-INF/invitedAuthors.jsp").forward(request, response);
-        }
-    }
-
-
-    private void actionCreateParagraph(HttpServletRequest request, HttpServletResponse response, ParagraphDAO paragraphDAO, ChoiceDAO choiceDAO, BookDAO bookDAO) throws ServletException, IOException{
-           int idBook = Integer.parseInt(request.getParameter("idBook"));
-           int numParagraph = paragraphDAO.getCurrentMaxNumParagraph(idBook) + 1;
-           String paragraphTitle = request.getParameter("paragraphTitle");
-           String paragraphContent = request.getParameter("paragraphContent");
-           String author = (String) request.getSession().getAttribute("utilisateur");
-           boolean isEnd = request.getParameter("isEnd") != null;
-           boolean isValidate = true;
-           boolean isAccess = true;
-           paragraphDAO.addParagraph(idBook,
-                                     numParagraph,
-                                     paragraphTitle,
-                                     paragraphContent,
-                                     author,
-                                     isEnd,
-                                     isValidate,
-                                     isAccess);
-           String[] choices = request.getParameterValues("choice");
-           if (choices != null){
-                for(int i = 0; i < choices.length; i++) {
-                    paragraphDAO.addParagraph(idBook,
-                                              numParagraph + i + 1,
-                                              choices[i],
-                                              "La suite de l'histoire n'a pas encore été écrite",
-                                              author,
-                                              false,
-                                              false,
-                                              true);
-                     choiceDAO.addChoice(idBook, numParagraph, numParagraph + i +1, -1);
-                }
-           }
-           try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Paragraph created</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Le paragraphe " + paragraphTitle + " a bien été créé! </h1>");
-            out.println("<a href=\"controleur?action=edition\">Retour à l'édition</a>");
-            out.println("</body>");
-            out.println("</html>");
         }
     }
 
@@ -794,6 +758,9 @@ private void actionGetInvitedUsers(HttpServletRequest request,
         List<Paragraph> list = paragraphDAO.getListParagraphs(idBook);
         request.setAttribute("listPara", list);
         if(request.getParameter("idPara") == null) { // on vient des choix d'invitations qd on crée le livre
+            // On édite le 1er paragraphe
+            Paragraph firstParagraph = paragraphDAO.getParagraph(idBook, 1);
+            request.setAttribute("paragraph", firstParagraph);
             request.getRequestDispatcher("/WEB-INF/writeBook.jsp").forward(request, response);
         } else { // on vient de l'ajout d'invitation après coup
             int idPara = Integer.parseInt(request.getParameter("idPara"));
@@ -976,7 +943,7 @@ private void actionGetInvitedUsers(HttpServletRequest request,
                 int numParagraph = Integer.parseInt(request.getParameter("idP"));
                 String login = (String) request.getSession().getAttribute("utilisateur");
                 int idUser = userDAO.getIdFromLogin(login);
-                if(userEditingParagraphDAO.getParagraph(idUser) != null){
+                if(userEditingParagraphDAO.getParagraph(idUser, idBook, numParagraph) != null){
                     paragraphDAO.unlockParagraph(idBook, numParagraph);
                     userEditingParagraphDAO.deleteEditing(idUser);
                 }

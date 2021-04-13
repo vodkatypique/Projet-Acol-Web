@@ -65,9 +65,7 @@
             <p class="font-weight-light">Edition de paragraphe</p>
             
             <form method="post" 
-                  <% if(request.getAttribute("paragraph")!=null) { %>
                                action="controleur?action=postEditParagraph"
-                  <%} else {%> action="controleur?action=createParagraph" <%}%>
                   accept-charset="utf-8">
                 <input type="hidden" name="idBook" value="${book.id}" >
                 
@@ -84,23 +82,16 @@
                 <% } %>
                 
                 <input class="form-control" type="text" name="paragraphTitle" 
-
-                       <% if(request.getAttribute("paragraph")!=null) { %>
-                            value="${paragraph.title}"
-                       <%} else { %>
-                       value="Titre du paragraphe" <%}%> required>
+                            value="${paragraph.title}" required>
                 </div>
                 
                 <div class="form-group">
                 <textarea class="form-control" name="paragraphContent" style="resize: none; width: 600px; height: 300px;" 
-                          required>
-                    <% if(request.getAttribute("paragraph")!=null) { %>${paragraph.text}<%}%>
-                </textarea>
+                          required>${paragraph.text}</textarea>
                 
                 </div>
                           
-                          <% if(request.getAttribute("paragraph")==null || !((Paragraph) request.getAttribute("paragraph")).getIsValidate()) { %>
-                          
+                <c:if test="${!paragraph.isValidate}">
                 <table>
                     <tr>
                         <th></th>
@@ -122,11 +113,8 @@
                            <button class="btn btn-info" onclick="addChoice(this)" form="">Ajouter</button>
                        </th>
                     </tr>
-                </table>
-                          
-                          
-                          
-                <% } %>
+                </table>       
+                </c:if>
                 <input type="checkbox" id="isEnd" name="isEnd" value="isEnd" onclick="blockChoice(this)" 
                        <c:if test="${paragraph.isEnd}"> checked </c:if> >
                   <label for="isEnd">est une fin de l'histoire</label>
@@ -139,10 +127,16 @@
                 </p>
             </form>
                   
-                <% if(request.getAttribute("paragraph") != null) { %>
-                <c:if test="${!paragraph.isValidate}">
-                       <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}'"> Annuler l'écriture de ce paragraphe </button>
-                </c:if>
+                 <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}'"> 
+                     <c:choose>
+                         <c:when test="${paragraph.isValidate}">
+                                Annuler la modification du paragraphe
+                         </c:when>
+                         <c:otherwise>
+                                Annuler l'écriture du paragraphe 
+                         </c:otherwise>
+                     </c:choose>
+                </button>
  
                  <jsp:include page="/controleur?action=getAllChoices&idBook=${book.id}&idPara=${paragraph.id}" />
                  <%     /* On peut supprimer uniquement si :
@@ -161,7 +155,6 @@
                     <button class="btn btn-warning" onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}'"> supprimer ce paragraphe </button>
                     <p class='red'>${errorDelete}</p>
                  </c:if>
-                  <%} %>
            
             
             
