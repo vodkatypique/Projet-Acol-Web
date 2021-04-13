@@ -33,10 +33,9 @@
     <body>
         <h1>Menu d'édition </h1>
             <div class="col-md-6 offset-md-3">
-            <%
-            if(request.getAttribute("book") == null){
-            %>
-            
+            <c:choose>
+                <c:when test="${empty book}">
+                                
             <form method="post" action="controleur?action=createNewBook" accept-charset="utf-8">
                 <div class="form-group">
                     <div class="d-flex justify-content-center">
@@ -58,8 +57,10 @@
                     Erreur : le nom de livre ${errorTitle} est déjà pris !
                 </div>
             </c:if>
-            <% } else { 
-            %>  
+            </c:when>
+            <c:otherwise>
+                    
+
             <h2>Livre : ${book.title}</h2>
             
             <p class="font-weight-light">Edition de paragraphe</p>
@@ -69,17 +70,17 @@
                   accept-charset="utf-8">
                 <input type="hidden" name="idBook" value="${book.id}" >
                 
-                <% if(request.getAttribute("paragraph")!=null) { %>
+                <c:if test="${not empty paragraph}">
                   <input type="hidden" name="numParagraph" value="${paragraph.id}" >
-                <% } %>
+                </c:if>
 
                 
                 <div class="form-group">
                 <input class="form-control" type="text" name="paragraphTitle" 
 
-                <% if(request.getAttribute("previousPara")!=null) { %>
+                <c:if test="${not empty previousPara}">
                   <input type="hidden" name="previousPara" value="${previousPara}" >
-                <% } %>
+                </c:if>
                 
                 <input class="form-control" type="text" name="paragraphTitle" 
                             value="${paragraph.title}" required>
@@ -155,11 +156,9 @@
                     <button class="btn btn-warning" onclick="location.href = 'controleur?action=deleteParagraph&idB=${book.id}&idP=${paragraph.id}&title=${paragraph.title}'"> supprimer ce paragraphe </button>
                     <p class='red'>${errorDelete}</p>
                  </c:if>
-           
-            
-            
-            <%}
-        %>
+                    
+            </c:otherwise>    
+            </c:choose> 
             
             </div>  
     </body>
