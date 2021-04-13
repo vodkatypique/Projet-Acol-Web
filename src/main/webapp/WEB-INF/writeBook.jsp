@@ -128,7 +128,7 @@
                 </p>
             </form>
                   
-                 <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}'"> 
+                 <button onclick="location.href = 'controleur?action=cancelEditParagraph&idB=${book.id}&idP=${paragraph.id}&previous=${previousPara}'"> 
                      <c:choose>
                          <c:when test="${paragraph.isValidate}">
                                 Annuler la modification du paragraphe

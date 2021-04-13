@@ -42,7 +42,7 @@
                 <c:otherwise>
                     <div class='choice'>
                         <p>${choice.title} <button <c:if test="${!choice.isAccessible}"> disabled </c:if> 
-                                                  onclick="location.href='controleur?action=editParagraph&idBook=${book.id}&numParagraph=${choice.id}<c:if test='${previousPara != null}'>&previousPara=${previousPara}</c:if>';">
+                                                  onclick="location.href='controleur?action=editParagraph&idBook=${book.id}&numParagraph=${choice.id}&previousPara=${para.id}'">
                                                   Ecrire ce choix  </button><p>
                     </div>                    
                 </c:otherwise>
