@@ -272,7 +272,7 @@ VALUES (1, 1, 2, -1);
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
 VALUES (1, 2, 3, -1);
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
-VALUES (1, 2, 4, 3);
+VALUES (1, 2, 4, -1);
 
 INSERT INTO Choice(idBook, numParagraphCurrent, numParagraphNext, numParagraphConditional)
 VALUES (3, 1, 2, -1);
