@@ -493,6 +493,39 @@ public class Controleur extends HttpServlet {
                 newHistory.add((double) p.getId());
                 if (canTerminate(request, response, paragraphDAO, choiceDAO, idBook, p, newHistory)){return true;}
             }
+            else{
+                newHistory.add((double) p.getId());
+                // si il y a deja une occurence du paragraphe il suffit de 
+                // savoir si sur la boucle a déjà eue lieu pour eviter les boucles infinies
+                // et ensuite de verifier que sur cette boucle un des états peut finir
+                
+                List<Integer> indicesOcc = new ArrayList<Integer>(); // indices des occurences du paragraphe
+                for(int i=0; i < newHistory.size(); i++){
+                    if(newHistory.get(i) == (double) p.getId()){indicesOcc.add(i);}
+                }
+                
+                List<Double> lastLoop = newHistory.subList(indicesOcc.get(indicesOcc.size() - 2), indicesOcc.get(indicesOcc.size() - 1));
+                List<Double> boucle = new ArrayList<Double>(); // contient une boucle après l'autre
+                // pour la comparer avec la dernière obtenue
+                boolean dejaExistant  = false;
+                
+                
+                for(int occurence = 0; occurence < indicesOcc.size() - 2; occurence++){
+                    boucle = newHistory.subList(indicesOcc.get(occurence), indicesOcc.get(occurence + 1));
+                    if(boucle.equals(lastLoop)){
+                        dejaExistant = true;
+                        break;
+                    }
+                }
+                
+                if(!dejaExistant || indicesOcc.size()==2){
+                    for(double indice : lastLoop) {
+                        Paragraph paraIndice = paragraphDAO.getParagraph(idBook, (int) indice);
+                        if(canTerminate(request, response, paragraphDAO, choiceDAO, idBook, paraIndice, newHistory)){return true;}
+                    }
+                } 
+                
+            }
         }
         return false;
     }
